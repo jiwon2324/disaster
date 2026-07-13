@@ -1,4 +1,4 @@
-package com.disaster.api.disaster;
+package com.disaster.api.disaster.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
