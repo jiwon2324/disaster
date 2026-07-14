@@ -98,3 +98,5 @@ public class Qna {
     @Column(name = "category", length = 30, nullable = false)
     private String category = "기타";
 }
+
+// dksjdka
