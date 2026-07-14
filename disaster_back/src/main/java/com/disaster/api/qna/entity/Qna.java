@@ -99,4 +99,3 @@ public class Qna {
     private String category = "기타";
 }
 
-// dksjdka
