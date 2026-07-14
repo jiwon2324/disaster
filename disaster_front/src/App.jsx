@@ -6,6 +6,7 @@ import BoardComp from "./components/board/BoardComp"
 import ImageComp from "./components/image/ImageComp"
 import MemberComp from "./components/member/MemberComp"
 import CommunityComp from "./components/community/CommunityComp"
+import QuizComp from "./componentS/quiz/QuizComp";
 
 function App() {
 
@@ -22,6 +23,8 @@ function App() {
           <Route path="/image/*" element={<ImageComp />} />
           <Route path="/member/*" element={<MemberComp />} />
           <Route path="/community/*" element={<CommunityComp />} />
+          <Route path="/quiz/*" element={<QuizComp />} />
+
           <Route path="*" element={<NotFoundMenu />} />
         </Routes>
       </div>
