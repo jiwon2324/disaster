@@ -47,6 +47,12 @@ function TopNavi(){
             <li className="nav-item">
               <NavLink to={"/board/list"} className="nav-link">Board</NavLink>&nbsp;
             </li>
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/community/list">제보게시판</NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/quiz/list">퀴즈</NavLink>
+            </li>
           </ul>
           <ul className="navbar-nav ms-auto">
               {!token && (
