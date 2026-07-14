@@ -1,79 +1,56 @@
 package com.disaster.api.guide.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "edu_guide")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "edu_guide")
 public class EduGuide {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "no")
     private Long no;
 
-    @Column(name = "title", nullable = false, length = 300)
+    @Column(nullable = false, length = 300)
     private String title;
 
-    @Column(name = "category", length = 100)
+    @Column(length = 100)
     private String category;
 
-    @Column(name = "writer", nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String writer;
 
-    @Column(name = "summary", nullable = false, length = 1000)
+    @Column(nullable = false, length = 1000)
     private String summary;
 
     @Lob
-    @Column(
-            name = "content",
-            nullable = false,
-            columnDefinition = "LONGTEXT"
-    )
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String content;
 
-    @Column(name = "tags", length = 500)
+    @Column(length = 500)
     private String tags;
 
-    @Builder.Default
-    @Column(name = "hit", nullable = false)
     private Long hit = 0L;
 
-    @Builder.Default
-    @Column(name = "status", length = 20)
+    @Column(length = 20)
     private String status = "PUBLIC";
 
-    @Column(
-            name = "reg_date",
-            nullable = false,
-            updatable = false,
-            insertable = false
-    )
+    @CreatedDate
+    @Column(name = "reg_date", updatable = false)
     private LocalDateTime regDate;
 
+    @LastModifiedDate
     @Column(name = "update_date")
     private LocalDateTime updateDate;
-
-    @PrePersist
-    public void prePersist() {
-        if (this.hit == null) {
-            this.hit = 0L;
-        }
-
-        if (this.status == null || this.status.isBlank()) {
-            this.status = "PUBLIC";
-        }
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        this.updateDate = LocalDateTime.now();
-    }
 }
