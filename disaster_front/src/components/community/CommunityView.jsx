@@ -91,7 +91,16 @@ function CommunityView(){
       {/* 🛡️ 본인 글이거나 관리자 권한을 가졌을 때만 수정/삭제 버튼 노출 */}
       {isAuthor && (
         <>
-          <button className="btn btn-primary" onClick={() => navigate(`/community/update?no=${no}`)}>수정</button>&nbsp;
+          <button 
+            className="btn btn-primary" 
+            onClick={() => {
+              const isAdmin = loginInfo && (loginInfo.sub === "admin" || loginInfo.sub === "admin01" || loginInfo.name === "관리자");
+              navigate(`/community/update?no=${no}`, { state: { isAdmin } });
+            }}
+          >
+            수정
+          </button>
+
           <button className="btn btn-danger" onClick={handleDeleteClick}>삭제</button>&nbsp;
         </>
       )}

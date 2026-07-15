@@ -103,16 +103,23 @@ public class CommunityServiceImpl implements CommunityService {
         if (optional.isEmpty()) throw new RuntimeException("제보게시판 수정 오류 - 잘못된 글번호");
         Community entity = optional.get();
 
-        // 1. 기존 비밀번호 검증
-        if (!passwordEncoder.matches(vo.getPw(), entity.getPw())) {
-            throw new RuntimeException("제보게시판 수정 오류 - 비밀번호가 일치하지 않습니다.");
+        // 🔑 [판단 기준 변경] 리액트가 보낸 패스워드가 관리자 마스터 키인지 확인합니다.
+        boolean isAdminPass = vo.getPw() != null && vo.getPw().equals("admin_master_pass");
+
+        // 🛡️ 관리자 마스터 키가 아닐 때만 일반 유저 비밀번호 및 작성자 검증 실행
+        if (!isAdminPass) {
+            // 1. 기존 비밀번호 검증
+            if (!passwordEncoder.matches(vo.getPw(), entity.getPw())) {
+                throw new RuntimeException("제보게시판 수정 오류 - 비밀번호가 일치하지 않습니다.");
+            }
+
+            // 2. 작성자 일치 여부 2차 검증 (보안 강화)
+            if (!entity.getWriter().equals(vo.getWriter())) {
+                throw new RuntimeException("제보게시판 수정 오류 - 타인의 글은 수정할 수 없습니다.");
+            }
         }
 
-        // 2. 🛡️ 작성자 일치 여부 2차 검증 (보안 강화)
-        if (!entity.getWriter().equals(vo.getWriter())) {
-            throw new RuntimeException("제보게시판 수정 오류 - 타인의 글은 수정할 수 없습니다.");
-        }
-
+        // 🟢 vo.getWriter()가 원래 글쓴이 이름 그대로 유지된 채 안전하게 업데이트됩니다!
         return communityRepositoryCustom.updateCommunity(vo.getTitle(), vo.getContent(), vo.getWriter(), vo.getNo());
     }
 

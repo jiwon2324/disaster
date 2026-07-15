@@ -8,7 +8,7 @@ function QuizList() {
   const [list, setList] = useState([]);
   const navigate = useNavigate();
 
-// 🔑 강사님의 MemberVO 스펙에 맞춰 싱크를 조정한 로그인 세션 판별부
+  // 🔑 로그인 세션 판별부 (관리자 판단)
   const loginInfoStr = localStorage.getItem("login");
   const loginInfo = loginInfoStr ? JSON.parse(loginInfoStr) : null;
   
@@ -35,7 +35,7 @@ function QuizList() {
       <tr key={vo.no} className="align-middle">
         <td>{vo.no}</td>
         <td>{vo.title}</td>
-        <td>{vo.writer}</td>
+        {/* ✂️ 출제자(vo.writer) 데이터 컬럼 삭제 */}
         <td>{vo.writeDate ? format(new Date(vo.writeDate), "yyyy-MM-dd") : "-"}</td>
         <td>{vo.hit}</td>
         <td>
@@ -50,7 +50,8 @@ function QuizList() {
     ))
   ) : (
     <tr>
-      <td colSpan="6" className="text-center text-muted py-5">
+      {/* 🛡️ 전체 열의 개수가 5개이므로 colSpan은 5가 맞습니다. */}
+      <td colSpan="5" className="text-center text-muted py-5">
         등록된 퀴즈가 없습니다. 우측 하단의 [퀴즈 등록] 버튼으로 문제를 출제해 주세요!
       </td>
     </tr>
@@ -64,10 +65,11 @@ function QuizList() {
         <thead>
           <tr>
             <th style={{ width: "10%" }}>번호</th>
-            <th style={{ width: "45%" }}>문제 제목</th>
-            <th style={{ width: "15%" }}>출제자</th>
+            <th style={{ width: "50%" }}>문제 제목</th>
             <th style={{ width: "15%" }}>등록일</th>
             <th style={{ width: "10%" }}>조회수</th>
+            {/* 💡 퀴즈 풀기 버튼 자리를 맞춰주기 위해 th를 추가하고 너비를 15% 줍니다. */}
+            <th style={{ width: "15%" }}>구분</th> 
           </tr>
         </thead>
         <tbody>
@@ -75,7 +77,7 @@ function QuizList() {
         </tbody>
       </table>
 
-      {/* 🛡️ 관리자일 경우 등록 버튼이 하단에 온전히 표시됩니다 */}
+      {/* 🛡️ 관리자일 경우 등록 버튼이 하단에 표시됩니다 */}
       {isAdmin && (
         <div className="mt-3">
           <Link to={"/quiz/write"} className="btn btn-primary">
