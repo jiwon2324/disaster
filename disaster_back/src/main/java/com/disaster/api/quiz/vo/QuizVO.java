@@ -12,9 +12,11 @@ public class QuizVO {
     private String writer;
     private LocalDateTime writeDate;
     private Long hit;
+
     private Long refNo;
     private Integer ordNo;
     private Integer levNo;
     private Long parentNo;
+    
     private String explain;
 }
