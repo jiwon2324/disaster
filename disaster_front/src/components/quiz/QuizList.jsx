@@ -67,8 +67,7 @@ function QuizList() {
             <th style={{ width: "45%" }}>문제 제목</th>
             <th style={{ width: "15%" }}>출제자</th>
             <th style={{ width: "15%" }}>등록일</th>
-            <th style={{ width: "10%" }}>도전 횟수</th>
-            <th style={{ width: "15%" }}>기능</th>
+            <th style={{ width: "10%" }}>조회수</th>
           </tr>
         </thead>
         <tbody>
