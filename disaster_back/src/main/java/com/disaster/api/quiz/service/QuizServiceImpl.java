@@ -60,13 +60,16 @@ public class QuizServiceImpl implements QuizService {
         question.setContent(vo.getContent());
         question.setAns(vo.getAns());
         question.setWriter(vo.getWriter());
-        question.setRefNo(0L);
+        question.setRefNo(0L); // 임시값
         question.setOrdNo(1);
         question.setLevNo(0);
 
+        // 영속성 컨텍스트에 저장하여 실제 DB 시퀀스/AUTO_INCREMENT 번호(no)를 즉시 부여받습니다.
         Quiz savedQuestion = quizRepositoryCustom.writeQuiz(question);
+
+        // 생성된 고유 키(no)를 refNo로 지정해 줍니다.
         savedQuestion.setRefNo(savedQuestion.getNo());
-        quizRepositoryCustom.writeQuiz(savedQuestion);
+        quizRepositoryCustom.writeQuiz(savedQuestion); // 영속 데이터 업데이트
 
         // [2단계] 해설 등록
         Quiz explanation = new Quiz();
@@ -77,6 +80,8 @@ public class QuizServiceImpl implements QuizService {
         explanation.setRefNo(savedQuestion.getNo());
         explanation.setOrdNo(2);
         explanation.setLevNo(1);
+
+        // 🚨 중요: 새로 생성된 savedQuestion.getNo() 부모 PK를 안전하게 자식 parentNo로 바인딩합니다.
         explanation.setParentNo(savedQuestion.getNo());
 
         quizRepositoryCustom.writeQuiz(explanation);
