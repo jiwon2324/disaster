@@ -5,26 +5,28 @@ import org.springframework.security.core.GrantedAuthority;
 import java.io.Serializable;
 import java.util.Collection;
 
-public interface UserDetails extends Serializable {
+public interface UserDetails
+        extends org.springframework.security.core.userdetails.UserDetails,
+        Serializable {
 
-    // 계정이 가지고 있는 권한 목록 보안 처리를 위해서 필요한 객체(SimpleGrantedAuthority) 변환해서 넘겨준다.
+    @Override
     Collection<? extends GrantedAuthority> getAuthorities();
 
+    @Override
     String getPassword();
 
-    // 사용자 이름 - ID
+    @Override
     String getUsername();
 
-    // 계정이 만료되지 않았는지
+    @Override
     boolean isAccountNonExpired();
 
-    // 계정이 잠겨있지 않았는지?
+    @Override
     boolean isAccountNonLocked();
 
-    // 비밀번호가 잠겨 있지 않는지?
+    @Override
     boolean isCredentialsNonExpired();
 
-    // 계정이 활성화되어 있는지?
+    @Override
     boolean isEnabled();
-
 }
