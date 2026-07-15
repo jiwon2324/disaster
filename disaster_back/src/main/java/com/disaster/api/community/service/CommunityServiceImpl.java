@@ -103,8 +103,14 @@ public class CommunityServiceImpl implements CommunityService {
         if (optional.isEmpty()) throw new RuntimeException("제보게시판 수정 오류 - 잘못된 글번호");
         Community entity = optional.get();
 
+        // 1. 기존 비밀번호 검증
         if (!passwordEncoder.matches(vo.getPw(), entity.getPw())) {
             throw new RuntimeException("제보게시판 수정 오류 - 비밀번호가 일치하지 않습니다.");
+        }
+
+        // 2. 🛡️ 작성자 일치 여부 2차 검증 (보안 강화)
+        if (!entity.getWriter().equals(vo.getWriter())) {
+            throw new RuntimeException("제보게시판 수정 오류 - 타인의 글은 수정할 수 없습니다.");
         }
 
         return communityRepositoryCustom.updateCommunity(vo.getTitle(), vo.getContent(), vo.getWriter(), vo.getNo());
@@ -117,8 +123,14 @@ public class CommunityServiceImpl implements CommunityService {
         if (optional.isEmpty()) throw new RuntimeException("제보게시판 삭제 오류 - 잘못된 글번호");
         Community entity = optional.get();
 
+        // 1. 기존 비밀번호 검증
         if (!passwordEncoder.matches(vo.getPw(), entity.getPw())) {
             throw new RuntimeException("제보게시판 삭제 오류 - 비밀번호가 일치하지 않습니다.");
+        }
+
+        // 2. 🛡️ 작성자 일치 여부 2차 검증 (보안 강화)
+        if (!entity.getWriter().equals(vo.getWriter())) {
+            throw new RuntimeException("제보게시판 삭제 오류 - 타인의 글은 삭제할 수 없습니다.");
         }
 
         communityRepositoryCustom.deleteCommunity(vo.getNo());

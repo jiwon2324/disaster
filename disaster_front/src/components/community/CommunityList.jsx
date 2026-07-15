@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "../board/Board.css"; // 강사님 hover CSS 공용 사용
+import "../board/Board.css"; 
 import PageNation from "../common/PageNation";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
@@ -13,6 +13,10 @@ function CommunityList(){
   const word = searchParams.get('word');
 
   const navigate = useNavigate();
+
+  // 🔑 로그인 정보 유무 체크 (비로그인 시 null)
+  const loginInfoStr = localStorage.getItem("login");
+  const loginInfo = loginInfoStr ? JSON.parse(loginInfoStr) : null;
 
   const notPageQuery = `perPageNum=${perPageNum==null?"":perPageNum}&key=${key==null?"":key}&word=${word==null?"":word}`;
   const query = `page=${page==null?"":page}&${notPageQuery}`;
@@ -67,7 +71,12 @@ function CommunityList(){
           {trTag}
         </tbody>
       </table>
-      <Link to={"/community/write"} className="btn btn-primary">제보하기</Link>
+
+      {/* 🛡️ 로그인 정보가 존재하는 유저에게만 [제보하기] 버튼을 노출시킵니다 */}
+      {loginInfo && (
+        <Link to={"/community/write"} className="btn btn-primary">제보하기</Link>
+      )}
+      
       <PageNation pageObject={myJSON.pageObject} />
     </>
   );
