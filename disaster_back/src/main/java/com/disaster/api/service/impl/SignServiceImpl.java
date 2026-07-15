@@ -4,7 +4,9 @@ import com.disaster.api.common.CommonResponse;
 import com.disaster.api.config.security.JwtTokenProvider;
 import com.disaster.api.data.dto.SignInResultDto;
 import com.disaster.api.data.dto.SignUpResultDto;
+import com.disaster.api.member.entity.Grade;
 import com.disaster.api.member.entity.Member;
+import com.disaster.api.member.repository.GradeRepository;
 import com.disaster.api.member.repository.QMemberRepository;
 import com.disaster.api.member.vo.MemberVO;
 import com.disaster.api.service.SignService;
@@ -21,16 +23,19 @@ import java.util.List;
 public class SignServiceImpl implements SignService {
 
     private final QMemberRepository qMemberRepository;
+    private final GradeRepository gradeRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public SignServiceImpl(
             QMemberRepository qMemberRepository,
+            GradeRepository gradeRepository,
             JwtTokenProvider jwtTokenProvider,
             PasswordEncoder passwordEncoder
     ) {
         this.qMemberRepository = qMemberRepository;
+        this.gradeRepository = gradeRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.passwordEncoder = passwordEncoder;
     }
@@ -39,6 +44,12 @@ public class SignServiceImpl implements SignService {
     public SignUpResultDto signUp(MemberVO vo) {
 
         log.info("[signUp] 회원가입 정보 전달 : vo = {}", vo);
+
+        Grade defaultGrade = gradeRepository.findById(1)
+                .orElseThrow(() ->
+                        new IllegalStateException(
+                                "기본 회원등급 정보가 없습니다."
+                        ));
 
         Member member = new Member();
 
@@ -50,6 +61,7 @@ public class SignServiceImpl implements SignService {
         member.setTel(vo.getTel());
         member.setEmail(vo.getEmail());
         member.setStatus("정상");
+        member.setGrade(defaultGrade);
 
         Member savedMember = qMemberRepository.save(member);
 
@@ -87,15 +99,36 @@ public class SignServiceImpl implements SignService {
 
         log.info("[signIn] 패스워드 일치");
 
-        // 최근 접속일 갱신
+// 정상 상태 회원만 로그인 가능
+        if (!"정상".equals(member.getStatus())) {
+            throw new RuntimeException("로그인할 수 없는 회원 상태입니다.");
+        }
+
+// 회원 등급 확인
+        if (member.getGrade() == null
+                || member.getGrade().getGradeNo() == null) {
+            throw new RuntimeException("회원 등급 정보가 없습니다.");
+        }
+
+        Integer gradeNo = member.getGrade().getGradeNo();
+
+        List<String> roles;
+
+        if (gradeNo == 9) {
+            roles = List.of("ROLE_ADMIN");
+        } else if (gradeNo == 1) {
+            roles = List.of("ROLE_USER");
+        } else {
+            throw new RuntimeException("유효하지 않은 회원 등급입니다.");
+        }
+
+// 로그인 성공 시 최근 접속일 갱신
         member.setConDate(LocalDateTime.now());
         qMemberRepository.save(member);
 
-        /*
-         * 현재 Member에는 roles가 없고 Grade 엔티티를 사용하므로
-         * 우선 일반 사용자 권한으로 토큰을 생성한다.
-         */
-        List<String> roles = List.of("ROLE_USER");
+// 최근 접속일 갱신
+        member.setConDate(LocalDateTime.now());
+        qMemberRepository.save(member);
 
         SignInResultDto signInResultDto = SignInResultDto.builder()
                 .token(
