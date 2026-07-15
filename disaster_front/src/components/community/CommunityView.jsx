@@ -27,19 +27,44 @@ function CommunityView(){
     })
   }, [no, inc]);
 
-  const handleDeleteClick = () => {
-    setShowDelete(!showDelete);
-  }
+  // 🟢 [관리자 즉시 삭제 분기 기능이 포함된 핸들러]
+  const handleDeleteClick = async () => {
+    // 현재 계정이 관리자인지 여부 판단 플래그
+    const isAdmin = loginInfo && (
+      loginInfo.sub === "admin" || 
+      loginInfo.sub === "admin01" || 
+      loginInfo.name === "관리자"
+    );
 
-  // 🛡️ [권한 검증 플래그] 
-  // 로그인 상태이면서 (글 작성자 ID와 내 로그인 ID가 일치하거나 OR 관리자 계정일 때)
-// 🛡️ [권한 검증 플래그 최종본]
-// Local Storage 구조에 맞춰 loginInfo.id 대신 loginInfo.sub를 사용합니다.
-const isAuthor = loginInfo && (
-  loginInfo.sub === vo.writer || 
-  loginInfo.sub === "admin" || 
-  loginInfo.name === "관리자"
-);
+    if (isAdmin) {
+      if (window.confirm("관리자 권한으로 이 제보글을 즉시 삭제하시겠습니까?")) {
+        try {
+          // 관리자는 패스워드 검증을 우회하므로 가짜 pw를 채우고 writer에 권한 ID를 실어 보냅니다.
+          const adminVo = {
+            no: no,
+            pw: "admin_master_pass", 
+            writer: loginInfo.sub
+          };
+          const response = await axios.post("http://localhost/community/delete.do", adminVo);
+          alert(response.data);
+          navigate("/community/list");
+        } catch (error) {
+          alert(error.response?.data || '관리자 삭제 중 오류가 발생되었습니다.');
+        }
+      }
+    } else {
+      // 일반 회원은 기존처럼 모달창(비밀번호 입력)을 토글시킵니다.
+      setShowDelete(!showDelete);
+    }
+  };
+
+  // 🛡️ [권한 검증 플래그 최종본]
+  const isAuthor = loginInfo && (
+    loginInfo.sub === vo.writer || 
+    loginInfo.sub === "admin" || 
+    loginInfo.sub === "admin01" || 
+    loginInfo.name === "관리자"
+  );
 
   return(
     <>
@@ -56,7 +81,6 @@ const isAuthor = loginInfo && (
               <tr><th>이미지</th><td>{vo.fileName && <img src={`http://localhost/image/${vo.fileName}`} alt="제보사진" style={{maxWidth:"400px"}} />}</td></tr>
               <tr><th>내용</th><td><pre>{vo.content}</pre></td></tr>
               <tr><th>작성자</th><td>{vo.writer}</td></tr>
-              {/* 날짜 데이터가 로드된 후에만 포맷팅되도록 예외 처리 보완 */}
               <tr><th>작성일</th><td>{vo.writeDate ? format(new Date(vo.writeDate), "yyyy-MM-dd") : ""}</td></tr>
               <tr><th>조회수</th><td>{vo.hit}</td></tr>
             </tbody>
@@ -73,7 +97,9 @@ const isAuthor = loginInfo && (
       )}
 
       <Link to={"/community/list"} className="btn btn-success">리스트</Link>&nbsp;
-      { showDelete && <CommunityDelete no = {vo.no} handleCancel={handleDeleteClick} />}
+      
+      {/* 🟢 [수정] 일반 회원 검증 로직을 매핑할 수 있도록 writer 속성을 추가로 넘겨줍니다. */}
+      { showDelete && <CommunityDelete no={vo.no} writer={vo.writer} handleCancel={handleDeleteClick} />}
     </>
   );
 }

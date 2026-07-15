@@ -3,13 +3,25 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function CommunityDelete({no, handleCancel}){
+    // 🔑 로컬스토리지 로그인 정보 수집
+  const loginInfoStr = localStorage.getItem("login");
+  const loginInfo = loginInfoStr ? JSON.parse(loginInfoStr) : null;
+
   const [vo, setVo] = useState({no:no, pw:""});
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    
+    // 🟢 일반 회원의 로그인 ID(sub) 또는 이름을 매핑하여 vo 주머니 재구성
+    const deleteVo = {
+      no: vo.no,
+      pw: vo.pw,
+      writer: loginInfo ? loginInfo.sub : "" 
+    };
+
     try {
-      const response = await axios.post("http://localhost/community/delete.do", vo);
+      const response = await axios.post("http://localhost/community/delete.do", deleteVo);
       alert(response.data);
       navigate("/community/list");
     } catch (error) {
