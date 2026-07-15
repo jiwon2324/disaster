@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -7,33 +7,29 @@ function QuizWrite() {
   const [content, setContent] = useState('');
   const [ans, setAns] = useState('');
   const [explain, setExplain] = useState('');
-  
-  // 🔑 들여쓰기를 맞추고 직접 깨끗하게 작성해 줍니다.
-  const [writer, setWriter] = useState('관리자');
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const loginInfoStr = localStorage.getItem("login");
-    if (loginInfoStr) {
-      try {
-        const loginInfo = JSON.parse(loginInfoStr);
-        if (loginInfo?.id) {
-          setWriter(loginInfo.id); // 👈 이제 이 부분의 빨간 밑줄이 사라집니다!
-        }
-      } catch (e) {
-        console.error("로그인 정보 파싱 실패: ", e);
+  // 🛡️ 로컬스토리지에서 로그인 ID를 꺼내와 즉시 고정 변수로 만듭니다. (useEffect 제거 가능!)
+  const loginInfoStr = localStorage.getItem("login");
+  let loginId = "관리자"; // 기본값
+  
+  if (loginInfoStr) {
+    try {
+      const loginInfo = JSON.parse(loginInfoStr);
+      if (loginInfo?.id) {
+        loginId = loginInfo.id;
       }
+    } catch (e) {
+      console.error("로그인 정보 파싱 실패: ", e);
     }
-  }, []);
-
-  // ... 이하 handleSubmit 및 return 부분은 기존과 동일
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // 💥 백엔드 비즈니스 로직에 맞춰 수집된 writer와 함께 전송합니다.
-    const data = { title, content, ans, writer, explain };
+    // 💥 고정된 loginId를 writer 키값으로 서버에 전송합니다.
+    const data = { title, content, ans, writer: loginId, explain };
 
     try {
       const response = await axios.post("http://localhost/quiz/write.do", data);
@@ -66,8 +62,6 @@ function QuizWrite() {
           <label>상세 정답 해설:</label>
           <textarea className="form-control" rows="3" required placeholder="상세 해설 내용 입력" onChange={(e) => setExplain(e.target.value)}></textarea>
         </div>
-
-        {/* ✂️ '출제자 닉네임' 입력창 영역은 깔끔하게 제거되었습니다. */}
 
         <button type="submit" className="btn btn-primary mr-2">퀴즈 출제</button>
         <button type="button" className="btn btn-warning" onClick={() => navigate("/quiz/list")}>취소</button>
