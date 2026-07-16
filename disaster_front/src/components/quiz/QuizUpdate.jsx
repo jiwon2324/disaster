@@ -36,8 +36,7 @@ function QuizUpdate() {
 
   return (
     <>
-      <div className="text-muted small mb-2">/quiz/update</div>
-      <hr className="my-3 opacity-25" />
+
       
       <div className="card border-0 p-3 mb-4">
         <form onSubmit={handleSubmit}>

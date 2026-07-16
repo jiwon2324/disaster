@@ -41,8 +41,7 @@ function QuizWrite() {
 
   return (
     <>
-      <div className="text-muted small mb-2">/quiz/write</div>
-      <hr className="my-3 opacity-25" />
+
       
       {/* 폼 테두리 및 그림자 클래스만 개선 */}
       <div className="card border-0 bg-light-subtle p-3 mb-4">

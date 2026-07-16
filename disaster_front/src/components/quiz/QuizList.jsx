@@ -57,8 +57,7 @@ function QuizList() {
 
   return (
     <>
-      <div className="text-muted small mb-2">/quiz/list</div>
-      <hr className="my-3 opacity-25" />
+
       
       {/* 부트스트랩 클래스 스타일만 세련되게 변경 */}
       <table className="table table-hover align-middle text-center">

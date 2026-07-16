@@ -56,9 +56,7 @@ function CommunityList(){
 
   return(
     <>
-      {/* 원래의 틀 그대로 유지 */}
-      <div className="text-muted small mb-2">/community/list</div>
-      <hr className="my-3 opacity-25" />
+
       
       {/* 부트스트랩 클래스 스타일만 변경 */}
       <table className="table table-hover align-middle">

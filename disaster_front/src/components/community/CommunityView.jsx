@@ -62,9 +62,7 @@ function CommunityView(){
 
   return(
     <>
-      <div className="mb-4 p-2 bg-light rounded shadow-sm small text-muted">
-        <i className="bi bi-house-door-fill me-1"></i> Home &gt; Community &gt; <span className="text-primary fw-bold">View</span>
-      </div>
+
 
       {/* 데이터를 표시하는 틀을 테이블에서 깔끔한 카드 바디로 변경 */}
       <div className="mb-4">

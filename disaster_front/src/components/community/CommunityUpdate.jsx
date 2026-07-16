@@ -52,9 +52,6 @@ function CommunityUpdate(){
 
   return(
     <>
-      <div className="mb-4 p-2 bg-light rounded shadow-sm small text-muted">
-        <i className="bi bi-house-door-fill me-1"></i> Home &gt; Community &gt; <span className="text-primary fw-bold">Update</span>
-      </div>
 
       {/* 수정 폼 카드 스타일 적용 */}
       <div className="card border-light shadow-sm mb-4">

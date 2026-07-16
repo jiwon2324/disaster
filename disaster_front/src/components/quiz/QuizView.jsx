@@ -59,8 +59,7 @@ function QuizView() {
 
   return (
     <>
-      <div className="text-muted small mb-2">/quiz/view</div>
-      <hr className="my-3 opacity-25" />
+
       {vo.no && (
         // card 클래스에서 테두리를 부드럽게 조정하고 마진을 핏하게 다듬었습니다.
         <div className="card border-light shadow-sm p-4 mb-4">
