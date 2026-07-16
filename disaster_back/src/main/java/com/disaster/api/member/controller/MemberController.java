@@ -2,6 +2,8 @@ package com.disaster.api.member.controller;
 
 import com.disaster.api.data.dto.SignInResultDto;
 import com.disaster.api.data.dto.SignUpResultDto;
+import com.disaster.api.member.dto.AdminMemberGradeRequest;
+import com.disaster.api.member.dto.AdminMemberStatusRequest;
 import com.disaster.api.member.dto.MemberResponse;
 import com.disaster.api.member.dto.MemberUpdateRequest;
 import com.disaster.api.member.dto.PasswordChangeRequest;
@@ -12,6 +14,10 @@ import com.disaster.api.service.SignService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +39,10 @@ public class MemberController {
 
     private final SignService signService;
     private final MemberService memberService;
+
+    // =========================
+    // 로그인 및 회원가입
+    // =========================
 
     @PostMapping("/login.do")
     @Operation(summary = "로그인")
@@ -69,6 +79,10 @@ public class MemberController {
                 "available", available
         );
     }
+
+    // =========================
+    // 일반회원 기능
+    // =========================
 
     @GetMapping("/me.do")
     @Operation(summary = "내 회원정보 조회")
@@ -121,6 +135,68 @@ public class MemberController {
         return Map.of(
                 "message",
                 "회원 탈퇴가 완료되었습니다."
+        );
+    }
+
+    // =========================
+    // 관리자 회원관리 기능
+    // =========================
+
+    @GetMapping("/admin/list.do")
+    @Operation(summary = "관리자 회원 목록 및 검색")
+    public Page<MemberResponse> adminMemberList(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Integer gradeNo,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(
+                        Sort.Direction.DESC,
+                        "regDate"
+                )
+        );
+
+        return memberService.getMemberList(
+                keyword,
+                status,
+                gradeNo,
+                pageable
+        );
+    }
+
+    @GetMapping("/admin/view.do")
+    @Operation(summary = "관리자 회원 상세조회")
+    public MemberResponse adminMemberDetail(
+            @RequestParam String id
+    ) {
+        return memberService.getMemberDetail(id);
+    }
+
+    @PutMapping("/admin/status.do")
+    @Operation(summary = "관리자 회원 상태 변경")
+    public MemberResponse adminUpdateStatus(
+            @RequestParam String id,
+            @RequestBody AdminMemberStatusRequest request
+    ) {
+        return memberService.updateMemberStatus(
+                id,
+                request
+        );
+    }
+
+    @PutMapping("/admin/grade.do")
+    @Operation(summary = "관리자 회원 등급 변경")
+    public MemberResponse adminUpdateGrade(
+            @RequestParam String id,
+            @RequestBody AdminMemberGradeRequest request
+    ) {
+        return memberService.updateMemberGrade(
+                id,
+                request
         );
     }
 }
