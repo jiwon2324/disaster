@@ -2,43 +2,93 @@ package com.disaster.api.common.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-// 자동 생성되는 어노테이션
 @RestControllerAdvice
 @Log4j2
 public class CustomExceptionHandler {
 
-    // 예외가 발생되면 처리(어노테니션으로 지정)되는 메서드 작성
-    @ExceptionHandler(value = RuntimeException.class)
+    /**
+     * 서비스에서 지정한 400, 401, 403, 404 등의 상태 코드를
+     * 그대로 클라이언트에 전달한다.
+     */
+    @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Map<String, String>>
-    handleException(RuntimeException e, HttpServletRequest request){
+    handleResponseStatusException(
+            ResponseStatusException e,
+            HttpServletRequest request
+    ) {
+        int statusCode = e.getStatusCode().value();
 
-        // 전달되는 데이터(서버->클라이언트)의 정보가 저장
-        HttpHeaders resposeHeaders = new HttpHeaders(); // header + body
-//        HttpStatus httpStatus = HttpStatus.BAD_REQUEST; // 400 번 오류
-        HttpStatus httpStatus =  HttpStatus.INTERNAL_SERVER_ERROR; // 500 번 오류
+        String message = e.getReason() == null
+                ? "요청 처리 중 오류가 발생했습니다."
+                : e.getReason();
 
-        log.error("Advice 내 handleException 호출, {}, {}", request.getRequestURI(),
-                e.getMessage());
-        log.info(resposeHeaders.toString());
+        log.warn(
+                "[ResponseStatusException] uri={}, status={}, message={}",
+                request.getRequestURI(),
+                statusCode,
+                message
+        );
 
-        // 예외가 발생되면 전달되는 정보를 Map
-        Map<String , String > map = new HashMap<>();
-        map.put("error type", httpStatus.getReasonPhrase());
-        map.put("code", httpStatus.value() + "");
-        map.put("message", e.getMessage());
+        Map<String, String> response = new LinkedHashMap<>();
 
-        return new ResponseEntity<>(map, resposeHeaders, httpStatus);
+        response.put("code", String.valueOf(statusCode));
+        response.put(
+                "error type",
+                e.getStatusCode().toString()
+        );
+        response.put("message", message);
+
+        return ResponseEntity
+                .status(e.getStatusCode())
+                .body(response);
     }
 
+    /**
+     * 별도로 상태 코드가 지정되지 않은 예상하지 못한 오류만
+     * 500 Internal Server Error로 처리한다.
+     */
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, String>>
+    handleRuntimeException(
+            RuntimeException e,
+            HttpServletRequest request
+    ) {
+        log.error(
+                "[RuntimeException] uri={}, message={}",
+                request.getRequestURI(),
+                e.getMessage(),
+                e
+        );
+
+        String message = e.getMessage() == null
+                ? "서버 내부 오류가 발생했습니다."
+                : e.getMessage();
+
+        Map<String, String> response = new LinkedHashMap<>();
+
+        response.put(
+                "code",
+                String.valueOf(
+                        HttpStatus.INTERNAL_SERVER_ERROR.value()
+                )
+        );
+        response.put(
+                "error type",
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()
+        );
+        response.put("message", message);
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(response);
+    }
 }

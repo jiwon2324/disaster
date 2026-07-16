@@ -12,8 +12,10 @@ import com.disaster.api.member.vo.MemberVO;
 import com.disaster.api.service.SignService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,11 +47,52 @@ public class SignServiceImpl implements SignService {
 
         log.info("[signUp] 회원가입 정보 전달 : vo = {}", vo);
 
+        if (vo == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "회원가입 정보를 입력해 주세요."
+            );
+        }
+
+        if (vo.getId() == null || vo.getId().isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "회원 아이디를 입력해 주세요."
+            );
+        }
+
+        if (vo.getPw() == null || vo.getPw().isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "비밀번호를 입력해 주세요."
+            );
+        }
+
+        String trimmedId = vo.getId().trim();
+
+        if (trimmedId.length() < 3 || trimmedId.length() > 20) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "아이디는 3자 이상 20자 이하로 입력해 주세요."
+            );
+        }
+
+        if (qMemberRepository.existsById(trimmedId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "이미 사용 중인 아이디입니다."
+            );
+        }
+
+        vo.setId(trimmedId);
+
         Grade defaultGrade = gradeRepository.findById(1)
                 .orElseThrow(() ->
-                        new IllegalStateException(
+                        new ResponseStatusException(
+                                HttpStatus.INTERNAL_SERVER_ERROR,
                                 "기본 회원등급 정보가 없습니다."
-                        ));
+                        )
+                );
 
         Member member = new Member();
 
@@ -67,13 +110,10 @@ public class SignServiceImpl implements SignService {
 
         SignUpResultDto signUpResultDto = new SignUpResultDto();
 
-        if (savedMember != null && savedMember.getId() != null) {
-
+        if (savedMember.getId() != null) {
             log.info("[signUp] 정상 회원가입 처리 완료");
             setSuccessResult(signUpResultDto);
-
         } else {
-
             log.info("[signUp] 회원가입 처리 실패");
             setFailResult(signUpResultDto);
         }
@@ -82,32 +122,56 @@ public class SignServiceImpl implements SignService {
     }
 
     @Override
-    public SignInResultDto signIn(String id, String pw)
-            throws RuntimeException {
+    public SignInResultDto signIn(String id, String pw) {
 
-        log.info("[signIn] 회원 정보 요청 - id : {}", id);
+        if (id == null || id.isBlank()
+                || pw == null || pw.isBlank()) {
 
-        Member member = qMemberRepository.findById(id)
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "아이디와 비밀번호를 입력해 주세요."
+            );
+        }
+
+        String trimmedId = id.trim();
+
+        log.info("[signIn] 회원 정보 요청 - id : {}", trimmedId);
+
+        Member member = qMemberRepository.findById(trimmedId)
                 .orElseThrow(() ->
-                        new RuntimeException("존재하지 않는 회원입니다."));
+                        new ResponseStatusException(
+                                HttpStatus.UNAUTHORIZED,
+                                "아이디 또는 비밀번호가 올바르지 않습니다."
+                        )
+                );
 
         log.info("[signIn] 패스워드 비교 수행");
 
         if (!passwordEncoder.matches(pw, member.getPw())) {
-            throw new RuntimeException("패스워드가 다릅니다.");
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "아이디 또는 비밀번호가 올바르지 않습니다."
+            );
         }
 
         log.info("[signIn] 패스워드 일치");
 
-// 정상 상태 회원만 로그인 가능
+        // 정상 상태 회원만 로그인 가능
         if (!"정상".equals(member.getStatus())) {
-            throw new RuntimeException("로그인할 수 없는 회원 상태입니다.");
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "로그인할 수 없는 회원 상태입니다."
+            );
         }
 
-// 회원 등급 확인
+        // 회원 등급 확인
         if (member.getGrade() == null
                 || member.getGrade().getGradeNo() == null) {
-            throw new RuntimeException("회원 등급 정보가 없습니다.");
+
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "회원 등급 정보가 없습니다."
+            );
         }
 
         Integer gradeNo = member.getGrade().getGradeNo();
@@ -119,14 +183,13 @@ public class SignServiceImpl implements SignService {
         } else if (gradeNo == 1) {
             roles = List.of("ROLE_USER");
         } else {
-            throw new RuntimeException("유효하지 않은 회원 등급입니다.");
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "유효하지 않은 회원 등급입니다."
+            );
         }
 
-// 로그인 성공 시 최근 접속일 갱신
-        member.setConDate(LocalDateTime.now());
-        qMemberRepository.save(member);
-
-// 최근 접속일 갱신
+        // 로그인 성공 시 최근 접속일 갱신
         member.setConDate(LocalDateTime.now());
         qMemberRepository.save(member);
 

@@ -38,7 +38,18 @@ public class SecurityConfiguration {
                                 .requestMatchers("/swagger",
                                 "/swagger-ui.html", "/swagger-ui/**", "/api-docs",
                                 "/api-docs/**", "/v3/api-docs/**" ).permitAll()
-                                .requestMatchers("/member/login.do", "/member/write.do").permitAll()
+                                .requestMatchers(
+                                        "/member/login.do",
+                                        "/member/write.do",
+                                        "/member/check-id.do"
+                                ).permitAll()
+
+                                .requestMatchers(
+                                        "/member/me.do",
+                                        "/member/update.do",
+                                        "/member/password.do",
+                                        "/member/withdraw.do"
+                                ).hasAnyRole("USER", "ADMIN")
                                 .requestMatchers(HttpMethod.GET, "/product/**").permitAll()
                                 .requestMatchers("/community/**").permitAll()                                .requestMatchers("/txt/**").permitAll()
                                 .requestMatchers("/image/**").permitAll()
