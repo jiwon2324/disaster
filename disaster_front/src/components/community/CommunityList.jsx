@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "../board/Board.css"; 
 import PageNation from "../common/PageNation";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
