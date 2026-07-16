@@ -28,7 +28,7 @@ function TopNavi(){
     alert("로그아웃 되었습니다.");
     // Navigate("/");
     location.href = "/";
-  }
+}
 
   return(
     <nav className="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
@@ -38,9 +38,17 @@ function TopNavi(){
         </button>
         <div className="collapse navbar-collapse" id="mynavbar">
           <ul className="navbar-nav me-auto">
-            {/* 🟢 [수정] 범인이었던 &nbsp; 특수문자를 완전히 제거하여 공백 꼬임 현상을 해결했습니다. */}
             <li className="nav-item">
-              <NavLink to={"/"} className="nav-link">Home</NavLink>
+              <NavLink to={"/"} className="nav-link">Home</NavLink>&nbsp;
+            </li>
+            <li className="nav-item">
+              <NavLink to={"/disaster"} className="nav-link">재난 정보</NavLink>&nbsp;
+            </li>
+            <li className="nav-item">
+              <NavLink to={"/image/list"} className="nav-link">Image</NavLink>&nbsp;
+            </li>
+            <li className="nav-item">
+              <NavLink to={"/board/list"} className="nav-link">Board</NavLink>&nbsp;
             </li>
             <li className="nav-item">
               <NavLink className="nav-link" to="/community/list">제보게시판</NavLink>

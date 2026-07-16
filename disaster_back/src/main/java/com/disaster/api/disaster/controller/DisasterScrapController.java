@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +17,7 @@ import java.util.List;
 @Tag(name = "DisasterScrap", description = "재난정보스크랩")
 @Controller
 @RequestMapping("/disasterScrap")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class DisasterScrapController {
 
     private final DisasterScrapService disasterScrapService;

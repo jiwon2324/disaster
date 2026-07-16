@@ -16,6 +16,7 @@ import java.util.List;
 @Tag(name = "DisasterCategory", description = "재난정보카테고리")
 @Controller
 @RequestMapping("/disasterCategory")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class DisasterCategoryController {
 
     private final DisasterCategoryService disasterCategoryService;

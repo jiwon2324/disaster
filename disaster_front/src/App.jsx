@@ -5,6 +5,7 @@ import NotFoundMenu from "./components/error/NotFoundMenu"
 import MemberComp from "./components/member/MemberComp"
 import CommunityComp from "./components/community/CommunityComp"
 import QuizComp from "./components/quiz/QuizComp";
+import DisasterCategory from "./components/disasterCategory/DisasterCategory"
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
       {/* 라이팅 - 메뉴별 */}
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/disaster" element={<DisasterCategory />} />
           <Route path="/member/*" element={<MemberComp />} />
           <Route path="/community/*" element={<CommunityComp />} />
           <Route path="/quiz/*" element={<QuizComp />} />

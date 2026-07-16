@@ -12115,3 +12115,448 @@ This generated password is for development use only. Your security configuration
 [2026-07-16 17:45:46.026] [WARN ] [restartedMain] org.springdoc.core.events.SpringDocAppInitializer SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
 [2026-07-16 17:45:46.026] [WARN ] [restartedMain] org.springdoc.core.events.SpringDocAppInitializer SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
 [2026-07-16 17:45:46.026] [INFO ] [restartedMain] org.springframework.boot.devtools.autoconfigure.ConditionEvaluationDeltaLoggingListener Condition evaluation unchanged
+[2026-07-16 17:46:45.957] [INFO ] [http-nio-80-exec-1] org.apache.catalina.core.ContainerBase.[Tomcat-1].[localhost].[/] Initializing Spring DispatcherServlet 'dispatcherServlet'
+[2026-07-16 17:46:45.957] [INFO ] [http-nio-80-exec-1] org.springframework.web.servlet.DispatcherServlet Initializing Servlet 'dispatcherServlet'
+[2026-07-16 17:46:45.958] [INFO ] [http-nio-80-exec-1] org.springframework.web.servlet.DispatcherServlet Completed initialization in 1 ms
+[2026-07-16 17:46:45.959] [INFO ] [http-nio-80-exec-1] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 17:46:45.960] [INFO ] [http-nio-80-exec-1] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 17:46:45.960] [INFO ] [http-nio-80-exec-1] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 17:46:45.960] [INFO ] [http-nio-80-exec-1] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 17:46:45.974] [INFO ] [http-nio-80-exec-2] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 17:46:45.974] [INFO ] [http-nio-80-exec-2] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 17:46:45.974] [INFO ] [http-nio-80-exec-2] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 17:46:45.974] [INFO ] [http-nio-80-exec-2] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 17:46:45.974] [INFO ] [http-nio-80-exec-3] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 17:46:45.976] [INFO ] [http-nio-80-exec-3] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 17:46:45.976] [INFO ] [http-nio-80-exec-3] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 17:46:45.976] [INFO ] [http-nio-80-exec-3] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 17:46:45.976] [INFO ] [http-nio-80-exec-5] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 17:46:45.976] [INFO ] [http-nio-80-exec-6] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 17:46:45.976] [INFO ] [http-nio-80-exec-4] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 17:46:45.976] [INFO ] [http-nio-80-exec-5] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 17:46:45.976] [INFO ] [http-nio-80-exec-4] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 17:46:45.976] [INFO ] [http-nio-80-exec-5] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 17:46:45.976] [INFO ] [http-nio-80-exec-4] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 17:46:45.976] [INFO ] [http-nio-80-exec-5] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 17:46:45.976] [INFO ] [http-nio-80-exec-6] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 17:46:45.976] [INFO ] [http-nio-80-exec-6] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 17:46:45.976] [INFO ] [http-nio-80-exec-6] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 17:46:45.976] [INFO ] [http-nio-80-exec-4] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 17:46:46.031] [INFO ] [http-nio-80-exec-7] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 17:46:46.031] [INFO ] [http-nio-80-exec-7] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 17:46:46.031] [INFO ] [http-nio-80-exec-7] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 17:46:46.031] [INFO ] [http-nio-80-exec-7] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 17:46:46.033] [INFO ] [http-nio-80-exec-8] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 17:46:46.033] [INFO ] [http-nio-80-exec-8] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 17:46:46.033] [INFO ] [http-nio-80-exec-8] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 17:46:46.033] [INFO ] [http-nio-80-exec-8] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 17:46:46.037] [INFO ] [http-nio-80-exec-9] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 17:46:46.037] [INFO ] [http-nio-80-exec-9] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 17:46:46.037] [INFO ] [http-nio-80-exec-9] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 17:46:46.037] [INFO ] [http-nio-80-exec-9] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 17:46:46.186] [INFO ] [http-nio-80-exec-9] org.springdoc.api.AbstractOpenApiResource Init duration for springdoc-openapi is: 147 ms
+[2026-07-16 17:47:13.971] [INFO ] [File Watcher] org.springframework.boot.devtools.autoconfigure.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener Restarting due to 7 class path changes (0 additions, 7 deletions, 0 modifications)
+[2026-07-16 17:47:13.972] [INFO ] [Thread-22] org.springframework.boot.web.embedded.tomcat.GracefulShutdown Commencing graceful shutdown. Waiting for active requests to complete
+[2026-07-16 17:47:14.010] [INFO ] [tomcat-shutdown] org.springframework.boot.web.embedded.tomcat.GracefulShutdown Graceful shutdown complete
+[2026-07-16 17:47:14.013] [INFO ] [Thread-22] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean Closing JPA EntityManagerFactory for persistence unit 'default'
+[2026-07-16 17:47:14.013] [INFO ] [Thread-22] com.zaxxer.hikari.HikariDataSource HikariPool-5 - Shutdown initiated...
+[2026-07-16 17:47:14.015] [INFO ] [Thread-22] com.zaxxer.hikari.HikariDataSource HikariPool-5 - Shutdown completed.
+[2026-07-16 17:47:14.095] [INFO ] [restartedMain] com.disaster.api.DisasterBackApplication Starting DisasterBackApplication using Java 17.0.12 with PID 2476 (D:\LHB\project2\disaster\disaster_back\target\classes started by User in D:\LHB\project2\disaster\disaster_back)
+[2026-07-16 17:47:14.095] [INFO ] [restartedMain] com.disaster.api.DisasterBackApplication No active profile set, falling back to 1 default profile: "default"
+[2026-07-16 17:47:14.275] [INFO ] [restartedMain] org.springframework.data.repository.config.RepositoryConfigurationDelegate Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+[2026-07-16 17:47:14.290] [WARN ] [restartedMain] org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext Exception encountered during context initialization - cancelling refresh attempt: java.lang.TypeNotPresentException: Type com.disaster.api.disaster.entity.DisasterCategory not present
+[2026-07-16 17:47:14.295] [INFO ] [restartedMain] org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+[2026-07-16 17:47:14.296] [ERROR] [restartedMain] org.springframework.boot.SpringApplication Application run failed
+java.lang.TypeNotPresentException: Type com.disaster.api.disaster.entity.DisasterCategory not present
+	at java.base/sun.reflect.generics.factory.CoreReflectionFactory.makeNamedType(CoreReflectionFactory.java:117)
+	at java.base/sun.reflect.generics.visitor.Reifier.visitClassTypeSignature(Reifier.java:125)
+	at java.base/sun.reflect.generics.tree.ClassTypeSignature.accept(ClassTypeSignature.java:49)
+	at java.base/sun.reflect.generics.visitor.Reifier.reifyTypeArguments(Reifier.java:68)
+	at java.base/sun.reflect.generics.visitor.Reifier.visitClassTypeSignature(Reifier.java:138)
+	at java.base/sun.reflect.generics.tree.ClassTypeSignature.accept(ClassTypeSignature.java:49)
+	at java.base/sun.reflect.generics.repository.ClassRepository.computeSuperInterfaces(ClassRepository.java:117)
+	at java.base/sun.reflect.generics.repository.ClassRepository.getSuperInterfaces(ClassRepository.java:95)
+	at java.base/java.lang.Class.getGenericInterfaces(Class.java:1211)
+	at org.springframework.core.ResolvableType.getInterfaces(ResolvableType.java:553)
+	at org.springframework.core.ResolvableType.as(ResolvableType.java:501)
+	at org.springframework.data.util.TypeDiscoverer.getSuperTypeInformation(TypeDiscoverer.java:265)
+	at org.springframework.data.util.ClassTypeInformation.getSuperTypeInformation(ClassTypeInformation.java:37)
+	at org.springframework.data.util.TypeInformation.getRequiredSuperTypeInformation(TypeInformation.java:327)
+	at org.springframework.data.repository.core.support.DefaultRepositoryMetadata.<init>(DefaultRepositoryMetadata.java:55)
+	at org.springframework.data.repository.core.support.AbstractRepositoryMetadata.getMetadata(AbstractRepositoryMetadata.java:79)
+	at org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport.getRepositoryConfigurations(RepositoryConfigurationExtensionSupport.java:93)
+	at org.springframework.data.repository.config.RepositoryConfigurationDelegate.registerRepositoriesIn(RepositoryConfigurationDelegate.java:170)
+	at org.springframework.boot.autoconfigure.data.AbstractRepositoryConfigurationSourceSupport.registerBeanDefinitions(AbstractRepositoryConfigurationSourceSupport.java:62)
+	at org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader.lambda$loadBeanDefinitionsFromRegistrars$1(ConfigurationClassBeanDefinitionReader.java:409)
+	at java.base/java.util.LinkedHashMap.forEach(LinkedHashMap.java:721)
+	at org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader.loadBeanDefinitionsFromRegistrars(ConfigurationClassBeanDefinitionReader.java:408)
+	at org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader.loadBeanDefinitionsForConfigurationClass(ConfigurationClassBeanDefinitionReader.java:148)
+	at org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader.loadBeanDefinitions(ConfigurationClassBeanDefinitionReader.java:120)
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.processConfigBeanDefinitions(ConfigurationClassPostProcessor.java:430)
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.postProcessBeanDefinitionRegistry(ConfigurationClassPostProcessor.java:290)
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanDefinitionRegistryPostProcessors(PostProcessorRegistrationDelegate.java:349)
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(PostProcessorRegistrationDelegate.java:118)
+	at org.springframework.context.support.AbstractApplicationContext.invokeBeanFactoryPostProcessors(AbstractApplicationContext.java:792)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:610)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at com.disaster.api.DisasterBackApplication.main(DisasterBackApplication.java:10)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: java.lang.ClassNotFoundException: com.disaster.api.disaster.entity.DisasterCategory
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641)
+	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:525)
+	at java.base/java.lang.Class.forName0(Native Method)
+	at java.base/java.lang.Class.forName(Class.java:467)
+	at org.springframework.boot.devtools.restart.classloader.RestartClassLoader.loadClass(RestartClassLoader.java:121)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:525)
+	at java.base/java.lang.Class.forName0(Native Method)
+	at java.base/java.lang.Class.forName(Class.java:467)
+	at java.base/sun.reflect.generics.factory.CoreReflectionFactory.makeNamedType(CoreReflectionFactory.java:114)
+	... 41 common frames omitted
+[2026-07-16 17:58:52.682] [INFO ] [background-preinit] org.hibernate.validator.internal.util.Version HV000001: Hibernate Validator 8.0.3.Final
+[2026-07-16 17:58:52.717] [INFO ] [restartedMain] com.disaster.api.DisasterBackApplication Starting DisasterBackApplication using Java 17.0.12 with PID 7752 (D:\LHB\project2\disaster\disaster_back\target\classes started by User in D:\LHB\project2\disaster\disaster_back)
+[2026-07-16 17:58:52.718] [INFO ] [restartedMain] com.disaster.api.DisasterBackApplication No active profile set, falling back to 1 default profile: "default"
+[2026-07-16 17:58:52.744] [INFO ] [restartedMain] org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+[2026-07-16 17:58:52.744] [INFO ] [restartedMain] org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+[2026-07-16 17:58:53.373] [INFO ] [restartedMain] org.springframework.data.repository.config.RepositoryConfigurationDelegate Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+[2026-07-16 17:58:53.442] [INFO ] [restartedMain] org.springframework.data.repository.config.RepositoryConfigurationDelegate Finished Spring Data repository scanning in 65 ms. Found 16 JPA repository interfaces.
+[2026-07-16 17:58:53.818] [INFO ] [restartedMain] org.springframework.boot.web.embedded.tomcat.TomcatWebServer Tomcat initialized with port 80 (http)
+[2026-07-16 17:58:53.825] [INFO ] [restartedMain] org.apache.coyote.http11.Http11NioProtocol Initializing ProtocolHandler ["http-nio-80"]
+[2026-07-16 17:58:53.826] [INFO ] [restartedMain] org.apache.catalina.core.StandardService Starting service [Tomcat]
+[2026-07-16 17:58:53.826] [INFO ] [restartedMain] org.apache.catalina.core.StandardEngine Starting Servlet engine: [Apache Tomcat/10.1.55]
+[2026-07-16 17:58:53.862] [INFO ] [restartedMain] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] Initializing Spring embedded WebApplicationContext
+[2026-07-16 17:58:53.862] [INFO ] [restartedMain] org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext Root WebApplicationContext: initialization completed in 1118 ms
+[2026-07-16 17:58:53.983] [INFO ] [restartedMain] org.hibernate.jpa.internal.util.LogHelper HHH000204: Processing PersistenceUnitInfo [name: default]
+[2026-07-16 17:58:54.009] [INFO ] [restartedMain] org.hibernate.Version HHH000412: Hibernate ORM core version 6.6.53.Final
+[2026-07-16 17:58:54.023] [INFO ] [restartedMain] org.hibernate.cache.internal.RegionFactoryInitiator HHH000026: Second-level cache disabled
+[2026-07-16 17:58:54.148] [INFO ] [restartedMain] org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo No LoadTimeWeaver setup: ignoring JPA class transformer
+[2026-07-16 17:58:54.161] [INFO ] [restartedMain] com.zaxxer.hikari.HikariDataSource HikariPool-1 - Starting...
+[2026-07-16 17:58:54.202] [INFO ] [restartedMain] com.zaxxer.hikari.pool.HikariPool HikariPool-1 - Added connection org.mariadb.jdbc.Connection@24e7dff0
+[2026-07-16 17:58:54.203] [INFO ] [restartedMain] com.zaxxer.hikari.HikariDataSource HikariPool-1 - Start completed.
+[2026-07-16 17:58:54.231] [INFO ] [restartedMain] org.hibernate.orm.connections.pooling HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 10.6.27
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+[2026-07-16 17:58:54.813] [INFO ] [restartedMain] org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+[2026-07-16 17:58:54.916] [INFO ] [restartedMain] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean Initialized JPA EntityManagerFactory for persistence unit 'default'
+[2026-07-16 17:58:55.032] [INFO ] [restartedMain] org.springframework.data.jpa.repository.query.QueryEnhancerFactory Hibernate is in classpath; If applicable, HQL parser will be used.
+[2026-07-16 17:58:55.470] [INFO ] [restartedMain] com.disaster.api.config.security.JwtTokenProvider [init] JwtTokenProvider 내 secretKey 이용 key 초기화 시작
+[2026-07-16 17:58:55.472] [INFO ] [restartedMain] com.disaster.api.config.security.JwtTokenProvider [init] JwtTokenProvider 내 secretKey 이용 key 초기화 초기화 완료
+[2026-07-16 17:58:55.810] [WARN ] [restartedMain] org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+[2026-07-16 17:58:55.832] [WARN ] [restartedMain] org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration 
+
+Using generated security password: 6e154b15-1b04-4cc6-b1ea-2ab0fca92d47
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+[2026-07-16 17:58:55.836] [INFO ] [restartedMain] org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+[2026-07-16 17:58:55.975] [INFO ] [restartedMain] com.disaster.api.config.WebConfig [addResourceHandlers] image URI 폴더 추가 ------
+[2026-07-16 17:58:56.048] [INFO ] [restartedMain] org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver Exposing 1 endpoint beneath base path '/actuator'
+[2026-07-16 17:58:56.314] [INFO ] [restartedMain] org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer LiveReload server is running on port 35729
+[2026-07-16 17:58:56.342] [INFO ] [restartedMain] org.apache.coyote.http11.Http11NioProtocol Starting ProtocolHandler ["http-nio-80"]
+[2026-07-16 17:58:56.353] [INFO ] [restartedMain] org.springframework.boot.web.embedded.tomcat.TomcatWebServer Tomcat started on port 80 (http) with context path '/'
+[2026-07-16 17:58:56.364] [INFO ] [restartedMain] com.disaster.api.DisasterBackApplication Started DisasterBackApplication in 3.94 seconds (process running for 4.375)
+[2026-07-16 17:58:56.367] [WARN ] [restartedMain] org.springdoc.core.events.SpringDocAppInitializer SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+[2026-07-16 17:58:56.367] [WARN ] [restartedMain] org.springdoc.core.events.SpringDocAppInitializer SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+[2026-07-16 17:58:56.622] [INFO ] [RMI TCP Connection(2)-10.15.21.211] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] Initializing Spring DispatcherServlet 'dispatcherServlet'
+[2026-07-16 17:58:56.622] [INFO ] [RMI TCP Connection(2)-10.15.21.211] org.springframework.web.servlet.DispatcherServlet Initializing Servlet 'dispatcherServlet'
+[2026-07-16 17:58:56.623] [INFO ] [RMI TCP Connection(2)-10.15.21.211] org.springframework.web.servlet.DispatcherServlet Completed initialization in 1 ms
+[2026-07-16 18:08:52.701] [INFO ] [File Watcher] org.springframework.boot.devtools.autoconfigure.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+[2026-07-16 18:08:52.705] [INFO ] [Thread-5] org.springframework.boot.web.embedded.tomcat.GracefulShutdown Commencing graceful shutdown. Waiting for active requests to complete
+[2026-07-16 18:08:52.705] [INFO ] [tomcat-shutdown] org.apache.coyote.http11.Http11NioProtocol Pausing ProtocolHandler ["http-nio-80"]
+[2026-07-16 18:08:52.734] [INFO ] [tomcat-shutdown] org.springframework.boot.web.embedded.tomcat.GracefulShutdown Graceful shutdown complete
+[2026-07-16 18:08:52.735] [INFO ] [Thread-5] org.apache.coyote.http11.Http11NioProtocol Stopping ProtocolHandler ["http-nio-80"]
+[2026-07-16 18:08:52.741] [INFO ] [Thread-5] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean Closing JPA EntityManagerFactory for persistence unit 'default'
+[2026-07-16 18:08:52.742] [INFO ] [Thread-5] com.zaxxer.hikari.HikariDataSource HikariPool-1 - Shutdown initiated...
+[2026-07-16 18:08:52.745] [INFO ] [Thread-5] com.zaxxer.hikari.HikariDataSource HikariPool-1 - Shutdown completed.
+[2026-07-16 18:08:52.797] [INFO ] [restartedMain] com.disaster.api.DisasterBackApplication Starting DisasterBackApplication using Java 17.0.12 with PID 7752 (D:\LHB\project2\disaster\disaster_back\target\classes started by User in D:\LHB\project2\disaster\disaster_back)
+[2026-07-16 18:08:52.797] [INFO ] [restartedMain] com.disaster.api.DisasterBackApplication No active profile set, falling back to 1 default profile: "default"
+[2026-07-16 18:08:52.986] [INFO ] [restartedMain] org.springframework.data.repository.config.RepositoryConfigurationDelegate Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+[2026-07-16 18:08:53.022] [INFO ] [restartedMain] org.springframework.data.repository.config.RepositoryConfigurationDelegate Finished Spring Data repository scanning in 36 ms. Found 16 JPA repository interfaces.
+[2026-07-16 18:08:53.096] [INFO ] [restartedMain] org.springframework.boot.web.embedded.tomcat.TomcatWebServer Tomcat initialized with port 80 (http)
+[2026-07-16 18:08:53.097] [INFO ] [restartedMain] org.apache.coyote.http11.Http11NioProtocol Initializing ProtocolHandler ["http-nio-80"]
+[2026-07-16 18:08:53.097] [INFO ] [restartedMain] org.apache.catalina.core.StandardService Starting service [Tomcat]
+[2026-07-16 18:08:53.097] [INFO ] [restartedMain] org.apache.catalina.core.StandardEngine Starting Servlet engine: [Apache Tomcat/10.1.55]
+[2026-07-16 18:08:53.115] [INFO ] [restartedMain] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] Initializing Spring embedded WebApplicationContext
+[2026-07-16 18:08:53.115] [INFO ] [restartedMain] org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext Root WebApplicationContext: initialization completed in 317 ms
+[2026-07-16 18:08:53.154] [INFO ] [restartedMain] org.hibernate.jpa.internal.util.LogHelper HHH000204: Processing PersistenceUnitInfo [name: default]
+[2026-07-16 18:08:53.155] [INFO ] [restartedMain] org.hibernate.cache.internal.RegionFactoryInitiator HHH000026: Second-level cache disabled
+[2026-07-16 18:08:53.160] [INFO ] [restartedMain] org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo No LoadTimeWeaver setup: ignoring JPA class transformer
+[2026-07-16 18:08:53.161] [INFO ] [restartedMain] com.zaxxer.hikari.HikariDataSource HikariPool-2 - Starting...
+[2026-07-16 18:08:53.163] [INFO ] [restartedMain] com.zaxxer.hikari.pool.HikariPool HikariPool-2 - Added connection org.mariadb.jdbc.Connection@1fb8ce28
+[2026-07-16 18:08:53.164] [INFO ] [restartedMain] com.zaxxer.hikari.HikariDataSource HikariPool-2 - Start completed.
+[2026-07-16 18:08:53.164] [INFO ] [restartedMain] org.hibernate.orm.connections.pooling HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-2)']
+	Database driver: undefined/unknown
+	Database version: 10.6.27
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+[2026-07-16 18:08:53.252] [INFO ] [restartedMain] org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+[2026-07-16 18:08:53.321] [INFO ] [restartedMain] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean Initialized JPA EntityManagerFactory for persistence unit 'default'
+[2026-07-16 18:08:53.373] [INFO ] [restartedMain] com.disaster.api.config.security.JwtTokenProvider [init] JwtTokenProvider 내 secretKey 이용 key 초기화 시작
+[2026-07-16 18:08:53.373] [INFO ] [restartedMain] com.disaster.api.config.security.JwtTokenProvider [init] JwtTokenProvider 내 secretKey 이용 key 초기화 초기화 완료
+[2026-07-16 18:08:53.464] [WARN ] [restartedMain] org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+[2026-07-16 18:08:53.470] [WARN ] [restartedMain] org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration 
+
+Using generated security password: ff9f6d26-ed2e-40e6-a7be-26cf8bb3afb6
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+[2026-07-16 18:08:53.471] [INFO ] [restartedMain] org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+[2026-07-16 18:08:53.523] [INFO ] [restartedMain] com.disaster.api.config.WebConfig [addResourceHandlers] image URI 폴더 추가 ------
+[2026-07-16 18:08:53.547] [INFO ] [restartedMain] org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver Exposing 1 endpoint beneath base path '/actuator'
+[2026-07-16 18:08:53.644] [INFO ] [restartedMain] org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer LiveReload server is running on port 35729
+[2026-07-16 18:08:53.654] [INFO ] [restartedMain] org.apache.coyote.http11.Http11NioProtocol Starting ProtocolHandler ["http-nio-80"]
+[2026-07-16 18:08:53.656] [INFO ] [restartedMain] org.springframework.boot.web.embedded.tomcat.TomcatWebServer Tomcat started on port 80 (http) with context path '/'
+[2026-07-16 18:08:53.662] [INFO ] [restartedMain] com.disaster.api.DisasterBackApplication Started DisasterBackApplication in 0.881 seconds (process running for 601.673)
+[2026-07-16 18:08:53.663] [WARN ] [restartedMain] org.springdoc.core.events.SpringDocAppInitializer SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+[2026-07-16 18:08:53.663] [WARN ] [restartedMain] org.springdoc.core.events.SpringDocAppInitializer SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+[2026-07-16 18:08:53.664] [INFO ] [restartedMain] org.springframework.boot.devtools.autoconfigure.ConditionEvaluationDeltaLoggingListener Condition evaluation unchanged
+[2026-07-16 18:09:59.279] [INFO ] [File Watcher] org.springframework.boot.devtools.autoconfigure.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener Restarting due to 3 class path changes (0 additions, 0 deletions, 3 modifications)
+[2026-07-16 18:09:59.281] [INFO ] [Thread-7] org.springframework.boot.web.embedded.tomcat.GracefulShutdown Commencing graceful shutdown. Waiting for active requests to complete
+[2026-07-16 18:09:59.281] [INFO ] [tomcat-shutdown] org.apache.coyote.http11.Http11NioProtocol Pausing ProtocolHandler ["http-nio-80"]
+[2026-07-16 18:09:59.316] [INFO ] [tomcat-shutdown] org.springframework.boot.web.embedded.tomcat.GracefulShutdown Graceful shutdown complete
+[2026-07-16 18:09:59.317] [INFO ] [Thread-7] org.apache.coyote.http11.Http11NioProtocol Stopping ProtocolHandler ["http-nio-80"]
+[2026-07-16 18:09:59.319] [INFO ] [Thread-7] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean Closing JPA EntityManagerFactory for persistence unit 'default'
+[2026-07-16 18:09:59.320] [INFO ] [Thread-7] com.zaxxer.hikari.HikariDataSource HikariPool-2 - Shutdown initiated...
+[2026-07-16 18:09:59.321] [INFO ] [Thread-7] com.zaxxer.hikari.HikariDataSource HikariPool-2 - Shutdown completed.
+[2026-07-16 18:09:59.381] [INFO ] [restartedMain] com.disaster.api.DisasterBackApplication Starting DisasterBackApplication using Java 17.0.12 with PID 7752 (D:\LHB\project2\disaster\disaster_back\target\classes started by User in D:\LHB\project2\disaster\disaster_back)
+[2026-07-16 18:09:59.381] [INFO ] [restartedMain] com.disaster.api.DisasterBackApplication No active profile set, falling back to 1 default profile: "default"
+[2026-07-16 18:09:59.563] [INFO ] [restartedMain] org.springframework.data.repository.config.RepositoryConfigurationDelegate Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+[2026-07-16 18:09:59.600] [INFO ] [restartedMain] org.springframework.data.repository.config.RepositoryConfigurationDelegate Finished Spring Data repository scanning in 36 ms. Found 16 JPA repository interfaces.
+[2026-07-16 18:09:59.664] [INFO ] [restartedMain] org.springframework.boot.web.embedded.tomcat.TomcatWebServer Tomcat initialized with port 80 (http)
+[2026-07-16 18:09:59.664] [INFO ] [restartedMain] org.apache.coyote.http11.Http11NioProtocol Initializing ProtocolHandler ["http-nio-80"]
+[2026-07-16 18:09:59.665] [INFO ] [restartedMain] org.apache.catalina.core.StandardService Starting service [Tomcat]
+[2026-07-16 18:09:59.665] [INFO ] [restartedMain] org.apache.catalina.core.StandardEngine Starting Servlet engine: [Apache Tomcat/10.1.55]
+[2026-07-16 18:09:59.683] [INFO ] [restartedMain] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] Initializing Spring embedded WebApplicationContext
+[2026-07-16 18:09:59.683] [INFO ] [restartedMain] org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext Root WebApplicationContext: initialization completed in 301 ms
+[2026-07-16 18:09:59.720] [INFO ] [restartedMain] org.hibernate.jpa.internal.util.LogHelper HHH000204: Processing PersistenceUnitInfo [name: default]
+[2026-07-16 18:09:59.721] [INFO ] [restartedMain] org.hibernate.cache.internal.RegionFactoryInitiator HHH000026: Second-level cache disabled
+[2026-07-16 18:09:59.725] [INFO ] [restartedMain] org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo No LoadTimeWeaver setup: ignoring JPA class transformer
+[2026-07-16 18:09:59.725] [INFO ] [restartedMain] com.zaxxer.hikari.HikariDataSource HikariPool-3 - Starting...
+[2026-07-16 18:09:59.728] [INFO ] [restartedMain] com.zaxxer.hikari.pool.HikariPool HikariPool-3 - Added connection org.mariadb.jdbc.Connection@76c366e0
+[2026-07-16 18:09:59.728] [INFO ] [restartedMain] com.zaxxer.hikari.HikariDataSource HikariPool-3 - Start completed.
+[2026-07-16 18:09:59.729] [INFO ] [restartedMain] org.hibernate.orm.connections.pooling HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-3)']
+	Database driver: undefined/unknown
+	Database version: 10.6.27
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+[2026-07-16 18:09:59.813] [INFO ] [restartedMain] org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+[2026-07-16 18:09:59.895] [INFO ] [restartedMain] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean Initialized JPA EntityManagerFactory for persistence unit 'default'
+[2026-07-16 18:09:59.941] [INFO ] [restartedMain] com.disaster.api.config.security.JwtTokenProvider [init] JwtTokenProvider 내 secretKey 이용 key 초기화 시작
+[2026-07-16 18:09:59.941] [INFO ] [restartedMain] com.disaster.api.config.security.JwtTokenProvider [init] JwtTokenProvider 내 secretKey 이용 key 초기화 초기화 완료
+[2026-07-16 18:10:00.048] [WARN ] [restartedMain] org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+[2026-07-16 18:10:00.055] [WARN ] [restartedMain] org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration 
+
+Using generated security password: 10b26512-0560-466c-9ebe-509896254b7a
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+[2026-07-16 18:10:00.056] [INFO ] [restartedMain] org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+[2026-07-16 18:10:00.100] [INFO ] [restartedMain] com.disaster.api.config.WebConfig [addResourceHandlers] image URI 폴더 추가 ------
+[2026-07-16 18:10:00.122] [INFO ] [restartedMain] org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver Exposing 1 endpoint beneath base path '/actuator'
+[2026-07-16 18:10:00.205] [INFO ] [restartedMain] org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer LiveReload server is running on port 35729
+[2026-07-16 18:10:00.213] [INFO ] [restartedMain] org.apache.coyote.http11.Http11NioProtocol Starting ProtocolHandler ["http-nio-80"]
+[2026-07-16 18:10:00.216] [INFO ] [restartedMain] org.springframework.boot.web.embedded.tomcat.TomcatWebServer Tomcat started on port 80 (http) with context path '/'
+[2026-07-16 18:10:00.222] [INFO ] [restartedMain] com.disaster.api.DisasterBackApplication Started DisasterBackApplication in 0.86 seconds (process running for 668.234)
+[2026-07-16 18:10:00.223] [WARN ] [restartedMain] org.springdoc.core.events.SpringDocAppInitializer SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+[2026-07-16 18:10:00.224] [WARN ] [restartedMain] org.springdoc.core.events.SpringDocAppInitializer SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+[2026-07-16 18:10:00.224] [INFO ] [restartedMain] org.springframework.boot.devtools.autoconfigure.ConditionEvaluationDeltaLoggingListener Condition evaluation unchanged
+[2026-07-16 18:10:30.475] [INFO ] [http-nio-80-exec-1] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] Initializing Spring DispatcherServlet 'dispatcherServlet'
+[2026-07-16 18:10:30.475] [INFO ] [http-nio-80-exec-1] org.springframework.web.servlet.DispatcherServlet Initializing Servlet 'dispatcherServlet'
+[2026-07-16 18:10:30.476] [INFO ] [http-nio-80-exec-1] org.springframework.web.servlet.DispatcherServlet Completed initialization in 1 ms
+[2026-07-16 18:10:30.492] [INFO ] [http-nio-80-exec-1] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 18:10:30.494] [INFO ] [http-nio-80-exec-1] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 18:10:30.494] [INFO ] [http-nio-80-exec-1] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 18:10:30.494] [INFO ] [http-nio-80-exec-1] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-4] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-2] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-5] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-7] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-2] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-4] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-2] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-5] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-6] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-4] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-5] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-2] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-5] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-7] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-6] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-4] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-7] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-3] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-7] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 18:10:30.610] [INFO ] [http-nio-80-exec-6] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 18:10:30.611] [INFO ] [http-nio-80-exec-6] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 18:10:30.611] [INFO ] [http-nio-80-exec-3] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 18:10:30.611] [INFO ] [http-nio-80-exec-3] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 18:10:30.611] [INFO ] [http-nio-80-exec-3] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 18:10:30.632] [INFO ] [http-nio-80-exec-2] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 18:10:30.632] [INFO ] [http-nio-80-exec-4] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 18:10:30.632] [INFO ] [http-nio-80-exec-6] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 18:10:30.632] [INFO ] [http-nio-80-exec-2] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 18:10:30.632] [INFO ] [http-nio-80-exec-3] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 18:10:30.632] [INFO ] [http-nio-80-exec-4] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 18:10:30.632] [INFO ] [http-nio-80-exec-2] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 18:10:30.632] [INFO ] [http-nio-80-exec-6] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 18:10:30.632] [INFO ] [http-nio-80-exec-2] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 18:10:30.632] [INFO ] [http-nio-80-exec-4] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 18:10:30.632] [INFO ] [http-nio-80-exec-6] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 18:10:30.632] [INFO ] [http-nio-80-exec-3] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 18:10:30.632] [INFO ] [http-nio-80-exec-4] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 18:10:30.632] [INFO ] [http-nio-80-exec-3] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 18:10:30.632] [INFO ] [http-nio-80-exec-6] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 18:10:30.632] [INFO ] [http-nio-80-exec-3] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 18:10:31.985] [INFO ] [http-nio-80-exec-7] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 18:10:31.986] [INFO ] [http-nio-80-exec-7] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 18:10:31.986] [INFO ] [http-nio-80-exec-7] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 18:10:31.986] [INFO ] [http-nio-80-exec-7] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 18:10:34.491] [INFO ] [http-nio-80-exec-5] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 18:10:34.491] [INFO ] [http-nio-80-exec-5] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 18:10:34.491] [INFO ] [http-nio-80-exec-5] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 18:10:34.491] [INFO ] [http-nio-80-exec-5] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 18:10:49.115] [INFO ] [http-nio-80-exec-2] com.disaster.api.config.security.JwtTokenProvider [resolveToken] Http 헤더에서 Token 값을 추출
+[2026-07-16 18:10:49.115] [INFO ] [http-nio-80-exec-2] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 추출 완료. token : null
+[2026-07-16 18:10:49.115] [INFO ] [http-nio-80-exec-2] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 시작
+[2026-07-16 18:10:49.115] [INFO ] [http-nio-80-exec-2] com.disaster.api.config.security.JwtAuthenticationFilter [doFilterInternal] token 값 유효성 체크 완료
+[2026-07-16 18:16:35.287] [INFO ] [SpringApplicationShutdownHook] org.springframework.boot.web.embedded.tomcat.GracefulShutdown Commencing graceful shutdown. Waiting for active requests to complete
+[2026-07-16 18:16:35.320] [INFO ] [tomcat-shutdown] org.springframework.boot.web.embedded.tomcat.GracefulShutdown Graceful shutdown complete
+[2026-07-16 18:16:35.322] [INFO ] [SpringApplicationShutdownHook] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean Closing JPA EntityManagerFactory for persistence unit 'default'
+[2026-07-16 18:16:35.323] [INFO ] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource HikariPool-3 - Shutdown initiated...
+[2026-07-16 18:16:35.324] [INFO ] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource HikariPool-3 - Shutdown completed.
+[2026-07-16 18:16:37.307] [INFO ] [background-preinit] org.hibernate.validator.internal.util.Version HV000001: Hibernate Validator 8.0.3.Final
+[2026-07-16 18:16:37.340] [INFO ] [restartedMain] com.disaster.api.DisasterBackApplication Starting DisasterBackApplication using Java 17.0.12 with PID 12720 (D:\LHB\project2\disaster\disaster_back\target\classes started by User in D:\LHB\project2\disaster\disaster_back)
+[2026-07-16 18:16:37.341] [INFO ] [restartedMain] com.disaster.api.DisasterBackApplication No active profile set, falling back to 1 default profile: "default"
+[2026-07-16 18:16:37.366] [INFO ] [restartedMain] org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+[2026-07-16 18:16:37.366] [INFO ] [restartedMain] org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+[2026-07-16 18:16:37.979] [INFO ] [restartedMain] org.springframework.data.repository.config.RepositoryConfigurationDelegate Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+[2026-07-16 18:16:38.048] [INFO ] [restartedMain] org.springframework.data.repository.config.RepositoryConfigurationDelegate Finished Spring Data repository scanning in 64 ms. Found 16 JPA repository interfaces.
+[2026-07-16 18:16:38.414] [INFO ] [restartedMain] org.springframework.boot.web.embedded.tomcat.TomcatWebServer Tomcat initialized with port 80 (http)
+[2026-07-16 18:16:38.421] [INFO ] [restartedMain] org.apache.coyote.http11.Http11NioProtocol Initializing ProtocolHandler ["http-nio-80"]
+[2026-07-16 18:16:38.421] [INFO ] [restartedMain] org.apache.catalina.core.StandardService Starting service [Tomcat]
+[2026-07-16 18:16:38.421] [INFO ] [restartedMain] org.apache.catalina.core.StandardEngine Starting Servlet engine: [Apache Tomcat/10.1.55]
+[2026-07-16 18:16:38.458] [INFO ] [restartedMain] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] Initializing Spring embedded WebApplicationContext
+[2026-07-16 18:16:38.458] [INFO ] [restartedMain] org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext Root WebApplicationContext: initialization completed in 1091 ms
+[2026-07-16 18:16:38.580] [INFO ] [restartedMain] org.hibernate.jpa.internal.util.LogHelper HHH000204: Processing PersistenceUnitInfo [name: default]
+[2026-07-16 18:16:38.601] [INFO ] [restartedMain] org.hibernate.Version HHH000412: Hibernate ORM core version 6.6.53.Final
+[2026-07-16 18:16:38.615] [INFO ] [restartedMain] org.hibernate.cache.internal.RegionFactoryInitiator HHH000026: Second-level cache disabled
+[2026-07-16 18:16:38.740] [INFO ] [restartedMain] org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo No LoadTimeWeaver setup: ignoring JPA class transformer
+[2026-07-16 18:16:38.757] [INFO ] [restartedMain] com.zaxxer.hikari.HikariDataSource HikariPool-1 - Starting...
+[2026-07-16 18:16:38.795] [INFO ] [restartedMain] com.zaxxer.hikari.pool.HikariPool HikariPool-1 - Added connection org.mariadb.jdbc.Connection@3466b7fe
+[2026-07-16 18:16:38.796] [INFO ] [restartedMain] com.zaxxer.hikari.HikariDataSource HikariPool-1 - Start completed.
+[2026-07-16 18:16:38.825] [INFO ] [restartedMain] org.hibernate.orm.connections.pooling HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 10.6.27
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+[2026-07-16 18:16:39.404] [INFO ] [restartedMain] org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+[2026-07-16 18:16:39.506] [INFO ] [restartedMain] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean Initialized JPA EntityManagerFactory for persistence unit 'default'
+[2026-07-16 18:16:39.620] [INFO ] [restartedMain] org.springframework.data.jpa.repository.query.QueryEnhancerFactory Hibernate is in classpath; If applicable, HQL parser will be used.
+[2026-07-16 18:16:40.059] [INFO ] [restartedMain] com.disaster.api.config.security.JwtTokenProvider [init] JwtTokenProvider 내 secretKey 이용 key 초기화 시작
+[2026-07-16 18:16:40.061] [INFO ] [restartedMain] com.disaster.api.config.security.JwtTokenProvider [init] JwtTokenProvider 내 secretKey 이용 key 초기화 초기화 완료
+[2026-07-16 18:16:40.393] [WARN ] [restartedMain] org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+[2026-07-16 18:16:40.410] [WARN ] [restartedMain] org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration 
+
+Using generated security password: 3e8f5e6b-26ae-4b3e-8252-fa3fb742e6f0
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+[2026-07-16 18:16:40.414] [INFO ] [restartedMain] org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+[2026-07-16 18:16:40.550] [INFO ] [restartedMain] com.disaster.api.config.WebConfig [addResourceHandlers] image URI 폴더 추가 ------
+[2026-07-16 18:16:40.614] [INFO ] [restartedMain] org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver Exposing 1 endpoint beneath base path '/actuator'
+[2026-07-16 18:16:40.873] [INFO ] [restartedMain] org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer LiveReload server is running on port 35729
+[2026-07-16 18:16:40.903] [INFO ] [restartedMain] org.apache.coyote.http11.Http11NioProtocol Starting ProtocolHandler ["http-nio-80"]
+[2026-07-16 18:16:40.914] [INFO ] [restartedMain] org.springframework.boot.web.embedded.tomcat.TomcatWebServer Tomcat started on port 80 (http) with context path '/'
+[2026-07-16 18:16:40.924] [INFO ] [restartedMain] com.disaster.api.DisasterBackApplication Started DisasterBackApplication in 3.882 seconds (process running for 4.383)
+[2026-07-16 18:16:40.927] [WARN ] [restartedMain] org.springdoc.core.events.SpringDocAppInitializer SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+[2026-07-16 18:16:40.928] [WARN ] [restartedMain] org.springdoc.core.events.SpringDocAppInitializer SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+[2026-07-16 18:16:41.241] [INFO ] [RMI TCP Connection(1)-10.15.21.211] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] Initializing Spring DispatcherServlet 'dispatcherServlet'
+[2026-07-16 18:16:41.242] [INFO ] [RMI TCP Connection(1)-10.15.21.211] org.springframework.web.servlet.DispatcherServlet Initializing Servlet 'dispatcherServlet'
+[2026-07-16 18:16:41.243] [INFO ] [RMI TCP Connection(1)-10.15.21.211] org.springframework.web.servlet.DispatcherServlet Completed initialization in 1 ms
+[2026-07-16 18:17:28.744] [INFO ] [SpringApplicationShutdownHook] org.springframework.boot.web.embedded.tomcat.GracefulShutdown Commencing graceful shutdown. Waiting for active requests to complete
+[2026-07-16 18:17:28.777] [INFO ] [tomcat-shutdown] org.springframework.boot.web.embedded.tomcat.GracefulShutdown Graceful shutdown complete
+[2026-07-16 18:17:28.783] [INFO ] [SpringApplicationShutdownHook] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean Closing JPA EntityManagerFactory for persistence unit 'default'
+[2026-07-16 18:17:28.784] [INFO ] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource HikariPool-1 - Shutdown initiated...
+[2026-07-16 18:17:28.788] [INFO ] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource HikariPool-1 - Shutdown completed.
+[2026-07-16 18:17:31.562] [INFO ] [background-preinit] org.hibernate.validator.internal.util.Version HV000001: Hibernate Validator 8.0.3.Final
+[2026-07-16 18:17:31.595] [INFO ] [restartedMain] com.disaster.api.DisasterBackApplication Starting DisasterBackApplication using Java 17.0.12 with PID 19184 (D:\LHB\project2\disaster\disaster_back\target\classes started by User in D:\LHB\project2\disaster\disaster_back)
+[2026-07-16 18:17:31.596] [INFO ] [restartedMain] com.disaster.api.DisasterBackApplication No active profile set, falling back to 1 default profile: "default"
+[2026-07-16 18:17:31.624] [INFO ] [restartedMain] org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+[2026-07-16 18:17:31.624] [INFO ] [restartedMain] org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+[2026-07-16 18:17:32.284] [INFO ] [restartedMain] org.springframework.data.repository.config.RepositoryConfigurationDelegate Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+[2026-07-16 18:17:32.357] [INFO ] [restartedMain] org.springframework.data.repository.config.RepositoryConfigurationDelegate Finished Spring Data repository scanning in 66 ms. Found 16 JPA repository interfaces.
+[2026-07-16 18:17:32.744] [INFO ] [restartedMain] org.springframework.boot.web.embedded.tomcat.TomcatWebServer Tomcat initialized with port 80 (http)
+[2026-07-16 18:17:32.751] [INFO ] [restartedMain] org.apache.coyote.http11.Http11NioProtocol Initializing ProtocolHandler ["http-nio-80"]
+[2026-07-16 18:17:32.752] [INFO ] [restartedMain] org.apache.catalina.core.StandardService Starting service [Tomcat]
+[2026-07-16 18:17:32.752] [INFO ] [restartedMain] org.apache.catalina.core.StandardEngine Starting Servlet engine: [Apache Tomcat/10.1.55]
+[2026-07-16 18:17:32.791] [INFO ] [restartedMain] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] Initializing Spring embedded WebApplicationContext
+[2026-07-16 18:17:32.792] [INFO ] [restartedMain] org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext Root WebApplicationContext: initialization completed in 1167 ms
+[2026-07-16 18:17:32.961] [INFO ] [restartedMain] org.hibernate.jpa.internal.util.LogHelper HHH000204: Processing PersistenceUnitInfo [name: default]
+[2026-07-16 18:17:32.985] [INFO ] [restartedMain] org.hibernate.Version HHH000412: Hibernate ORM core version 6.6.53.Final
+[2026-07-16 18:17:33.002] [INFO ] [restartedMain] org.hibernate.cache.internal.RegionFactoryInitiator HHH000026: Second-level cache disabled
+[2026-07-16 18:17:33.120] [INFO ] [restartedMain] org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo No LoadTimeWeaver setup: ignoring JPA class transformer
+[2026-07-16 18:17:33.134] [INFO ] [restartedMain] com.zaxxer.hikari.HikariDataSource HikariPool-1 - Starting...
+[2026-07-16 18:17:33.174] [INFO ] [restartedMain] com.zaxxer.hikari.pool.HikariPool HikariPool-1 - Added connection org.mariadb.jdbc.Connection@27963c8e
+[2026-07-16 18:17:33.175] [INFO ] [restartedMain] com.zaxxer.hikari.HikariDataSource HikariPool-1 - Start completed.
+[2026-07-16 18:17:33.206] [INFO ] [restartedMain] org.hibernate.orm.connections.pooling HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 10.6.27
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+[2026-07-16 18:17:33.794] [INFO ] [restartedMain] org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+[2026-07-16 18:17:33.942] [INFO ] [restartedMain] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean Initialized JPA EntityManagerFactory for persistence unit 'default'
+[2026-07-16 18:17:34.057] [INFO ] [restartedMain] org.springframework.data.jpa.repository.query.QueryEnhancerFactory Hibernate is in classpath; If applicable, HQL parser will be used.
+[2026-07-16 18:17:34.501] [INFO ] [restartedMain] com.disaster.api.config.security.JwtTokenProvider [init] JwtTokenProvider 내 secretKey 이용 key 초기화 시작
+[2026-07-16 18:17:34.503] [INFO ] [restartedMain] com.disaster.api.config.security.JwtTokenProvider [init] JwtTokenProvider 내 secretKey 이용 key 초기화 초기화 완료
+[2026-07-16 18:17:34.824] [WARN ] [restartedMain] org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+[2026-07-16 18:17:34.841] [WARN ] [restartedMain] org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration 
+
+Using generated security password: 3eb88cc1-1237-417f-9ccc-9d1d81266bf1
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+[2026-07-16 18:17:34.845] [INFO ] [restartedMain] org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+[2026-07-16 18:17:34.985] [INFO ] [restartedMain] com.disaster.api.config.WebConfig [addResourceHandlers] image URI 폴더 추가 ------
+[2026-07-16 18:17:35.053] [INFO ] [restartedMain] org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver Exposing 1 endpoint beneath base path '/actuator'
+[2026-07-16 18:17:35.301] [INFO ] [restartedMain] org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer LiveReload server is running on port 35729
+[2026-07-16 18:17:35.331] [INFO ] [restartedMain] org.apache.coyote.http11.Http11NioProtocol Starting ProtocolHandler ["http-nio-80"]
+[2026-07-16 18:17:35.343] [INFO ] [restartedMain] org.springframework.boot.web.embedded.tomcat.TomcatWebServer Tomcat started on port 80 (http) with context path '/'
+[2026-07-16 18:17:35.353] [INFO ] [restartedMain] com.disaster.api.DisasterBackApplication Started DisasterBackApplication in 4.055 seconds (process running for 4.5)
+[2026-07-16 18:17:35.357] [WARN ] [restartedMain] org.springdoc.core.events.SpringDocAppInitializer SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+[2026-07-16 18:17:35.357] [WARN ] [restartedMain] org.springdoc.core.events.SpringDocAppInitializer SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+[2026-07-16 18:17:35.535] [INFO ] [RMI TCP Connection(1)-10.15.21.211] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] Initializing Spring DispatcherServlet 'dispatcherServlet'
+[2026-07-16 18:17:35.535] [INFO ] [RMI TCP Connection(1)-10.15.21.211] org.springframework.web.servlet.DispatcherServlet Initializing Servlet 'dispatcherServlet'
+[2026-07-16 18:17:35.537] [INFO ] [RMI TCP Connection(1)-10.15.21.211] org.springframework.web.servlet.DispatcherServlet Completed initialization in 2 ms
+[2026-07-16 18:19:07.297] [INFO ] [SpringApplicationShutdownHook] org.springframework.boot.web.embedded.tomcat.GracefulShutdown Commencing graceful shutdown. Waiting for active requests to complete
+[2026-07-16 18:19:07.336] [INFO ] [tomcat-shutdown] org.springframework.boot.web.embedded.tomcat.GracefulShutdown Graceful shutdown complete
+[2026-07-16 18:19:07.341] [INFO ] [SpringApplicationShutdownHook] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean Closing JPA EntityManagerFactory for persistence unit 'default'
+[2026-07-16 18:19:07.344] [INFO ] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource HikariPool-1 - Shutdown initiated...
+[2026-07-16 18:19:07.346] [INFO ] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource HikariPool-1 - Shutdown completed.
