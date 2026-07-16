@@ -2,12 +2,11 @@ package com.disaster.api.disaster.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.io.Serializable;
 
 @Entity
 @Data
 @Table(name = "DISASTER_CAT_ASSIGN")
-@IdClass(DisasterCatAssignId.class) // 복합키 식별자 클래스 지정
+@IdClass(DisasterCatAssignId.class) // 별도 파일로 분리된 public 클래스를 매핑
 public class DisasterCatAssign {
 
     @Id
@@ -17,11 +16,4 @@ public class DisasterCatAssign {
     @Id
     @Column(name = "catid")
     private Long catId; // DISASTER_CATEGORY 참조
-}
-
-// 복합키를 위한 식별자 클래스 (동일 패키지 또는 내부 클래스로 선언)
-@Data
-class DisasterCatAssignId implements Serializable {
-    private Long no;
-    private Long catId;
 }
