@@ -23,6 +23,9 @@ public class DisasterInfo {
     @Column(name = "summary", nullable = false, length = 2)
     private String summary; // DISASTER_CATEGORY 참조 외래키 역할
 
+    @Column(name = "CATID", nullable = false)
+    private Integer catId; // 카테고리 번호 (1: 피해/폭발, 2: 지진/해일 등)
+
     @Column(name = "APIID", length = 100)
     private String apiId;
 

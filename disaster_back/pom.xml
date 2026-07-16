@@ -140,6 +140,11 @@
             <classifier>jakarta</classifier>
         </dependency>
 
+        <!-- XmlMapper: XML형식의 데이터를 자바 객체(Object)로 자동 변환해주는 라이브러리-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+        </dependency>
 
     </dependencies>
 

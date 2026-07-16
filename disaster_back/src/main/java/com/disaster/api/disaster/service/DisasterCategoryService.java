@@ -5,6 +5,7 @@ import com.disaster.api.disaster.entity.DisasterInfo;
 import com.disaster.api.disaster.repository.DisasterCategoryRepository;
 import com.disaster.api.disaster.repository.DisasterCatAssignRepository;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,7 +88,7 @@ public class DisasterCategoryService {
                         info.setContent(content);
                         info.setCreateDate(formattedDate);
                         info.setDangerLevel(1);
-                        info.setCatID(representativeCatID); // DisasterInfo의 catID 필드 매핑
+                        info.setCatId(representativeCatID); // DisasterInfo의 catID 필드 매핑
 
                         // save() 호출 시 영속 컨텍스트를 거쳐 DB에 저장되고 Sequence에 의한 ID(no)가 바인딩됩니다.
                         DisasterInfo savedInfo = disasterCategoryRepository.save(info);
