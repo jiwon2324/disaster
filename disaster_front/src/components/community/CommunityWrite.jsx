@@ -14,19 +14,16 @@ function CommunityWrite(){
 
   const navigate = useNavigate();
 
-  // 🔑 로컬스토리지 로그인 정보 미리 선언
   const loginInfoStr = localStorage.getItem("login");
   const loginInfo = loginInfoStr ? JSON.parse(loginInfoStr) : null;
 
   useEffect(()=>{
-    // 🛡️ 비로그인 사용자 방어 차단
     if (!loginInfoStr) {
       alert("로그인 사용자만 제보 등록을 이용할 수 있습니다.");
-      navigate(-1); // 주소창 경로 오류 방지를 위해 이전 페이지로 튕김 처리
+      navigate(-1); 
       return;
     }
     
-    // 안전하게 DOM 요소 확인 후 포커스
     const titleInput = document.getElementById('title');
     if (titleInput) titleInput.focus();
   }, [navigate, loginInfoStr]);
@@ -62,8 +59,6 @@ function CommunityWrite(){
 
     const formData = new FormData();
     
-    // 🔑 [핵심 해결 포인트]
-    // 인풋창에 사용자가 무엇을 적었든 상관없이, 전송 직전에 로그인한 유저의 진짜 ID(sub)로 덮어써서 보냅니다!
     const vo = { 
       title, 
       content, 
@@ -80,7 +75,7 @@ function CommunityWrite(){
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
       alert(response.data);
-      navigate(-1); // 저장 후 안전하게 이전 리스트/상세 화면으로 이동
+      navigate(-1); 
     } catch (error) {
       console.error(error);
       alert("제보 글 등록 중 서버 통신 에러가 발생했습니다.");
@@ -89,44 +84,89 @@ function CommunityWrite(){
 
   return(
     <>
-      <div>/community/write</div>
-      <hr />
-      <p>제보 게시판 등록 페이지 입니다.</p>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3 mt-3">
-          <label htmlFor="title" className="form-label">제목:</label>
-          <input type="text" className="form-control" id="title" placeholder="제보 제목 입력" name="title" required maxLength={100} onChange={(e) => setTitle(e.target.value)}/>
-        </div>
-        <div className="mb-3 mt-3">
-          <label htmlFor="content">내용:</label>
-          <textarea className="form-control" rows="5" id="content" name="content" required placeholder="상세 제보 내용 입력" onChange={(e) => setContent(e.target.value)}></textarea>
-        </div>
-        
-        {/* 🛡️ 작성자 칸: 손대지 못하게 readOnly 처리하고, 기본값으로 현재 로그인한 사용자 이름을 띄워줍니다. */}
-        <div className="mb-3 mt-3">
-          <label htmlFor="writer" className="form-label">작성자:</label>
-          <input type="text" className="form-control" id="writer" name="writer" readOnly value={loginInfo ? loginInfo.name : ''} style={{ backgroundColor: '#e9ecef', cursor: 'not-allowed' }}/>
+      <div className="mb-4 p-2 bg-light rounded shadow-sm small text-muted">
+        <i className="bi bi-house-door-fill me-1"></i> Home &gt; Community &gt; <span className="text-primary fw-bold">Write</span>
+      </div>
+
+      {/* 폼 전체를 감싸는 카드 스타일 적용 */}
+      <div className="card border-light shadow-sm mb-4">
+        <div className="card-header bg-white border-bottom border-light p-3">
+            <h5 className="card-title mb-0 fw-bold text-dark">
+                <i className="bi bi-pencil-square me-2 text-primary"></i>제보 내용 입력
+            </h5>
+            <p className="text-muted small mb-0 mt-1">정확하고 상세한 제보는 문제 해결에 큰 도움이 됩니다.</p>
         </div>
         
-        <div className="mb-3">
-          <label htmlFor="pw" className="form-label">비밀번호:</label>
-          <input type="password" className="form-control" id="pw" placeholder="비밀번호를 입력하세요" name="pw" required maxLength={20} value={pw} onChange={(e) => setPw(e.target.value)} />
+        <div className="card-body p-4">
+          <form onSubmit={handleSubmit}>
+            {/* 제목 */}
+            <div className="mb-3">
+              <label htmlFor="title" className="form-label fw-bold text-secondary">제보 제목</label>
+              <input type="text" className="form-control form-control-lg rounded border-secondary-subtle" id="title" placeholder="무엇을 제보하시겠습니까? (예: OO동 도로 파손)" name="title" required maxLength={100} onChange={(e) => setTitle(e.target.value)}/>
+            </div>
+            
+            {/* 내용 */}
+            <div className="mb-3">
+              <label htmlFor="content" className="form-label fw-bold text-secondary">상세 내용</label>
+              <textarea className="form-control rounded border-secondary-subtle" rows="8" id="content" name="content" required placeholder="일시, 장소, 상황 등 구체적인 내용을 적어주세요." onChange={(e) => setContent(e.target.value)}></textarea>
+            </div>
+            
+            <div className="row">
+                {/* 작성자 (ReadOnly) */}
+                <div className="col-md-6 mb-3">
+                  <label htmlFor="writer" className="form-label fw-bold text-secondary">작성자 권한</label>
+                  <div className="input-group">
+                    <span className="input-group-text bg-light border-secondary-subtle text-muted"><i className="bi bi-person-fill"></i></span>
+                    <input type="text" className="form-control rounded-end border-secondary-subtle" id="writer" name="writer" readOnly value={loginInfo ? loginInfo.name : ''} style={{ backgroundColor: '#f8f9fa', cursor: 'not-allowed', color: '#6c757d' }}/>
+                  </div>
+                </div>
+            </div>
+
+            <div className="row border-top border-light pt-3 mt-2">
+                {/* 비밀번호 */}
+                <div className="col-md-6 mb-3">
+                  <label htmlFor="pw" className="form-label fw-bold text-secondary">비밀번호 설정</label>
+                  <input type="password" className="form-control rounded border-secondary-subtle" id="pw" placeholder="수정/삭제 시 필요합니다." name="pw" required maxLength={20} value={pw} onChange={(e) => setPw(e.target.value)} />
+                </div>
+                {/* 비밀번호 확인 */}
+                <div className="col-md-6 mb-3">
+                  <label htmlFor="pw2" className="form-label fw-bold text-secondary">비밀번호 확인</label>
+                  <input type="password" className="form-control rounded border-secondary-subtle" id="pw2" placeholder="비밀번호를 한번 더 입력하세요." required maxLength={20} value={pw2} onChange={(e) => setPw2(e.target.value)} />
+                </div>
+            </div>
+
+            {/* 파일 첨부 영역 디자인 개선 */}
+            <div className="mb-3 border-top border-light pt-3 mt-2">
+              <label htmlFor="imageFile" className="form-label fw-bold text-secondary">
+                <i className="bi bi-camera-fill me-1"></i>제보 현장 이미지 첨부 (필수)
+              </label>
+              <input type="file" className="form-control rounded border-secondary-subtle" id="imageFile" name="imageFile" required accept="image/*" onChange={handleFileChange}/>
+              <div className="form-text text-muted small">현장 상황을 잘 보여주는 사진을 첨부해주세요.</div>
+            </div>
+            
+            {/* 미리보기 영역 개선 */}
+            {preview && (
+                <div className="mb-4 p-3 bg-light rounded text-center border border-light shadow-inner">
+                    <p className="text-muted small mb-2">이미지 미리보기</p>
+                    <img src={preview} alt="제보사진 미리보기" className="img-thumbnail rounded shadow-sm" style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'contain' }} />
+                </div>
+            )}
+            
+            {/* 하단 버튼 영역 정렬 및 디자인 변경 */}
+            <div className="d-flex justify-content-end align-items-center gap-2 border-top pt-4 mt-4">
+                <button type="submit" className="btn btn-primary px-5 rounded-pill">
+                    <i className="bi bi-check-circle me-1"></i>제보 등록
+                </button>
+                <button type="reset" className="btn btn-outline-secondary px-4 rounded-pill" onClick={() => setPreview('')}>
+                    <i className="bi bi-arrow-counterclockwise me-1"></i>새로입력
+                </button>
+                <button type="button" className="btn btn-light px-4 rounded-pill text-danger border border-danger-subtle" onClick={() => navigate(-1)}>
+                    <i className="bi bi-x-circle me-1"></i>취소
+                </button>
+            </div>
+          </form>
         </div>
-        <div className="mb-3">
-          <label htmlFor="pw2" className="form-label">비밀번호 확인:</label>
-          <input type="password" className="form-control" id="pw2" placeholder="비밀번호 확인을 입력하세요" required maxLength={20} value={pw2} onChange={(e) => setPw2(e.target.value)} />
-        </div>
-        <div className="mb-3 mt-3">
-          <label htmlFor="imageFile" className="form-label">제보 현장 이미지 첨부:</label>
-          <input type="file" className="form-control" id="imageFile" name="imageFile" required accept="image/*" onChange={handleFileChange}/>
-        </div>
-        <div className="mb-3 mt-3">
-          {preview && <img src={preview} alt="제보사진 미리보기" style={{ maxWidth: '300px', border: '1px solid #ddd' }} />}
-        </div>
-        <button type="submit" className="btn btn-primary mr-2">제보 등록</button>
-        <button type="reset" className="btn btn-success mr-2" onClick={() => setPreview('')}>새로입력</button>
-        <button type="button" className="btn btn-warning" onClick={() => navigate(-1)}>취소</button>
-      </form>
+      </div>
     </>
   );
 }

@@ -13,7 +13,6 @@ function CommunityView(){
   const [showDelete, setShowDelete] = useState(false);
   const navigate = useNavigate();
 
-  // 🔑 LocalStorage에서 로그인 유저 정보 수집
   const loginInfoStr = localStorage.getItem("login");
   const loginInfo = loginInfoStr ? JSON.parse(loginInfoStr) : null;
 
@@ -27,9 +26,7 @@ function CommunityView(){
     })
   }, [no, inc]);
 
-  // 🟢 [관리자 즉시 삭제 분기 기능이 포함된 핸들러]
   const handleDeleteClick = async () => {
-    // 현재 계정이 관리자인지 여부 판단 플래그
     const isAdmin = loginInfo && (
       loginInfo.sub === "admin" || 
       loginInfo.sub === "admin01" || 
@@ -39,7 +36,6 @@ function CommunityView(){
     if (isAdmin) {
       if (window.confirm("관리자 권한으로 이 제보글을 즉시 삭제하시겠습니까?")) {
         try {
-          // 관리자는 패스워드 검증을 우회하므로 가짜 pw를 채우고 writer에 권한 ID를 실어 보냅니다.
           const adminVo = {
             no: no,
             pw: "admin_master_pass", 
@@ -53,12 +49,10 @@ function CommunityView(){
         }
       }
     } else {
-      // 일반 회원은 기존처럼 모달창(비밀번호 입력)을 토글시킵니다.
       setShowDelete(!showDelete);
     }
   };
 
-  // 🛡️ [권한 검증 플래그 최종본]
   const isAuthor = loginInfo && (
     loginInfo.sub === vo.writer || 
     loginInfo.sub === "admin" || 
@@ -68,46 +62,83 @@ function CommunityView(){
 
   return(
     <>
-      <div>/community/view</div>
-      <hr />
-      <table className="table">
-        {!vo.no && (
-          <tbody><tr><td>데이터가 존재하지 않습니다.</td></tr></tbody>
+      <div className="mb-4 p-2 bg-light rounded shadow-sm small text-muted">
+        <i className="bi bi-house-door-fill me-1"></i> Home &gt; Community &gt; <span className="text-primary fw-bold">View</span>
+      </div>
+
+      {/* 데이터를 표시하는 틀을 테이블에서 깔끔한 카드 바디로 변경 */}
+      <div className="mb-4">
+        {!vo.no ? (
+          <div className="text-center py-5 text-muted card border-light">데이터가 존재하지 않거나 불러오는 중입니다.</div>
+        ) : (
+          <div className="card border-light shadow-sm">
+            <div className="card-body p-0">
+              {/* 제목 및 메타 정보 영역 */}
+              <div className="p-4 border-bottom border-light bg-light rounded-top">
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <span className="badge bg-primary rounded-pill">No. {vo.no}</span>
+                  <span className="text-muted small">
+                    <i className="bi bi-eye me-1"></i> {vo.hit} &nbsp; | &nbsp;
+                    <i className="bi bi-calendar-check me-1"></i> {vo.writeDate ? format(new Date(vo.writeDate), "yyyy-MM-dd HH:mm") : ""}
+                  </span>
+                </div>
+                <h3 className="card-title fw-bold text-dark mb-0">{vo.title}</h3>
+                <div className="mt-3 text-secondary small">
+                   <i className="bi bi-person-circle me-1"></i> 작성자: <span className="text-dark fw-bold">{vo.writer}</span>
+                </div>
+              </div>
+
+              {/* 이미지 영역 */}
+              {vo.fileName && (
+                <div className="text-center p-4 border-bottom border-light bg-white">
+                  <img src={`http://localhost/image/${vo.fileName}`} alt="제보사진" 
+                    className="img-fluid rounded shadow-sm border"
+                    style={{maxWidth:"100%", maxHeight:"500px"}} />
+                </div>
+              )}
+
+              {/* 내용 영역 */}
+              <div className="p-4 bg-white rounded-bottom">
+                <h5 className="text-muted mb-3"><i className="bi bi-chat-left-text me-2"></i>제보 내용</h5>
+                <div className="p-3 bg-light rounded" style={{minHeight: '200px'}}>
+                    <pre className="mb-0 text-dark" style={{whiteSpace: 'pre-wrap', fontfamily: 'inherit'}}>{vo.content}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
-        {vo.no && (
-            <tbody>
-              <tr><th>번호</th><td>{vo.no}</td></tr>
-              <tr><th>제목</th><td>{vo.title}</td></tr>
-              <tr><th>이미지</th><td>{vo.fileName && <img src={`http://localhost/image/${vo.fileName}`} alt="제보사진" style={{maxWidth:"400px"}} />}</td></tr>
-              <tr><th>내용</th><td><pre>{vo.content}</pre></td></tr>
-              <tr><th>작성자</th><td>{vo.writer}</td></tr>
-              <tr><th>작성일</th><td>{vo.writeDate ? format(new Date(vo.writeDate), "yyyy-MM-dd") : ""}</td></tr>
-              <tr><th>조회수</th><td>{vo.hit}</td></tr>
-            </tbody>
-          )
-        }
-      </table>
+      </div>
 
-      {/* 🛡️ 본인 글이거나 관리자 권한을 가졌을 때만 수정/삭제 버튼 노출 */}
-      {isAuthor && (
-        <>
-          <button 
-            className="btn btn-primary" 
-            onClick={() => {
-              const isAdmin = loginInfo && (loginInfo.sub === "admin" || loginInfo.sub === "admin01" || loginInfo.name === "관리자");
-              navigate(`/community/update?no=${no}`, { state: { isAdmin } });
-            }}
-          >
-            수정
-          </button>
+      {/* 하단 버튼 및 삭제 컴포넌트 영역 정렬 개선 */}
+      <div className="d-flex justify-content-end align-items-center gap-2 mb-4 border-top pt-3">
+        {isAuthor && (
+          <>
+            <button 
+              // 버튼 디자인 변경: btn-primary -> btn-outline-warning (수정 느낌)
+              className="btn btn-outline-warning px-4 rounded-pill" 
+              onClick={() => {
+                const isAdmin = loginInfo && (loginInfo.sub === "admin" || loginInfo.sub === "admin01" || loginInfo.name === "관리자");
+                navigate(`/community/update?no=${no}`, { state: { isAdmin } });
+              }}
+            >
+              <i className="bi bi-pencil me-1"></i>수정
+            </button>
 
-          <button className="btn btn-danger" onClick={handleDeleteClick}>삭제</button>&nbsp;
-        </>
-      )}
+            <button 
+                // 버튼 디자인 변경: btn-danger -> btn-outline-danger
+                className="btn btn-outline-danger px-4 rounded-pill" 
+                onClick={handleDeleteClick}>
+                <i className="bi bi-trash me-1"></i>삭제
+            </button>
+          </>
+        )}
 
-      <Link to={"/community/list"} className="btn btn-success">리스트</Link>&nbsp;
+        <Link to={"/community/list"} className="btn btn-secondary px-4 rounded-pill">
+            <i className="bi bi-list-ul me-1"></i>리스트
+        </Link>
+      </div>
       
-      {/* 🟢 [수정] 일반 회원 검증 로직을 매핑할 수 있도록 writer 속성을 추가로 넘겨줍니다. */}
+      {/* 삭제 폼 디자인은 CommunityDelete 컴포넌트 내부에서 변경됨 */}
       { showDelete && <CommunityDelete no={vo.no} writer={vo.writer} handleCancel={handleDeleteClick} />}
     </>
   );

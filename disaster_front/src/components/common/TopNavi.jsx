@@ -42,12 +42,6 @@ function TopNavi(){
               <NavLink to={"/"} className="nav-link">Home</NavLink>&nbsp;
             </li>
             <li className="nav-item">
-              <NavLink to={"/image/list"} className="nav-link">Image</NavLink>&nbsp;
-            </li>
-            <li className="nav-item">
-              <NavLink to={"/board/list"} className="nav-link">Board</NavLink>&nbsp;
-            </li>
-            <li className="nav-item">
               <NavLink className="nav-link" to="/community/list">제보게시판</NavLink>
             </li>
             <li className="nav-item">
