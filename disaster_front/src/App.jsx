@@ -4,7 +4,7 @@ import Home from "./components/common/Home"
 import NotFoundMenu from "./components/error/NotFoundMenu"
 import MemberComp from "./components/member/MemberComp"
 import CommunityComp from "./components/community/CommunityComp"
-import QuizComp from "./componentS/quiz/QuizComp";
+import QuizComp from "./components/quiz/QuizComp";
 
 function App() {
 
