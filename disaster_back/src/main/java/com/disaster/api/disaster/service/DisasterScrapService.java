@@ -20,66 +20,42 @@ public class DisasterScrapService {
     // 1. 스크랩 등록
     @Transactional
     public void addScrap(String memberId, Long no) {
-        /* [원래 코드] - 회원 기능 연동 시 주석 해제 후 아래 임시 코드를 제거하세요.
-        if (disasterScrapRepository.existsByIdAndNo(memberId, no)) {
-            throw new IllegalStateException("이미 스크랩한 재난 정보입니다.");
-        }
-
-        DisasterScrap scrap = new DisasterScrap();
-        scrap.setId(memberId); // setMemberId 대신 setId 사용
-        scrap.setNo(no);
-
-        disasterScrapRepository.save(scrap);
-        */
-
-        // ------------------ [임시 테스트 코드 시작] ------------------
         if (memberId == null || memberId.trim().isEmpty()) {
-            memberId = "test_member";
+            throw new IllegalArgumentException("회원 식별 정보가 없습니다.");
         }
 
+        // 중복 스크랩 방지 검증
         if (disasterScrapRepository.existsByIdAndNo(memberId, no)) {
             throw new IllegalStateException("이미 스크랩한 재난 정보입니다.");
         }
 
         DisasterScrap scrap = new DisasterScrap();
-        scrap.setId(memberId); // 엔티티 필드인 id에 맞춰 setId로 바인딩!
+        scrap.setId(memberId); // 회원 테이블의 PK(id)와 논리적으로 연결됨
         scrap.setNo(no);
 
         disasterScrapRepository.save(scrap);
-        // ------------------ [임시 테스트 코드 끝] ------------------
+
     }
 
     // 2. 스크랩 취소
     @Transactional
     public void removeScrap(String memberId, Long no) {
-        /* [원래 코드] - 회원 기능 연동 시 주석 해제 후 아래 임시 코드를 제거하세요.
-        DisasterScrap scrap = disasterScrapRepository.findByIdAndNo(memberId, no)
-                .orElseThrow(() -> new IllegalArgumentException("스크랩 내역을 찾을 수 없습니다."));
-        disasterScrapRepository.delete(scrap);
-        */
-
-        // ------------------ [임시 테스트 코드 시작] ------------------
         if (memberId == null || memberId.trim().isEmpty()) {
-            memberId = "test_member";
+            throw new IllegalArgumentException("회원 식별 정보가 없습니다.");
         }
 
         DisasterScrap scrap = disasterScrapRepository.findByIdAndNo(memberId, no)
-                .orElseThrow(() -> new IllegalArgumentException("스크랩 내역을 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("취소할 스크랩 내역을 찾을 수 없습니다."));
+
         disasterScrapRepository.delete(scrap);
-        // ------------------ [임시 테스트 코드 끝] ------------------
     }
 
     // 3. 내 스크랩 목록 조회
     public Page<DisasterScrap> getMyScrapList(String memberId, Pageable pageable) {
-        /* [원래 코드] - 회원 기능 연동 시 주석 해제 후 아래 임시 코드를 제거하세요.
-        return disasterScrapRepository.findById(memberId, pageable);
-        */
-
-        // ------------------ [임시 테스트 코드 시작] ------------------
         if (memberId == null || memberId.trim().isEmpty()) {
-            memberId = "test_member";
+            throw new IllegalArgumentException("회원 식별 정보가 없습니다.");
         }
         return disasterScrapRepository.findById(memberId, pageable);
-        // ------------------ [임시 테스트 코드 끝] ------------------
     }
+
 }

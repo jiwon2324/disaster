@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DisasterInfoRepository extends JpaRepository<DisasterInfo, Long> {
-    // JpaRepository를 상속받으면 save(), findById() 등을 자동으로 사용할 수 있습니다.
+    // JpaRepository를 상속받으면 save(), findById() 등을 자동으로 사용가능
 }

@@ -1,7 +1,9 @@
 package com.disaster.api.disaster.service;
 
 import com.disaster.api.disaster.entity.DisasterCatAssign;
+import com.disaster.api.disaster.entity.DisasterCategory;
 import com.disaster.api.disaster.entity.DisasterInfo;
+import com.disaster.api.disaster.repository.DisasterCategoryMasterRepository;
 import com.disaster.api.disaster.repository.DisasterCategoryRepository;
 import com.disaster.api.disaster.repository.DisasterCatAssignRepository;
 import com.disaster.api.disaster.repository.DisasterInfoRepository;
@@ -27,6 +29,7 @@ public class DisasterCategoryService {
     private final DisasterCategoryRepository disasterCategoryRepository;
     private final DisasterCatAssignRepository disasterCatAssignRepository;
     private final DisasterInfoRepository disasterInfoRepository;
+    private final DisasterCategoryMasterRepository disasterCategoryMasterRepository;
 
 
     // API 연동 및 엔티티 저장 로직
@@ -119,5 +122,26 @@ public class DisasterCategoryService {
         if (text.contains("실종") || text.contains("수색") || text.contains("배회") || text.contains("찾습니다")) catIDs.add(8);
 
         return catIDs;
+    }
+
+    @Transactional(readOnly = true)
+    public List<DisasterCategory> getAllCategories() {
+        return disasterCategoryMasterRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public DisasterCategory getCategory(Long catId) {
+        return disasterCategoryMasterRepository.findById(catId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리가 존재하지 않습니다. ID=" + catId));
+    }
+
+    @Transactional
+    public void saveCategory(DisasterCategory category) {
+        disasterCategoryMasterRepository.save(category);
+    }
+
+    @Transactional
+    public void deleteCategory(Long catId) {
+        disasterCategoryMasterRepository.deleteById(catId);
     }
 }
