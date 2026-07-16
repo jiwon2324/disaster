@@ -69,7 +69,6 @@ function QuizView() {
           </h3>
           <p className="rounded p-4 text-dark" style={{ whiteSpace: "pre-wrap", background: "#f8f9fa", minHeight: "100px" }}>{vo.content}</p>
           <p className="text-muted small">
-            <i className="bi bi-person-fill me-1"></i>출제자: {vo.writer} &nbsp;|&nbsp; 
             <i className="bi bi-eye-fill me-1"></i>조회수: {vo.hit}
           </p>
           
