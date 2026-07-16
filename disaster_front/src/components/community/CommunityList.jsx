@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "../board/Board.css"; 
 import PageNation from "../common/PageNation";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
@@ -38,16 +37,18 @@ function CommunityList(){
   let trTag = myJSON.list.map(
     (vo) => {
       return (
-        <tr className="dataRow" key={vo.no}
-         onClick={() => navigate(`/community/view?no=${vo.no}&inc=1`)}>
-          <td className="no">{vo.no}</td>
+        <tr className="dataRow align-middle" key={vo.no}
+         onClick={() => navigate(`/community/view?no=${vo.no}&inc=1`)} style={{ cursor: "pointer" }}>
+          <td className="no text-center text-muted">{vo.no}</td>
           <td>
-            {vo.fileName && <img src={`http://localhost/image/${vo.fileName}`} alt="thumb" style={{width:"50px", marginRight:"10px"}} />}
-            {vo.title}
+            <div className="d-flex align-items-center">
+              {vo.fileName && <img src={`http://localhost/image/${vo.fileName}`} alt="thumb" className="img-thumbnail rounded me-2" style={{width:"45px", height:"45px", objectFit:"cover"}} />}
+              <span className="fw-semibold text-dark">{vo.title}</span>
+            </div>
           </td>
-          <td>{vo.writer}</td>
-          <td>{format(new Date(vo.writeDate), "yyyy-MM-dd")}</td>
-          <td>{vo.hit}</td>
+          <td className="text-center">{vo.writer}</td>
+          <td className="text-center text-secondary">{format(new Date(vo.writeDate), "yyyy-MM-dd")}</td>
+          <td className="text-center"><span className="badge bg-light text-secondary border">{vo.hit}</span></td>
         </tr>
       )
     }
@@ -55,28 +56,38 @@ function CommunityList(){
 
   return(
     <>
-      <div>/community/list</div>
-      <hr /> <br />
-      <table className="table table-hover">
-        <thead>
+
+      
+      {/* 부트스트랩 클래스 스타일만 변경 */}
+      <table className="table table-hover align-middle">
+        <thead className="table-light text-center">
           <tr>
-            <th>번호</th>
+            <th style={{ width: "8%" }}>번호</th>
             <th>제목</th>
-            <th>작성자</th>
-            <th>작성일</th>
-            <th>조회수</th>
+            <th style={{ width: "15%" }}>작성자</th>
+            <th style={{ width: "15%" }}>작성일</th>
+            <th style={{ width: "10%" }}>조회수</th>
           </tr>
         </thead>
         <tbody>
-          {trTag}
+          {myJSON.list.length === 0 ? (
+            <tr>
+              <td colSpan="5" className="text-center py-5 text-muted">등록된 제보가 없습니다.</td>
+            </tr>
+          ) : trTag}
         </tbody>
       </table>
 
-      {/* 🛡️ 로그인 정보가 존재하는 유저에게만 [제보하기] 버튼을 노출시킵니다 */}
+      {/* 🛡️ 로그인 정보가 존재하는 유저에게만 [제보하기] 버튼을 노출시킵니다 - 원본 순서 및 틀 백퍼센트 유지 */}
       {loginInfo && (
-        <Link to={"/community/write"} className="btn btn-primary">제보하기</Link>
+        <div className="mb-3">
+          <Link to={"/community/write"} className="btn btn-outline-primary px-4">
+            <i className="bi bi-pencil-square me-1"></i>제보하기
+          </Link>
+        </div>
       )}
       
+      {/* 제보판 내부 페이지를 넘겨주는 페이지네이션 컴포넌트 위치 그대로 유지 */}
       <PageNation pageObject={myJSON.pageObject} />
     </>
   );

@@ -2,69 +2,201 @@ package com.disaster.api.member.controller;
 
 import com.disaster.api.data.dto.SignInResultDto;
 import com.disaster.api.data.dto.SignUpResultDto;
+import com.disaster.api.member.dto.AdminMemberGradeRequest;
+import com.disaster.api.member.dto.AdminMemberStatusRequest;
+import com.disaster.api.member.dto.MemberResponse;
+import com.disaster.api.member.dto.MemberUpdateRequest;
+import com.disaster.api.member.dto.PasswordChangeRequest;
+import com.disaster.api.member.service.MemberService;
 import com.disaster.api.member.vo.LoginVO;
 import com.disaster.api.member.vo.MemberVO;
 import com.disaster.api.service.SignService;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/member")
-@CrossOrigin(origins = "http://localhost:5173") // react 서버로 데이터 공유 허용해준다.
+@CrossOrigin(origins = "http://localhost:5173")
+@RequiredArgsConstructor
 @Log4j2
 public class MemberController {
 
-    // service 자동 DI
     private final SignService signService;
+    private final MemberService memberService;
 
-    @Autowired // 생성자를 이용한 자동 DI
-    public MemberController(SignService signService){
-        this.signService = signService;
-    }
+    // =========================
+    // 로그인 및 회원가입
+    // =========================
 
-    //로그인 처리
-    @PostMapping("/login.do") //  /sign-api/sign-in
-    @Operation(summary = "(로그인)")
+    @PostMapping("/login.do")
+    @Operation(summary = "로그인")
     public SignInResultDto login(
             @RequestBody LoginVO vo
-            ) throws RuntimeException {
-
-        // 넘겨 받은 데이터에서 필요한 데이터 꺼내기.
+    ) {
         String id = vo.getId();
         String pw = vo.getPw();
 
-        // 넘어오는 데이터 확인하기
-        log.info("[signIn] 로그인 시도를 하고 있습니다. id : {}, pw : {}", id, pw);
-        // 정상적인 로그인 처리가 되어서 데이터를 가져오거나 정보가 틀리면 예외가 발생된다.
-        SignInResultDto signInResultDto = signService.signIn(id, pw);
+        log.info("[login] 로그인 시도, id : {}", id);
 
-        if(signInResultDto.getCode() == 0){
-            // signInResultDto - success, code, msg, token
-            log.info("[signIn] 정상적으로 로그인되었습니다. id : {}, token : {}",
-                   id, signInResultDto.getToken());
-        }
-
-        // 토큰이 포함됨. - react에서 X-AUTH-TOKEN 헤더에 추가해서 서버에 보내야한다.
-        return signInResultDto;
+        return signService.signIn(id, pw);
     }
 
-    @PostMapping("/write.do") //  /sign-api/sign-up
-    @Operation(summary = "(회원가입)")
+    @PostMapping("/write.do")
+    @Operation(summary = "회원가입")
     public SignUpResultDto write(
             @RequestBody MemberVO vo
-    ){
+    ) {
+        log.info("[signUp] 회원가입 수행, id : {}", vo.getId());
 
-        // 넘어온 데이터 확인
-        log.info("[signUp] 회원가입을 수행합니다. vo : {}", vo);
-        // DB에 적용
-        SignUpResultDto signUpResultDto = signService.signUp(vo);
-        log.info("[signUp] 회원가입을 완료했습니다.");
-        log.info("[signUp] signUpResultDto : {}", signUpResultDto);
-
-        // success, code, msg
-        return signUpResultDto;
+        return signService.signUp(vo);
     }
 
+    @GetMapping("/check-id.do")
+    @Operation(summary = "아이디 중복 확인")
+    public Map<String, Object> checkId(
+            @RequestParam String id
+    ) {
+        boolean available = memberService.isIdAvailable(id);
+
+        return Map.of(
+                "id", id,
+                "available", available
+        );
+    }
+
+    // =========================
+    // 일반회원 기능
+    // =========================
+
+    @GetMapping("/me.do")
+    @Operation(summary = "내 회원정보 조회")
+    public MemberResponse myInfo(
+            Authentication authentication
+    ) {
+        return memberService.getMyInfo(
+                authentication.getName()
+        );
+    }
+
+    @PutMapping("/update.do")
+    @Operation(summary = "내 회원정보 수정")
+    public MemberResponse update(
+            @RequestBody MemberUpdateRequest request,
+            Authentication authentication
+    ) {
+        return memberService.updateMyInfo(
+                authentication.getName(),
+                request
+        );
+    }
+
+    @PutMapping("/password.do")
+    @Operation(summary = "비밀번호 변경")
+    public Map<String, String> changePassword(
+            @RequestBody PasswordChangeRequest request,
+            Authentication authentication
+    ) {
+        memberService.changePassword(
+                authentication.getName(),
+                request
+        );
+
+        return Map.of(
+                "message",
+                "비밀번호가 변경되었습니다."
+        );
+    }
+
+    @PutMapping("/withdraw.do")
+    @Operation(summary = "회원 탈퇴")
+    public Map<String, String> withdraw(
+            Authentication authentication
+    ) {
+        memberService.withdraw(
+                authentication.getName()
+        );
+
+        return Map.of(
+                "message",
+                "회원 탈퇴가 완료되었습니다."
+        );
+    }
+
+    // =========================
+    // 관리자 회원관리 기능
+    // =========================
+
+    @GetMapping("/admin/list.do")
+    @Operation(summary = "관리자 회원 목록 및 검색")
+    public Page<MemberResponse> adminMemberList(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Integer gradeNo,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(
+                        Sort.Direction.DESC,
+                        "regDate"
+                )
+        );
+
+        return memberService.getMemberList(
+                keyword,
+                status,
+                gradeNo,
+                pageable
+        );
+    }
+
+    @GetMapping("/admin/view.do")
+    @Operation(summary = "관리자 회원 상세조회")
+    public MemberResponse adminMemberDetail(
+            @RequestParam String id
+    ) {
+        return memberService.getMemberDetail(id);
+    }
+
+    @PutMapping("/admin/status.do")
+    @Operation(summary = "관리자 회원 상태 변경")
+    public MemberResponse adminUpdateStatus(
+            @RequestParam String id,
+            @RequestBody AdminMemberStatusRequest request
+    ) {
+        return memberService.updateMemberStatus(
+                id,
+                request
+        );
+    }
+
+    @PutMapping("/admin/grade.do")
+    @Operation(summary = "관리자 회원 등급 변경")
+    public MemberResponse adminUpdateGrade(
+            @RequestParam String id,
+            @RequestBody AdminMemberGradeRequest request
+    ) {
+        return memberService.updateMemberGrade(
+                id,
+                request
+        );
+    }
 }

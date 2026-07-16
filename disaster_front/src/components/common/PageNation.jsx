@@ -1,9 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
-// 컴포넌트에서 Spring Boot에서 넘어오는 pageObject를 
+// 컴포넌트에서 Spring Boot에서 넘어오는 pageObject를 수집
 const PageNation = ({pageObject}) => {
 
   const navigate = useNavigate();
+  const location = useLocation(); // 🔑 [핵심] 현재 주소창의 진짜 경로(예: /community/list 또는 /quiz/list)를 읽어옵니다.
 
   // 데이터 처리
   console.log("pageObject=",JSON.stringify(pageObject));
@@ -16,8 +17,9 @@ const PageNation = ({pageObject}) => {
     // 넘어온 페이지 확인
     console.log("page=",page);
 
-    // 페이지와 검색 정보를 포함시켜서 리스트를 다시 부르기
-    navigate("/board/list?page=" + page
+    // 🔑 [해결 완료] navigate 앞의 주소 부분을 고정된 "/board/list" 대신
+    // 현재 주소인 location.pathname으로 동적 처리하여 어느 게시판이든 알아서 해당 경로를 쫓아가게 만듭니다!
+    navigate(location.pathname + "?page=" + page
       + "&perPageNum=" + pageObject.perPageNum
       + "&key=" + pageObject.key
       + "&word=" + pageObject.word
@@ -26,13 +28,13 @@ const PageNation = ({pageObject}) => {
 
   // 맨 앞 페이지(1페이지) 이동 코드 작성
   liTag.push(
-      <li className={(pageObject.page==1)?"page-item disabled":"page-item"}>
+      <li key="first" className={(pageObject.page==1)?"page-item disabled":"page-item"}>
         <a className="page-link" href="#" onClick={(event)=>handleClick(event, 1)}>&lt;&lt;</a>
       </li>
   );
   // 시작페이지의 이전 페이지
   liTag.push(
-      <li className={(pageObject.startPage==1)?"page-item disabled":"page-item"}>
+      <li key="prev" className={(pageObject.startPage==1)?"page-item disabled":"page-item"}>
         <a className="page-link" href="#"
          onClick={(event)=>handleClick(event, pageObject.startPage - 1)}>&lt;</a>
       </li>
@@ -41,7 +43,7 @@ const PageNation = ({pageObject}) => {
   // 페이지 클릭 버튼
   for(let i=pageObject.startPage; i <= pageObject.endPage; i++){
     liTag.push(
-      <li className={(pageObject.page == i)?"page-item disabled":"page-item"}>
+      <li key={i} className={(pageObject.page == i)?"page-item active disabled":"page-item"}> {/* active 스타일 지원 추가 */}
         <a className="page-link" href="#"
          onClick={(event)=>handleClick(event,i)}>{i}</a>
       </li>
@@ -50,7 +52,7 @@ const PageNation = ({pageObject}) => {
 
   // 끝 페이지의 다음 페이지
   liTag.push(
-      <li className={(pageObject.totalPage > pageObject.endPage)?"page-item":"page-item disabled"}>
+      <li key="next" className={(pageObject.totalPage > pageObject.endPage)?"page-item":"page-item disabled"}>
         <a className="page-link" href="#"
          onClick={(event)=>handleClick(event,pageObject.endPage + 1)}>&gt;</a>
       </li>
@@ -58,7 +60,7 @@ const PageNation = ({pageObject}) => {
 
   // 마지막 페이지 가기
   liTag.push(
-      <li className={(pageObject.totalPage > pageObject.page)?"page-item":"page-item disabled"}>
+      <li key="last" className={(pageObject.totalPage > pageObject.page)?"page-item":"page-item disabled"}>
         <a className="page-link" href="#"
           onClick={(event)=>handleClick(event,pageObject.totalPage)}>&gt;&gt;</a>
       </li>
@@ -66,8 +68,9 @@ const PageNation = ({pageObject}) => {
 
   // 데이터 표시
   return (
-    <div>
-      <ul className="pagination">
+    // justify-content-center로 페이지네이션 버튼들이 가운데로 정렬되게 클래스만 깔끔하게 보강했습니다!
+    <div className="d-flex justify-content-center mt-4">
+      <ul className="pagination mb-0">
         {liTag}
       </ul>
     </div>

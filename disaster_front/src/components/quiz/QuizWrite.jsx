@@ -10,9 +10,8 @@ function QuizWrite() {
 
   const navigate = useNavigate();
 
-  // 🛡️ 로컬스토리지에서 로그인 ID를 꺼내와 즉시 고정 변수로 만듭니다. (useEffect 제거 가능!)
   const loginInfoStr = localStorage.getItem("login");
-  let loginId = "관리자"; // 기본값
+  let loginId = "관리자"; 
   
   if (loginInfoStr) {
     try {
@@ -28,7 +27,6 @@ function QuizWrite() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // 💥 고정된 loginId를 writer 키값으로 서버에 전송합니다.
     const data = { title, content, ans, writer: loginId, explain };
 
     try {
@@ -43,29 +41,39 @@ function QuizWrite() {
 
   return (
     <>
-      <div>/quiz/write</div>
-      <hr />
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3 mt-3">
-          <label>문제 제목:</label>
-          <input type="text" className="form-control" required onChange={(e) => setTitle(e.target.value)}/>
-        </div>
-        <div className="mb-3 mt-3">
-          <label>문제 지문(내용):</label>
-          <textarea className="form-control" rows="4" required onChange={(e) => setContent(e.target.value)}></textarea>
-        </div>
-        <div className="mb-3 mt-3">
-          <label>핵심 정답:</label>
-          <input type="text" className="form-control" required placeholder="단답형 정답 입력" onChange={(e) => setAns(e.target.value)}/>
-        </div>
-        <div className="mb-3 mt-3">
-          <label>상세 정답 해설:</label>
-          <textarea className="form-control" rows="3" required placeholder="상세 해설 내용 입력" onChange={(e) => setExplain(e.target.value)}></textarea>
-        </div>
 
-        <button type="submit" className="btn btn-primary mr-2">퀴즈 출제</button>
-        <button type="button" className="btn btn-warning" onClick={() => navigate("/quiz/list")}>취소</button>
-      </form>
+      
+      {/* 폼 테두리 및 그림자 클래스만 개선 */}
+      <div className="card border-0 bg-light-subtle p-3 mb-4">
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label className="form-label fw-bold text-secondary">문제 제목:</label>
+            <input type="text" className="form-control rounded border-secondary-subtle" required onChange={(e) => setTitle(e.target.value)} placeholder="직관적이고 명확한 문제명을 입력하세요."/>
+          </div>
+          <div className="mb-3">
+            <label className="form-label fw-bold text-secondary">문제 지문(내용):</label>
+            <textarea className="form-control rounded border-secondary-subtle" rows="5" required onChange={(e) => setContent(e.target.value)} placeholder="문제를 풀기 위한 상세한 지문 정보를 입력해 주세요."></textarea>
+          </div>
+          <div className="mb-3">
+            <label className="form-label fw-bold text-secondary">핵심 정답:</label>
+            <input type="text" className="form-control rounded border-secondary-subtle" required placeholder="단답형 정답 입력 (공백 유의)" onChange={(e) => setAns(e.target.value)}/>
+          </div>
+          <div className="mb-3">
+            <label className="form-label fw-bold text-secondary">상세 정답 해설:</label>
+            <textarea className="form-control rounded border-secondary-subtle" rows="4" required placeholder="문제 해결을 위한 상세 해설 내용을 입력하세요." onChange={(e) => setExplain(e.target.value)}></textarea>
+          </div>
+
+          <div className="d-flex gap-2 mt-4">
+            {/* 버튼 디자인 변경: btn-primary -> btn-outline-primary */}
+            <button type="submit" className="btn btn-outline-primary px-5 rounded-pill">
+              <i className="bi bi-check-circle me-1"></i>퀴즈 출제
+            </button>
+            <button type="button" className="btn btn-light px-4 rounded-pill border border-secondary-subtle text-secondary" onClick={() => navigate("/quiz/list")}>
+              <i className="bi bi-x-circle me-1"></i>취소
+            </button>
+          </div>
+        </form>
+      </div>
     </>
   );
 }

@@ -36,32 +36,41 @@ function QuizUpdate() {
 
   return (
     <>
-      <div>/quiz/update</div>
-      <hr />
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3 mt-3">
-          <label>퀴즈 번호:</label>
-          <input type="text" className="form-control" name="no" value={vo.no || ''} readOnly />
-        </div>
-        <div className="mb-3 mt-3">
-          <label>문제 명:</label>
-          <input type="text" className="form-control" name="title" value={vo.title || ''} required onChange={changeData}/>
-        </div>
-        <div className="mb-3 mt-3">
-          <label>문제 내용:</label>
-          <textarea className="form-control" rows="4" name="content" value={vo.content || ''} required onChange={changeData}></textarea>
-        </div>
-        <div className="mb-3 mt-3">
-          <label>정답 변경:</label>
-          <input type="text" className="form-control" name="ans" value={vo.ans || ''} required onChange={changeData}/>
-        </div>
-        <div className="mb-3 mt-3">
-          <label>해설 변경:</label>
-          <textarea className="form-control" rows="3" name="explain" value={vo.explain || ''} required onChange={changeData}></textarea>
-        </div>
-        <button type="submit" className="btn btn-primary mr-2">수정 완료</button>
-        <button type="button" className="btn btn-warning" onClick={() => navigate(`/quiz/view?no=${no}&inc=0`)}>취소</button>
-      </form>
+
+      
+      <div className="card border-0 p-3 mb-4">
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label className="form-label fw-bold text-secondary">퀴즈 번호:</label>
+            <input type="text" className="form-control rounded border-secondary-subtle bg-light text-muted" name="no" value={vo.no || ''} readOnly style={{cursor: 'not-allowed'}} />
+          </div>
+          <div className="mb-3">
+            <label className="form-label fw-bold text-secondary">문제 명:</label>
+            <input type="text" className="form-control rounded border-secondary-subtle" name="title" value={vo.title || ''} required onChange={changeData}/>
+          </div>
+          <div className="mb-3">
+            <label className="form-label fw-bold text-secondary">문제 내용:</label>
+            <textarea className="form-control rounded border-secondary-subtle" rows="5" name="content" value={vo.content || ''} required onChange={changeData}></textarea>
+          </div>
+          <div className="mb-3">
+            <label className="form-label fw-bold text-secondary">정답 변경:</label>
+            <input type="text" className="form-control rounded border-secondary-subtle" name="ans" value={vo.ans || ''} required onChange={changeData}/>
+          </div>
+          <div className="mb-3">
+            <label className="form-label fw-bold text-secondary">해설 변경:</label>
+            <textarea className="form-control rounded border-secondary-subtle" rows="4" name="explain" value={vo.explain || ''} required onChange={changeData}></textarea>
+          </div>
+          
+          <div className="d-flex gap-2 mt-4">
+            <button type="submit" className="btn btn-warning px-5 rounded-pill text-white fw-bold">
+              <i className="bi bi-check-circle me-1"></i>수정 완료
+            </button>
+            <button type="button" className="btn btn-light px-4 rounded-pill border border-secondary-subtle text-secondary" onClick={() => navigate(`/quiz/view?no=${no}&inc=0`)}>
+              <i className="bi bi-x-circle me-1"></i>취소
+            </button>
+          </div>
+        </form>
+      </div>
     </>
   );
 }
