@@ -29,3 +29,4 @@ public class DisasterScrap {
     @Column(name = "scrap_date", updatable = false)
     private LocalDateTime scrapDate; // 스크랩 일시 (자동 세팅)
 }
+

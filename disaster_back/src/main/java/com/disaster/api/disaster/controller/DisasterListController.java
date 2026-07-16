@@ -3,6 +3,7 @@ package com.disaster.api.disaster.controller;
 import com.disaster.api.disaster.entity.DisasterInfo;
 import com.disaster.api.disaster.service.DisasterListService;
 import com.disaster.api.util.page.PageObject;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
+@Tag(name = "DisasterList", description = "재난정보리스트")
 @Controller
 @RequestMapping("/disasterList")
 public class DisasterListController {
@@ -24,11 +26,11 @@ public class DisasterListController {
 
     @GetMapping("/list.do")
     public String list(
-            @RequestParam(value = "catID", defaultValue = "1") int catID,
+            @RequestParam(value = "catId", defaultValue = "1") Long catId,
             HttpServletRequest request,
             Model model) {
         try {
-            String headTitle = switch(catID) {
+            String headTitle = switch(catId.intValue()) {
                 case 1 -> "피해/폭발(산불 포함)";
                 case 2 -> "지진/해일";
                 case 3 -> "태풍/호우(폭풍, 홍수 포함)";
@@ -42,7 +44,7 @@ public class DisasterListController {
             model.addAttribute("headTitle", headTitle);
 
             PageObject pageObject = PageObject.getInstance(request);
-            List<DisasterInfo> list = disasterListService.getDisasterList(catID, pageObject);
+            List<DisasterInfo> list = disasterListService.getDisasterList(catId, pageObject);
 
             model.addAttribute("list", list);
             model.addAttribute("pageObject", pageObject);

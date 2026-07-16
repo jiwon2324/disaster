@@ -23,7 +23,7 @@ public class DisasterListService {
     }
 
     @Transactional
-    public List<DisasterInfo> getDisasterList(int catID, PageObject pageObject) throws Exception {
+    public List<DisasterInfo> getDisasterList(Long catId, PageObject pageObject) throws Exception {
         // 기존 PageObject의 시작 페이지는 1부터 시작하지만, Spring Data JPA의 PageRequest는 0-index 기반입니다.
         int jpaPage = (int) pageObject.getPage() - 1;
         if (jpaPage < 0) jpaPage = 0;
@@ -35,7 +35,7 @@ public class DisasterListService {
 
         // 2. Repository 호출을 통한 페이징 및 검색 수행
         Page<DisasterInfo> resultPage = disasterListRepository.findDisasters(
-                catID,
+                catId,
                 pageObject.getKey(),
                 pageObject.getWord(),
                 pageable

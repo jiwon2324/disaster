@@ -2,13 +2,13 @@ package com.disaster.api.disaster.controller;
 
 import com.disaster.api.disaster.service.DisasterCategoryService;
 import com.disaster.api.util.page.PageObject;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Controller
+@Tag(name = "DisasterCategory", description = "재난정보카테고리")
 @RequestMapping("/disasterCategory")
 public class DisasterCategoryController {
 

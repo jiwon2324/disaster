@@ -4,8 +4,10 @@ import com.disaster.api.disaster.entity.DisasterCatAssign;
 import com.disaster.api.disaster.entity.DisasterInfo;
 import com.disaster.api.disaster.repository.DisasterCategoryRepository;
 import com.disaster.api.disaster.repository.DisasterCatAssignRepository;
+import com.disaster.api.disaster.repository.DisasterInfoRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,16 +21,13 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DisasterCategoryService {
 
     private final DisasterCategoryRepository disasterCategoryRepository;
     private final DisasterCatAssignRepository disasterCatAssignRepository;
+    private final DisasterInfoRepository disasterInfoRepository;
 
-    public DisasterCategoryService(DisasterCategoryRepository disasterCategoryRepository,
-                                   DisasterCatAssignRepository disasterCatAssignRepository) {
-        this.disasterCategoryRepository = disasterCategoryRepository;
-        this.disasterCatAssignRepository = disasterCatAssignRepository;
-    }
 
     // API 연동 및 엔티티 저장 로직
     @Transactional
@@ -88,10 +87,9 @@ public class DisasterCategoryService {
                         info.setContent(content);
                         info.setCreateDate(formattedDate);
                         info.setDangerLevel(1);
-                        info.setCatId(representativeCatID); // DisasterInfo의 catID 필드 매핑
 
                         // save() 호출 시 영속 컨텍스트를 거쳐 DB에 저장되고 Sequence에 의한 ID(no)가 바인딩됩니다.
-                        DisasterInfo savedInfo = disasterCategoryRepository.save(info);
+                        DisasterInfo savedInfo = disasterInfoRepository.save(info);
 
                         // 2. 다중 카테고리 매핑 관계가 감지되었을 경우 DisasterCatAssign 엔티티를 생성하여 저장
                         for (Integer catId : catIDs) {

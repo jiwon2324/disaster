@@ -23,8 +23,6 @@ public class DisasterInfo {
     @Column(name = "summary", nullable = false, length = 2)
     private String summary; // DISASTER_CATEGORY 참조 외래키 역할
 
-    @Column(name = "CATID", nullable = false)
-    private Integer catId; // 카테고리 번호 (1: 피해/폭발, 2: 지진/해일 등)
 
     @Column(name = "APIID", length = 100)
     private String apiId;
@@ -42,11 +40,11 @@ public class DisasterInfo {
     private Integer dangerLevel = 1; // 기본값 1
 
     @Lob
-    @Column(name = "Content", columnDefinition = "clob")
+    @Column(name = "Content", columnDefinition = "TEXT")
     private String content;
 
     @Lob
-    @Column(name = "Detailcontent", columnDefinition = "clob")
+    @Column(name = "Detailcontent", columnDefinition = "TEXT")
     private String detailContent;
 
     @Column(name = "Latitude", precision = 10, scale = 7)

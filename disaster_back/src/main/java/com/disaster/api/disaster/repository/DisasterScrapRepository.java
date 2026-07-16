@@ -13,11 +13,11 @@ public interface DisasterScrapRepository extends JpaRepository<DisasterScrap, Lo
 
     // 특정 회원이 특정 재난글을 이미 스크랩했는지 조회 (중복 스크랩 방지용)
     // (DisasterScrap 엔티티의 필드명에 맞춰서 수정하여 사용하세요)
-    boolean existsByMemberIdAndNo(String memberId, Long no);
+    boolean existsByIdAndNo(String Id, Long no);
 
     // 특정 회원이 스크랩한 목록 페이징 조회
-    Page<DisasterScrap> findByMemberId(String memberId, Pageable pageable);
+    Page<DisasterScrap> findById(String Id, Pageable pageable);
 
     // 스크랩 취소(삭제)를 위한 단건 조회
-    Optional<DisasterScrap> findByMemberIdAndNo(String memberId, Long no);
+    Optional<DisasterScrap> findByIdAndNo(String Id, Long no);
 }

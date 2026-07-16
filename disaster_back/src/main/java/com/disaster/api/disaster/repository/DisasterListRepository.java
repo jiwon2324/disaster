@@ -11,14 +11,17 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DisasterListRepository extends JpaRepository<DisasterInfo, Long> {
 
-    // 1. 카테고리 ID 및 동적 키워드 검색을 포함하는 JPQL 페이징 쿼리
-    // Oracle의 3중 서브쿼리 페이징을 작성할 필요 없이, Pageable 파라미터를 넘기면 JPA가 DB 방언에 맞춰 페이징을 자동 수행합니다.
-    @Query("SELECT i FROM DisasterInfo i WHERE i.catID = :catID " +
+    // 1. 카테고리 할당 테이블(DisasterCatAssign)과 조인하여 조건에 맞는 재난 정보를 가져오는 페이징 쿼리
+    @Query("SELECT i FROM DisasterInfo i " +
+            "WHERE EXISTS (" +
+            "    SELECT 1 FROM DisasterCatAssign a " +
+            "    WHERE a.no = i.no AND a.catId = :catId" +
+            ") " +
             "AND (:word IS NULL OR :word = '' " +
             "     OR (:key LIKE '%t%' AND i.content LIKE %:word%) " +
             "     OR (:key LIKE '%l%' AND i.locationName LIKE %:word%))")
     Page<DisasterInfo> findDisasters(
-            @Param("catID") int catID,
+            @Param("catId") Long catId, // DisasterCatAssign의 catId 타입과 일치하게 Long으로 변경
             @Param("key") String key,
             @Param("word") String word,
             Pageable pageable
