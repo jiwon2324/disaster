@@ -7,7 +7,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
-import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
 @RequestMapping("/qna")
@@ -36,10 +35,20 @@ public class QnaController {
     public Page<QnaResponse> list(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String category,
-            @PageableDefault(size = 10, sort = "no", direction = DESC)
-            Pageable pageable
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        return qnaService.getQuestionList(keyword, category, pageable);
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(Sort.Direction.DESC, "no")
+        );
+
+        return qnaService.getQuestionList(
+                keyword,
+                category,
+                pageable
+        );
     }
 
     @GetMapping("/view.do")
@@ -54,7 +63,10 @@ public class QnaController {
             @RequestBody QnaRequest request,
             Authentication authentication
     ) {
-        return qnaService.createQuestion(request, authentication.getName());
+        return qnaService.createQuestion(
+                request,
+                authentication.getName()
+        );
     }
 
     @PutMapping("/update.do")
@@ -64,7 +76,11 @@ public class QnaController {
             @RequestBody QnaRequest request,
             Authentication authentication
     ) {
-        return qnaService.updateQna(no, request, authentication.getName());
+        return qnaService.updateQna(
+                no,
+                request,
+                authentication.getName()
+        );
     }
 
     @DeleteMapping("/delete.do")
@@ -73,7 +89,10 @@ public class QnaController {
             @RequestParam Long no,
             Authentication authentication
     ) {
-        qnaService.deleteQna(no, authentication.getName());
+        qnaService.deleteQna(
+                no,
+                authentication.getName()
+        );
     }
 
     @PostMapping("/answer.do")
@@ -83,6 +102,10 @@ public class QnaController {
             @RequestBody QnaRequest request,
             Authentication authentication
     ) {
-        return qnaService.createAnswer(no, request, authentication.getName());
+        return qnaService.createAnswer(
+                no,
+                request,
+                authentication.getName()
+        );
     }
 }
