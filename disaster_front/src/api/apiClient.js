@@ -13,7 +13,10 @@ apiClient.interceptors.request.use(
     const token = localStorage.getItem("token");
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      const authToken = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
+      const rawToken = token.startsWith("Bearer ") ? token.replace("Bearer ", "") : token;
+      config.headers.Authorization = authToken;
+      config.headers["X-AUTH-TOKEN"] = rawToken;
     }
 
     return config;
