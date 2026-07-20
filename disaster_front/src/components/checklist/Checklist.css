@@ -1,0 +1,109 @@
+.checklist-container {
+  width: min(1000px, calc(100% - 40px));
+  margin: 40px auto;
+}
+
+.checklist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.checklist-button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #2457d6;
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.checklist-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 24px 0;
+}
+
+.checklist-meta div {
+  display: grid;
+  gap: 5px;
+  padding: 18px;
+  border: 1px solid #dddddd;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.checklist-meta strong {
+  font-size: 26px;
+}
+
+.checklist-list {
+  display: grid;
+  gap: 12px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid #dddddd;
+  border-radius: 10px;
+}
+
+.ready-check {
+  width: 34px;
+  height: 34px;
+  border: 2px solid #aaaaaa;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+}
+
+.ready-check.completed {
+  border-color: #159447;
+  background: #159447;
+  color: white;
+}
+
+.checklist-item-content {
+  flex: 1;
+}
+
+.checklist-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.checklist-link {
+  color: inherit;
+}
+
+.checklist-form {
+  display: grid;
+  gap: 18px;
+}
+
+.checklist-form label {
+  display: grid;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.checklist-form input,
+.checklist-form select,
+.checklist-form textarea {
+  padding: 10px;
+  font-size: 15px;
+}
+
+.checklist-error {
+  color: #d10000;
+}
+
+.checklist-empty {
+  padding: 40px;
+  text-align: center;
+}
