@@ -3,41 +3,42 @@ import { useNavigate, useParams } from "react-router-dom";
 import apiClient from "../../api/apiClient";
 import "./Checklist.css";
 
-const getLoginId = () => {
-  try {
-    const loginData = localStorage.getItem("login");
+const TEST_USER_ID = "test_user";
 
-    if (!loginData) {
-      return "test_user";
-    }
+const CATEGORY_OPTIONS = [
+  { label: "식수", value: "\uC2DD\uC218" },
+  { label: "식량", value: "\uC2DD\uB7C9" },
+  { label: "의약품", value: "\uC758\uC57D\uD488" },
+  { label: "조명", value: "\uC870\uBA85" },
+  { label: "위생", value: "\uC704\uC0DD" },
+  { label: "기타", value: "\uAE30\uD0C0" },
+];
 
-    const login = JSON.parse(loginData);
-
-    return login.id ?? login.username ?? "test_user";
-  } catch (error) {
-    console.error("로그인 정보 읽기 실패:", error);
-    return "test_user";
-  }
-};
-
-const initialForm = {
-  id: getLoginId(),
+const createInitialForm = () => ({
+  id: TEST_USER_ID,
   name: "",
   category: "",
   quantity: 1,
-  unit: "개",
+  unit: "ea",
   priority: "",
   expiryDate: "",
   memo: "",
   isReady: "N",
+});
+
+const logApiError = (label, err) => {
+  console.error(label, err);
+  console.error(`${label} status:`, err.response?.status);
+  console.error(`${label} response:`, err.response?.data);
+  console.error(`${label} request URL:`, err.config?.baseURL ? `${err.config.baseURL}${err.config.url}` : err.config?.url);
 };
 
 function ChecklistForm() {
   const { no } = useParams();
   const navigate = useNavigate();
   const isEdit = Boolean(no);
-
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState(createInitialForm);
+  const [fieldErrors, setFieldErrors] = useState({});
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(isEdit);
   const [submitting, setSubmitting] = useState(false);
@@ -51,29 +52,22 @@ function ChecklistForm() {
       try {
         setLoading(true);
         setError("");
-
-        const response = await apiClient.get(
-          `/api/checklists/${no}`
-        );
-
+        const response = await apiClient.get(`/api/checklists/${no}`);
         const item = response.data;
 
         setForm({
-          id: item.id ?? getLoginId(),
+          id: TEST_USER_ID,
           name: item.name ?? "",
           category: item.category ?? "",
           quantity: item.quantity ?? 1,
-          unit: item.unit ?? "개",
+          unit: item.unit ?? "ea",
           priority: item.priority ?? "",
           expiryDate: item.expiryDate ?? "",
           memo: item.memo ?? "",
           isReady: item.isReady ?? "N",
         });
       } catch (err) {
-        console.error("체크리스트 상세 조회 오류:", err);
-        console.error("상태 코드:", err.response?.status);
-        console.error("응답 내용:", err.response?.data);
-
+        logApiError("체크리스트 상세 조회 실패", err);
         setError("물품 정보를 불러오지 못했습니다.");
       } finally {
         setLoading(false);
@@ -85,44 +79,30 @@ function ChecklistForm() {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-
     setForm((current) => ({
       ...current,
-      [name]:
-        name === "quantity"
-          ? Number(value)
-          : value,
+      [name]: name === "quantity" ? Number(value) : value,
     }));
+    setFieldErrors((current) => ({ ...current, [name]: "" }));
   };
 
   const validateForm = () => {
+    const nextErrors = {};
+
     if (!form.name.trim()) {
-      setError("물품명은 필수입니다.");
-      return false;
+      nextErrors.name = "물품명을 입력해 주세요.";
     }
 
     if (!form.id || !form.id.trim()) {
-      setError("사용자 아이디가 없습니다.");
-      return false;
+      nextErrors.id = "사용자 ID를 확인할 수 없습니다.";
     }
 
-    if (
-      !Number.isInteger(form.quantity) ||
-      form.quantity < 1
-    ) {
-      setError("수량은 1 이상의 정수여야 합니다.");
-      return false;
+    if (!Number.isInteger(form.quantity) || form.quantity < 1) {
+      nextErrors.quantity = "수량은 1 이상의 정수로 입력해 주세요.";
     }
 
-    if (
-      form.isReady !== "Y" &&
-      form.isReady !== "N"
-    ) {
-      setError("준비 상태 값이 올바르지 않습니다.");
-      return false;
-    }
-
-    return true;
+    setFieldErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
   };
 
   const handleSubmit = async (event) => {
@@ -132,228 +112,106 @@ function ChecklistForm() {
       return;
     }
 
-    const requestData = {
-      id: form.id.trim(),
+    const payload = {
+      id: TEST_USER_ID,
       name: form.name.trim(),
       category: form.category || null,
       quantity: Number(form.quantity),
-      unit: form.unit?.trim() || null,
+      unit: form.unit.trim() || null,
       priority: form.priority || null,
       expiryDate: form.expiryDate || null,
-      memo: form.memo?.trim() || null,
+      memo: form.memo.trim() || null,
       isReady: form.isReady,
     };
-
-    console.log("체크리스트 전송 데이터:", requestData);
 
     try {
       setSubmitting(true);
       setError("");
 
       if (isEdit) {
-        const response = await apiClient.put(
-          `/api/checklists/${no}`,
-          requestData
-        );
-
-        console.log("수정 응답:", response.data);
-        alert("수정되었습니다.");
+        await apiClient.put(`/api/checklists/${no}`, payload);
       } else {
-        const response = await apiClient.post(
-          "/api/checklists",
-          requestData
-        );
-
-        console.log("등록 응답:", response.data);
-        alert("등록되었습니다.");
+        await apiClient.post("/api/checklists", payload);
       }
 
       navigate("/checklists");
     } catch (err) {
-      console.error("체크리스트 저장 오류:", err);
-      console.error("상태 코드:", err.response?.status);
-      console.error("응답 내용:", err.response?.data);
-
-      if (err.response?.status === 401) {
-        setError(
-          "로그인이 필요하거나 인증 토큰이 없습니다."
-        );
-      } else if (err.response?.status === 403) {
-        setError(
-          "체크리스트 등록 권한이 없습니다."
-        );
-      } else if (err.response?.status === 400) {
-        setError(
-          err.response?.data?.message ??
-            "입력값을 확인해 주세요."
-        );
-      } else if (err.response?.status === 500) {
-        setError(
-          "서버 또는 데이터베이스 오류가 발생했습니다."
-        );
-      } else {
-        setError(
-          isEdit
-            ? "물품 수정에 실패했습니다."
-            : "물품 등록에 실패했습니다."
-        );
-      }
+      logApiError("체크리스트 저장 실패", err);
+      setError("저장에 실패했습니다. 입력한 내용을 확인해 주세요.");
     } finally {
       setSubmitting(false);
     }
   };
 
   if (loading) {
-    return (
-      <div className="checklist-container">
-        <p>물품 정보를 불러오는 중입니다.</p>
-      </div>
-    );
+    return <p className="checklist-state">물품 정보를 불러오는 중입니다.</p>;
   }
 
   return (
     <div className="checklist-container">
-      <h1>
-        {isEdit
-          ? "비상 물품 수정"
-          : "비상 물품 등록"}
-      </h1>
+      <h1>{isEdit ? "물품 수정" : "물품 등록"}</h1>
+      {error && <p className="checklist-error">{error}</p>}
 
-      {error && (
-        <p className="checklist-error">
-          {error}
-        </p>
-      )}
-
-      <form
-        className="checklist-form"
-        onSubmit={handleSubmit}
-      >
+      <form className="checklist-form" onSubmit={handleSubmit}>
         <label>
-          물품명
-          <input
-            type="text"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            maxLength={100}
-            required
-          />
+          물품명 <span className="required">*</span>
+          <input name="name" value={form.name} onChange={handleChange} maxLength={100} required />
+          {fieldErrors.name && <small>{fieldErrors.name}</small>}
         </label>
-
-        <label>
-          카테고리
-          <select
-            name="category"
-            value={form.category}
-            onChange={handleChange}
-          >
-            <option value="">선택</option>
-            <option value="식수">식수</option>
-            <option value="식량">식량</option>
-            <option value="의약품">
-              의약품
-            </option>
-            <option value="조명">조명</option>
-            <option value="위생">위생</option>
-            <option value="기타">기타</option>
-          </select>
-        </label>
-
-        <label>
-          수량
-          <input
-            type="number"
-            name="quantity"
-            value={form.quantity}
-            onChange={handleChange}
-            min="1"
-            step="1"
-            required
-          />
-        </label>
-
-        <label>
-          단위
-          <input
-            type="text"
-            name="unit"
-            value={form.unit}
-            onChange={handleChange}
-            placeholder="개, 병, 팩"
-            maxLength={20}
-          />
-        </label>
-
-        <label>
-          중요도
-          <select
-            name="priority"
-            value={form.priority}
-            onChange={handleChange}
-          >
-            <option value="">선택</option>
-            <option value="필수">필수</option>
-            <option value="권장">권장</option>
-            <option value="선택">선택</option>
-          </select>
-        </label>
-
-        <label>
-          유효기간
-          <input
-            type="date"
-            name="expiryDate"
-            value={form.expiryDate}
-            onChange={handleChange}
-          />
-        </label>
-
+        <input type="hidden" name="id" value={form.id} readOnly />
+        <div className="checklist-form-row">
+          <label>
+            카테고리
+            <select name="category" value={form.category} onChange={handleChange}>
+              <option value="">선택</option>
+              {CATEGORY_OPTIONS.map((category) => (
+                <option key={category.label} value={category.value}>{category.label}</option>
+              ))}
+            </select>
+          </label>
+          <label>
+            중요도
+            <select name="priority" value={form.priority} onChange={handleChange}>
+              <option value="">선택</option>
+              <option value="\uD544\uC218">필수</option>
+              <option value="\uAD8C\uC7A5">권장</option>
+              <option value="\uC120\uD0DD">선택</option>
+            </select>
+          </label>
+        </div>
+        <div className="checklist-form-row">
+          <label>
+            수량 <span className="required">*</span>
+            <input type="number" name="quantity" value={form.quantity} onChange={handleChange} min="1" step="1" required />
+            {fieldErrors.quantity && <small>{fieldErrors.quantity}</small>}
+          </label>
+          <label>
+            단위
+            <input name="unit" value={form.unit} onChange={handleChange} placeholder="개, 병, 세트" maxLength={20} />
+          </label>
+        </div>
+        <div className="checklist-form-row">
+          <label>
+            유효기간
+            <input type="date" name="expiryDate" value={form.expiryDate} onChange={handleChange} />
+          </label>
+          <label>
+            준비 상태
+            <select name="isReady" value={form.isReady} onChange={handleChange}>
+              <option value="N">준비 필요</option>
+              <option value="Y">준비 완료</option>
+            </select>
+          </label>
+        </div>
         <label>
           메모
-          <textarea
-            name="memo"
-            value={form.memo}
-            onChange={handleChange}
-            rows={5}
-            maxLength={1000}
-          />
+          <textarea name="memo" value={form.memo} onChange={handleChange} rows={5} maxLength={1000} />
         </label>
-
-        <label>
-          준비 상태
-          <select
-            name="isReady"
-            value={form.isReady}
-            onChange={handleChange}
-          >
-            <option value="N">
-              준비 필요
-            </option>
-            <option value="Y">
-              준비 완료
-            </option>
-          </select>
-        </label>
-
         <div className="checklist-actions">
-          <button
-            type="submit"
-            className="checklist-button"
-            disabled={submitting}
-          >
-            {submitting
-              ? "처리 중..."
-              : isEdit
-                ? "수정"
-                : "등록"}
+          <button type="submit" className="checklist-button" disabled={submitting}>
+            {submitting ? "저장 중..." : "저장"}
           </button>
-
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            disabled={submitting}
-          >
+          <button type="button" onClick={() => navigate(-1)} disabled={submitting}>
             취소
           </button>
         </div>
