@@ -1,59 +1,37 @@
 package com.disaster.api.disaster.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
-@EntityListeners(AuditingEntityListener.class)
-@Table(name = "DISASTERINFO")
+@Getter
+@Setter
+@NoArgsConstructor
+@Table(name = "DISASTER_INFO")
 public class DisasterInfo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "disaster_seq")
-    @SequenceGenerator(name = "disaster_seq", sequenceName = "DISASTER_SEQ", allocationSize = 1)
-    @Column(name = "no")
-    private Long no;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(name = "summary", nullable = false, length = 2)
-    private String summary; // DISASTER_CATEGORY 참조 외래키 역할
+    @Column(name = "api_id", unique = true)
+    private String apiId; // 외부 API ID (중복 체크용)
 
-
-    @Column(name = "APIID", length = 100)
-    private String apiId;
-
-    @Column(name = "title", length = 300)
     private String title;
 
-    @Column(name = "locationname", length = 300)
-    private String locationName;
-
-    @Column(name = "createdate", length = 50)
-    private String createDate; // 재난 발생 시간 (문자열 포맷)
-
-    @Column(name = "dangerlevel")
-    private Integer dangerLevel = 1; // 기본값 1
-
-    @Lob
-    @Column(name = "Content", columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String content;
 
-    @Lob
-    @Column(name = "Detailcontent", columnDefinition = "TEXT")
-    private String detailContent;
+    private String location;
 
-    @Column(name = "Latitude", precision = 10, scale = 7)
-    private BigDecimal latitude;
+    private LocalDateTime disasterDate;
 
-    @Column(name = "Longitude", precision = 10, scale = 7)
-    private BigDecimal longitude;
-
-    @CreatedDate
-    @Column(name = "Writedate", updatable = false)
-    private LocalDateTime writeDate; // DB 등록일 (자동 세팅)
+    // 카테고리와의 연관관계 (FK: category_id 또는 catid)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "catid")
+    private DisasterCategory category;
 }

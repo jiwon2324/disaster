@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@Tag(name = "DisasterApiCollector", description = "공공데이터 재난 API 수집기")
+@Tag(name = "DisasterApiCollector", description = "4대 개별 재난 API 수집기")
 @RestController
 @RequestMapping("/api/disaster")
 @RequiredArgsConstructor
@@ -19,20 +19,69 @@ public class DisasterApiController {
 
     private final DisasterApiService disasterApiService;
 
-    @Operation(summary = "외부 API 재난 데이터 수집 및 DB 자동 카테고리화 수집")
+    // 1. 행안부 재난문자 수집
+    @Operation(summary = "재난문자 데이터 수집")
     @GetMapping("/collect")
-    public ResponseEntity<Map<String, Object>> collectApiData() {
+    public ResponseEntity<Map<String, Object>> collectDisasterMsg(
+            @RequestParam(name = "pages", defaultValue = "3") int pages) {
+
         Map<String, Object> response = new HashMap<>();
-        try {
-            int savedCount = disasterApiService.fetchAndSaveDisasterData();
-            response.put("success", true);
-            response.put("message", "성공적으로 수집되었습니다.");
-            response.put("savedCount", savedCount);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
-        }
+        int savedCount = disasterApiService.fetchAndSaveDisasterData(pages);
+        response.put("success", true);
+        response.put("savedCount", savedCount);
+        return ResponseEntity.ok(response);
+    }
+
+    // 2. 기상청 단기예보 수집
+    @Operation(summary = "기상청 단기예보 데이터 수집")
+    @GetMapping("/collect/weather")
+    public ResponseEntity<Map<String, Object>> collectWeather() {
+        Map<String, Object> response = new HashMap<>();
+        int savedCount = disasterApiService.fetchVilageFcst();
+        response.put("success", true);
+        response.put("savedCount", savedCount);
+        return ResponseEntity.ok(response);
+    }
+
+    // 3. 산림청 산불통계 수집
+    @Operation(summary = "산림청 산불발생통계 데이터 수집")
+    @GetMapping("/collect/forest-fire")
+    public ResponseEntity<Map<String, Object>> collectForestFire() {
+        Map<String, Object> response = new HashMap<>();
+        int savedCount = disasterApiService.fetchForestFire();
+        response.put("success", true);
+        response.put("savedCount", savedCount);
+        return ResponseEntity.ok(response);
+    }
+
+    // 4. 기상청 지진정보 수집
+    @Operation(summary = "기상청 지진정보 데이터 수집")
+    @GetMapping("/collect/earthquake")
+    public ResponseEntity<Map<String, Object>> collectEarthquake() {
+        Map<String, Object> response = new HashMap<>();
+        int savedCount = disasterApiService.fetchEarthquake();
+        response.put("success", true);
+        response.put("savedCount", savedCount);
+        return ResponseEntity.ok(response);
+    }
+
+    // 5. 전체 데이터 통합 수집
+    @Operation(summary = "전체 기관(행안부, 기상청, 산림청) 데이터 통합 수집")
+    @GetMapping("/collect/all")
+    public ResponseEntity<Map<String, Object>> collectAll() {
+        Map<String, Object> response = new HashMap<>();
+        int msgCount = disasterApiService.fetchAndSaveDisasterData(3);
+        int weatherCount = disasterApiService.fetchVilageFcst();
+        int fireCount = disasterApiService.fetchForestFire();
+        int eqkCount = disasterApiService.fetchEarthquake();
+
+        response.put("success", true);
+        response.put("totalSaved", msgCount + weatherCount + fireCount + eqkCount);
+        response.put("disasterMsgSaved", msgCount);
+        response.put("weatherSaved", weatherCount);
+        response.put("forestFireSaved", fireCount);
+        response.put("earthquakeSaved", eqkCount);
+
+        return ResponseEntity.ok(response);
     }
 }

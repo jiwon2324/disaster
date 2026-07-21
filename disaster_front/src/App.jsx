@@ -5,7 +5,12 @@ import NotFoundMenu from "./components/error/NotFoundMenu"
 import MemberComp from "./components/member/MemberComp"
 import CommunityComp from "./components/community/CommunityComp"
 import QuizComp from "./components/quiz/QuizComp";
-import DisasterCategory from "./components/disasterCategory/DisasterCategory"
+import DisasterCategory from "./components/disaster/DisasterCategory"
+import DisasterList from "./components/disaster/DisasterList"
+import DisasterDetail from "./components/disaster/DisasterDetail"
+import DisasterScrap from "./components/disaster/DisasterScrap"
+import DisasterForm from "./components/disaster/DisasterForm"
+import DisasterEditForm from "./components/disaster/DisasterEditForm"
 
 function App() {
 
@@ -18,7 +23,16 @@ function App() {
       {/* 라이팅 - 메뉴별 */}
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/disaster" element={<DisasterCategory />} />
+
+          {/* 재난 정보 도메인 라우트 */}
+          <Route path="/disasterCategory/list" element={<DisasterCategory />} />
+          <Route path="/disasterInfo/list/:catid" element={<DisasterList />} />
+          <Route path="/disasterInfo/detail/:id" element={<DisasterDetail />} />
+          <Route path="/disasterScrap/list" element={<DisasterScrap />} />
+          <Route path="/disasterInfo/create" element={<DisasterForm />} />
+          <Route path="/disasterInfo/edit/:id" element={<DisasterEditForm />} />
+          <Route path="/disasterScrap/list" element={<DisasterScrap />} />
+
           <Route path="/member/*" element={<MemberComp />} />
           <Route path="/community/*" element={<CommunityComp />} />
           <Route path="/quiz/*" element={<QuizComp />} />

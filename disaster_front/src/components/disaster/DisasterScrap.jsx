@@ -7,7 +7,6 @@ export default function DisasterScrap() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // 로그인 회원 ID 추출 (JWT Payload의 sub 필드 사용)
   const getLoginUserId = () => {
     const loginData = localStorage.getItem("login");
     if (!loginData) return null;
@@ -29,7 +28,6 @@ export default function DisasterScrap() {
       }
       try {
         setLoading(true);
-        // 내 스크랩 목록 API 호출
         const res = await axios.get(`http://localhost/disasterScrap/list/${memberId}`, {
           withCredentials: true
         });
@@ -44,9 +42,8 @@ export default function DisasterScrap() {
     fetchMyScraps();
   }, [memberId]);
 
-  // 스크랩 취소
   const handleRemoveScrap = async (e, disasterNo) => {
-    e.stopPropagation(); // 카드 클릭 이벤트(상세 페이지 이동) 전파 방지
+    e.stopPropagation();
     if (!window.confirm("스크랩을 취소하시겠습니까?")) return;
 
     try {
@@ -66,90 +63,91 @@ export default function DisasterScrap() {
     }
   };
 
-  if (loading) {
-    return <div style={{ textAlign: 'center', marginTop: '50px' }}>목록을 불러오는 중...</div>;
-  }
-
-  if (!memberId) {
-    return (
-      <div style={{ maxWidth: '900px', margin: '40px auto', padding: '0 20px', textAlign: 'center' }}>
-        <div style={{ padding: '40px', background: '#f8fafc', borderRadius: '12px', color: '#64748b' }}>
-          <h3>로그인이 필요한 서비스입니다.</h3>
-          <button 
-            onClick={() => navigate('/member/login')} 
-            style={{ marginTop: '16px', padding: '8px 16px', background: '#6366f1', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
-          >
-            로그인하러 가기
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div style={{ maxWidth: '900px', margin: '40px auto', padding: '0 20px' }}>
-      {/* 상단 헤더 영역 */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h2 style={{ margin: 0, fontSize: '1.75rem', color: '#1e293b' }}>📌 재난 정보 스크랩</h2>
-        <button 
-          onClick={() => navigate('/disasterCategory/list')}
-          style={{ padding: '8px 16px', background: '#f1f5f9', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', color: '#475569' }}
-        >
-          📋 카테고리로 이동
-        </button>
-      </div>
-
-      {/* 리스트 영역 */}
-      {scrapList.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '40px', background: '#f8fafc', borderRadius: '12px', color: '#64748b' }}>
-          스크랩한 재난 정보가 없습니다.
-        </div>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {scrapList.map((item) => (
-            <div
-              key={item.scrapNo}
-              onClick={() => navigate(`/disasterInfo/detail/${item.no}`)} // 재난 정보 PK(no)로 상세 이동
-              style={{
-                padding: '20px',
-                border: '1px solid #e2e8f0',
-                borderRadius: '12px',
-                backgroundColor: '#ffffff',
-                cursor: 'pointer',
-                transition: 'transform 0.1s, box-shadow 0.1s',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <span style={{ color: '#6366f1', fontWeight: 'bold', fontSize: '0.9rem' }}>
-                  #{item.categoryName || '재난'}
-                </span>
-                <button
-                  onClick={(e) => handleRemoveScrap(e, item.no)}
-                  style={{ border: 'none', background: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}
-                >
-                  ❌ 삭제
-                </button>
-              </div>
-
-              <h3 style={{ margin: '0 0 8px 0', fontSize: '1.25rem', color: '#1e293b' }}>
-                {item.title}
-              </h3>
-
-              <p style={{ margin: '0 0 12px 0', color: '#475569', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                {item.content && item.content.length > 100 
-                  ? item.content.substring(0, 100) + '...' 
-                  : item.content}
-              </p>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#64748b', borderTop: '1px solid #f8fafc', paddingTop: '10px' }}>
-                <span>📍 <strong>발생 위치:</strong> {item.location || '정보 없음'}</span>
-                <span>⭐ <strong>스크랩일:</strong> {item.scrapDate ? new Date(item.scrapDate).toLocaleDateString() : '-'}</span>
-              </div>
+    <div className="container mt-5">
+      <div className="card shadow-sm border-light">
+        {/* Header */}
+        <div className="card-header bg-white border-0 pt-4 pb-0 text-center">
+          <div className="d-flex justify-content-between align-items-center position-relative px-3">
+            <div className="w-100 text-center">
+              <h2 className="fw-bold text-primary mb-0">
+                <i className="bi bi-bookmark-star-fill me-2"></i>재난 정보 스크랩
+              </h2>
             </div>
-          ))}
+            <button 
+              onClick={() => navigate('/disasterCategory/list')}
+              className="btn btn-outline-secondary btn-sm position-absolute end-0 me-3 fw-bold"
+            >
+              📋 카테고리로 이동
+            </button>
+          </div>
+          <hr className="text-secondary opacity-25 mt-3 mb-0" />
         </div>
-      )}
+
+        {/* Body */}
+        <div className="card-body p-4">
+          {loading ? (
+            <div className="text-center py-5 text-muted">목록을 불러오는 중...</div>
+          ) : !memberId ? (
+            <div className="text-center py-5 bg-light rounded-3 color-secondary">
+              <h5 className="fw-bold mb-3">로그인이 필요한 서비스입니다.</h5>
+              <button 
+                onClick={() => navigate('/member/login')} 
+                className="btn btn-primary btn-sm px-4 fw-bold"
+              >
+                로그인하러 가기
+              </button>
+            </div>
+          ) : scrapList.length === 0 ? (
+            <div className="text-center py-5 text-muted bg-light rounded-3">
+              스크랩한 재난 정보가 없습니다.
+            </div>
+          ) : (
+            <div className="d-flex flex-column gap-3">
+              {scrapList.map((item) => (
+                <div
+                  key={item.scrapNo}
+                  onClick={() => navigate(`/disasterInfo/detail/${item.no}`)}
+                  className="p-3 border rounded-3 bg-white shadow-sm hover-shadow"
+                  style={{ cursor: 'pointer', transition: 'all 0.2s ease-in-out' }}
+                >
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <span className="badge bg-primary-subtle text-primary fw-bold">
+                      #{item.categoryName || '재난'}
+                    </span>
+                    <button
+                      onClick={(e) => handleRemoveScrap(e, item.no)}
+                      className="btn btn-link text-danger p-0 text-decoration-none fw-bold small"
+                    >
+                      ❌ 삭제
+                    </button>
+                  </div>
+
+                  <h5 className="fw-bold text-dark mb-2">
+                    {item.title}
+                  </h5>
+
+                  <p className="text-secondary small mb-3 text-truncate" style={{ maxWidth: '100%' }}>
+                    {item.content && item.content.length > 100 
+                      ? item.content.substring(0, 100) + '...' 
+                      : item.content}
+                  </p>
+
+                  <div className="d-flex justify-content-between small text-muted border-top pt-2">
+                    <span>📍 <strong>발생 위치:</strong> {item.location || '정보 없음'}</span>
+                    <span>⭐ <strong>스크랩일:</strong> {item.scrapDate ? new Date(item.scrapDate).toLocaleDateString() : '-'}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="card-footer bg-white border-0 pb-4 text-center text-muted small">
+          저장한 주요 재난 정보를 신속하게 확인하세요.
+        </div>
+      </div>
     </div>
   );
 }

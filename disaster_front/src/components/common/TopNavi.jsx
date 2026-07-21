@@ -42,9 +42,6 @@ function TopNavi(){
               <NavLink to={"/"} className="nav-link">Home</NavLink>&nbsp;
             </li>
             <li className="nav-item">
-              <NavLink to={"/disaster"} className="nav-link">재난 정보</NavLink>&nbsp;
-            </li>
-            <li className="nav-item">
               <NavLink to={"/image/list"} className="nav-link">Image</NavLink>&nbsp;
             </li>
             <li className="nav-item">
@@ -55,6 +52,12 @@ function TopNavi(){
             </li>
             <li className="nav-item">
               <NavLink className="nav-link" to="/quiz/list">퀴즈</NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink to={"/disasterCategory/list"} className="nav-link">재난 정보</NavLink>&nbsp;
+            </li>
+            <li className="nav-item">
+              <NavLink to={"/disasterScrap/list"} className="nav-link">스크랩</NavLink>&nbsp;
             </li>
           </ul>
           <ul className="navbar-nav ms-auto">

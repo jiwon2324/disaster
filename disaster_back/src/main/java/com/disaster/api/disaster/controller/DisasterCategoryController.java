@@ -1,93 +1,57 @@
 package com.disaster.api.disaster.controller;
 
-import com.disaster.api.disaster.entity.DisasterCategory;
 import com.disaster.api.disaster.service.DisasterCategoryService;
-import com.disaster.api.util.page.PageObject;
+import com.disaster.api.disaster.vo.DisasterCategoryVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
-@Tag(name = "DisasterCategory", description = "재난정보카테고리")
-@Controller
+@Tag(name = "DisasterCategory", description = "재난 카테고리 API")
+@RestController
 @RequestMapping("/disasterCategory")
+@RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class DisasterCategoryController {
 
     private final DisasterCategoryService disasterCategoryService;
 
-    public DisasterCategoryController(DisasterCategoryService disasterCategoryService) {
-        this.disasterCategoryService = disasterCategoryService;
-    }
-
-    @Operation(summary = "재난 API 데이터 수집 트리거", description = "공공 API 데이터를 수집하고 화면을 띄웁니다.")
+    @Operation(summary = "카테고리 목록 조회", description = "React 카드로 표시할 카테고리 목록을 반환합니다.")
     @GetMapping("/list.do")
-    public String list(HttpServletRequest request, Model model) {
-        try {
-            PageObject pageObject = PageObject.getInstance(request);
-
-            // API 데이터 수집 호출
-            disasterCategoryService.updateDisasterData(10);
-
-            model.addAttribute("pageObject", pageObject);
-            model.addAttribute("url", request.getRequestURL());
-
-            return "disasterCategory/list";
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("moduleName", "재난 카테고리");
-            model.addAttribute("e", e);
-            return "error/err_500";
-        }
+    public ResponseEntity<List<DisasterCategoryVO>> list() {
+        List<DisasterCategoryVO> categoryList = disasterCategoryService.getAllCategories();
+        return ResponseEntity.ok(categoryList);
     }
 
-    @Operation(summary = "[관리자] 카테고리 목록 관리", description = "DB에 등록된 모든 카테고리 종류를 조회합니다.")
-    @GetMapping("/manageList.do")
-    public String manageList(Model model) {
-        List<DisasterCategory> categoryList = disasterCategoryService.getAllCategories();
-        model.addAttribute("categoryList", categoryList);
-        return "disasterCategory/manageList";
+    // 관리자 전용 추가, 수정, 삭제
+    @Operation(summary = "카테고리 상세 조회 (수정 폼용)", description = "수정 모달/폼에 기존 카테고리 정보를 채우기 위해 단건 조회합니다.")
+    @GetMapping("/get.do")
+    public ResponseEntity<DisasterCategoryVO> getCategory(@RequestParam("catid") Long catid) {
+        DisasterCategoryVO category = disasterCategoryService.getCategoryById(catid);
+        return ResponseEntity.ok(category);
     }
 
-    @Operation(summary = "[관리자] 카테고리 추가/수정 폼", description = "새로운 카테고리를 추가하거나 기존 카테고리 이름을 수정하는 폼입니다.")
-    @GetMapping("/write.do")
-    public String writeForm(@RequestParam(value = "catId", required = false) Long catId, Model model) {
-        DisasterCategory category = new DisasterCategory();
-        if (catId != null) {
-            category = disasterCategoryService.getCategory(catId);
-        }
-        model.addAttribute("category", category);
-        return "disasterCategory/write";
+    @Operation(summary = "카테고리 추가", description = "새로운 재난 카테고리를 등록합니다.")
+    @PostMapping("/add.do")
+    public ResponseEntity<String> addCategory(@RequestBody DisasterCategoryVO vo) {
+        disasterCategoryService.addCategory(vo);
+        return ResponseEntity.ok("카테고리가 정상적으로 추가되었습니다.");
     }
 
-    @Operation(summary = "[관리자] 카테고리 저장 처리", description = "입력받은 카테고리 정보를 DB에 저장(Insert 또는 Update)합니다.")
-    @PostMapping("/write.do")
-    public String write(@ModelAttribute DisasterCategory category, RedirectAttributes rttr) {
-        try {
-            disasterCategoryService.saveCategory(category);
-            rttr.addFlashAttribute("msg", "카테고리가 정상적으로 저장되었습니다.");
-        } catch (Exception e) {
-            e.printStackTrace();
-            rttr.addFlashAttribute("msg", "카테고리 저장에 실패했습니다.");
-        }
-        return "redirect:/disasterCategory/manageList.do";
+    @Operation(summary = "카테고리 수정", description = "기존 카테고리명(catName)을 수정합니다.")
+    @PostMapping("/update.do")
+    public ResponseEntity<String> updateCategory(@RequestBody DisasterCategoryVO vo) {
+        disasterCategoryService.updateCategory(vo);
+        return ResponseEntity.ok("카테고리가 정상적으로 수정되었습니다.");
     }
 
-    @Operation(summary = "[관리자] 카테고리 삭제 처리", description = "선택한 카테고리를 DB에서 삭제합니다.")
+    @Operation(summary = "카테고리 삭제", description = "카테고리를 삭제합니다.")
     @PostMapping("/delete.do")
-    public String delete(@RequestParam("catId") Long catId, RedirectAttributes rttr) {
-        try {
-            disasterCategoryService.deleteCategory(catId);
-            rttr.addFlashAttribute("msg", "카테고리가 삭제되었습니다.");
-        } catch (Exception e) {
-            e.printStackTrace();
-            rttr.addFlashAttribute("msg", "삭제 실패: 해당 카테고리를 참조하는 재난 정보가 있을 수 있습니다.");
-        }
-        return "redirect:/disasterCategory/manageList.do";
+    public ResponseEntity<String> deleteCategory(@RequestParam("catid") Long catid) {
+        disasterCategoryService.deleteCategory(catid);
+        return ResponseEntity.ok("카테고리가 정상적으로 삭제되었습니다.");
     }
 }

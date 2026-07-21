@@ -4,7 +4,6 @@ import axios from 'axios';
 import { Flame, Waves, CloudLightning, Thermometer, Trees, Car, Radiation, ShieldCheck, HelpCircle, Wind, Plus, Edit, Trash2, X } from 'lucide-react';
 import './DisasterCategory.css';
 
-// 카테고리명 키워드에 맞춰 아이콘 매핑
 const getCategoryIcon = (catName = '') => {
   if (catName.includes('화재') || catName.includes('폭발') || catName.includes('피해')) return <Flame size={22} />;
   if (catName.includes('지진') || catName.includes('해일')) return <Waves size={22} />;
@@ -15,26 +14,42 @@ const getCategoryIcon = (catName = '') => {
   if (catName.includes('감염병')) return <Radiation size={22} />;
   if (catName.includes('대피소')) return <ShieldCheck size={22} />;
   if (catName.includes('미세먼지')) return <Wind size={22} />;
-  return <HelpCircle size={22} />; // 기본 아이콘
+  return <HelpCircle size={22} />;
 };
 
-export default function DisasterCategory({ onSelectCategory}) {
+export default function DisasterCategory({ onSelectCategory }) {
   const [categories, setCategories] = useState([]);
   const [selectedCatId, setSelectedCatId] = useState(null);
   const [loading, setLoading] = useState(true);
-  
-  // 관리자일 때 추가,수정,삭제를 할 수 있도록
-  const isAdmin = true; 
 
-  // 관리자 모달 및 폼 상태 관리
+  const checkIsAdmin = () => {
+    const loginData = localStorage.getItem("login");
+    if (!loginData) return false;
+    try {
+      const parsed = JSON.parse(loginData);
+      const role = parsed.role || parsed.roles || parsed.grade || "";
+      const name = parsed.name || parsed.username || "";
+      return (
+        role === "ROLE_ADMIN" || 
+        role === "ADMIN" || 
+        role === "관리자" || 
+        name === "관리자" || 
+        parsed.isAdmin === true
+      );
+    } catch {
+      return false;
+    }
+  };
+
+  const isAdmin = checkIsAdmin();
+
   const [showModal, setShowModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentCatId, setCurrentCatId] = useState(null);
   const [catNameInput, setCatNameInput] = useState('');
-  
+
   const navigate = useNavigate();
 
-  // 카테고리 목록 불러오기 함수
   const fetchCategories = () => {
     axios.get('http://localhost/disasterCategory/list.do', { withCredentials: true })
       .then((res) => {
@@ -52,9 +67,7 @@ export default function DisasterCategory({ onSelectCategory}) {
   }, []);
 
   const handleCardClick = (catid, catName) => {
-
     setSelectedCatId(catid);
-    
     if (onSelectCategory) {
       onSelectCategory(catid, catName);
     } else {
@@ -62,21 +75,27 @@ export default function DisasterCategory({ onSelectCategory}) {
     }
   };
 
-  // 1. 추가 모달 열기
   const handleOpenAddModal = (e) => {
     e.stopPropagation();
+    if (!isAdmin) {
+      alert("관리자 권한이 필요합니다.");
+      return;
+    }
     setIsEditMode(false);
     setCurrentCatId(null);
     setCatNameInput('');
     setShowModal(true);
   };
 
-  // 2. 수정 모달 열기 (단건 조회 API 연동)
   const handleOpenEditModal = (e, catid) => {
     e.stopPropagation();
+    if (!isAdmin) {
+      alert("관리자 권한이 필요합니다.");
+      return;
+    }
     setIsEditMode(true);
     setCurrentCatId(catid);
-    
+
     axios.get(`http://localhost/disasterCategory/get.do?catid=${catid}`, { withCredentials: true })
       .then((res) => {
         setCatNameInput(res.data.catName);
@@ -88,16 +107,18 @@ export default function DisasterCategory({ onSelectCategory}) {
       });
   };
 
-  // 3. 추가 / 수정 제출 처리
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!isAdmin) {
+      alert("관리자만 이용 가능한 기능입니다.");
+      return;
+    }
     if (!catNameInput.trim()) {
       alert('카테고리명을 입력해주세요.');
       return;
     }
 
     if (isEditMode) {
-      // 수정 API 연동 (/update.do)
       axios.post('http://localhost/disasterCategory/update.do', {
         catid: currentCatId,
         catName: catNameInput
@@ -109,10 +130,9 @@ export default function DisasterCategory({ onSelectCategory}) {
         })
         .catch((err) => {
           console.error('카테고리 수정 실패:', err);
-          alert('수정에 실패했습니다.');
+          alert(err.response?.data || '수정에 실패했습니다.');
         });
     } else {
-      // 추가 API 연동 (/add.do)
       axios.post('http://localhost/disasterCategory/add.do', {
         catName: catNameInput
       }, { withCredentials: true })
@@ -123,14 +143,17 @@ export default function DisasterCategory({ onSelectCategory}) {
         })
         .catch((err) => {
           console.error('카테고리 추가 실패:', err);
-          alert('추가에 실패했습니다.');
+          alert(err.response?.data || '추가에 실패했습니다.');
         });
     }
   };
 
-  // 4. 삭제 API 연동 (/delete.do)
   const handleDelete = (e, catid, catName) => {
     e.stopPropagation();
+    if (!isAdmin) {
+      alert("관리자만 삭제할 수 있습니다.");
+      return;
+    }
     if (!window.confirm(`"${catName}" 카테고리를 정말 삭제하시겠습니까?`)) return;
 
     axios.post(`http://localhost/disasterCategory/delete.do?catid=${catid}`, null, { withCredentials: true })
@@ -140,77 +163,86 @@ export default function DisasterCategory({ onSelectCategory}) {
       })
       .catch((err) => {
         console.error('카테고리 삭제 실패:', err);
-        alert('삭제에 실패했습니다.');
+        alert(err.response?.data || '삭제에 실패했습니다.');
       });
   };
 
-  if (loading) {
-    return <div className="disaster-category-container">카테고리를 불러오는 중입니다...</div>;
-  }
-
   return (
-    <div className="disaster-category-container">
-      {/* Header 영역 */}
-      <div className="category-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <h1 className="category-title">
-            {isAdmin ? '재난 카테고리 관리' : '재난 정보 카테고리'}
-          </h1>
-          <p className="category-subtitle">
-            {isAdmin ? '시스템에 등록된 재난 카테고리를 추가, 수정, 삭제합니다.' : '원하는 카테고리를 선택하여 실시간 분석 데이터를 확인하세요.'}
-          </p>
-        </div>
-        
-        {/* 관리자일 경우에만 상단에 '카테고리 추가' 버튼 노출 */}
-        {isAdmin && (
-          <button 
-            onClick={handleOpenAddModal}
-            style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 18px', backgroundColor: '#6366f1', color: '#fff', border: 'none', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold' }}
-          >
-            <Plus size={18} /> 카테고리 추가
-          </button>
-        )}
-      </div>
-
-      {/* Card Grid 영역 */}
-      <div className="category-grid">
-        {categories.map((cat) => (
-          <div
-            key={cat.catid}
-            className={`category-card ${selectedCatId === cat.catid ? 'active' : ''}`}
-            onClick={() => handleCardClick(cat.catid, cat.catName)}
-          >
-            <div className="icon-box">
-              {getCategoryIcon(cat.catName)}
+    <div className="container mt-5">
+      <div className="card shadow-sm border-light">
+        {/* Header */}
+        <div className="card-header bg-white border-0 pt-4 pb-0 text-center">
+          <div className="d-flex justify-content-between align-items-center position-relative px-3">
+            <div className="w-100 text-center">
+              <h2 className="fw-bold text-primary mb-1">
+                <i className="bi bi-grid-fill me-2"></i>재난 정보 카테고리
+              </h2>
+              <p className="text-muted small mb-0">
+                {isAdmin ? '시스템에 등록된 재난 카테고리를 추가, 수정, 삭제합니다.' : '원하는 카테고리를 선택하여 실시간 데이터를 확인하세요.'}
+              </p>
             </div>
-            <div className="card-name">{cat.catName}</div>
-            <span className="card-tag">
-              {isAdmin ? `ID: ${cat.catid}` : '#재난 리스트'}
-            </span>
-
-            {/* 관리자 로그인 시 카드 내부 하단에 수정/삭제 버튼 노출 */}
             {isAdmin && (
-              <div style={{ marginTop: '16px', display: 'flex', gap: '8px', width: '100%', borderTop: '1px solid #f1f5f9', paddingTop: '12px' }}>
-                <button 
-                  onClick={(e) => handleOpenEditModal(e, cat.catid)} 
-                  style={{ flex: 1, padding: '6px', backgroundColor: '#f1f5f9', color: '#334155', border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', fontSize: '0.85rem', fontWeight: '600' }}
-                >
-                  <Edit size={14} /> 수정
-                </button>
-                <button 
-                  onClick={(e) => handleDelete(e, cat.catid, cat.catName)} 
-                  style={{ flex: 1, padding: '6px', backgroundColor: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', fontSize: '0.85rem', fontWeight: '600' }}
-                >
-                  <Trash2 size={14} /> 삭제
-                </button>
-              </div>
+              <button 
+                onClick={handleOpenAddModal}
+                className="btn btn-primary btn-sm position-absolute end-0 me-3 fw-bold d-flex align-items-center gap-1"
+              >
+                <Plus size={16} /> 카테고리 추가
+              </button>
             )}
           </div>
-        ))}
+          <hr className="text-secondary opacity-25 mt-3 mb-0" />
+        </div>
+
+        {/* Body */}
+        <div className="card-body p-4">
+          {loading ? (
+            <div className="text-center py-5 text-muted">카테고리를 불러오는 중입니다...</div>
+          ) : (
+            <div className="category-grid">
+              {categories.map((cat) => (
+                <div
+                  key={cat.catid}
+                  className={`category-card ${selectedCatId === cat.catid ? 'active' : ''}`}
+                  onClick={() => handleCardClick(cat.catid, cat.catName)}
+                >
+                  <div className="icon-box">
+                    {getCategoryIcon(cat.catName)}
+                  </div>
+                  <div className="card-name">{cat.catName}</div>
+                  <span className="card-tag">
+                    {isAdmin ? `ID: ${cat.catid}` : '#재난 리스트'}
+                  </span>
+
+                  {isAdmin && (
+                    <div style={{ marginTop: '16px', display: 'flex', gap: '8px', width: '100%', borderTop: '1px solid #f1f5f9', paddingTop: '12px' }}>
+                      <button 
+                        onClick={(e) => handleOpenEditModal(e, cat.catid)} 
+                        style={{ flex: 1, padding: '6px', backgroundColor: '#f1f5f9', color: '#334155', border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', fontSize: '0.85rem', fontWeight: '600' }}
+                      >
+                        <Edit size={14} /> 수정
+                      </button>
+                      <button 
+                        onClick={(e) => handleDelete(e, cat.catid, cat.catName)} 
+                        style={{ flex: 1, padding: '6px', backgroundColor: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', fontSize: '0.85rem', fontWeight: '600' }}
+                      >
+                        <Trash2 size={14} /> 삭제
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="card-footer bg-white border-0 pb-4 text-center text-muted small">
+          실시간 재난 정보와 안전 지침을 확인하세요.
+        </div>
       </div>
 
-      {/* 관리자 등록/수정 모달 */}
-      {showModal && (
+      {/* 모달 */}
+      {showModal && isAdmin && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
           <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '16px', width: '380px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', position: 'relative' }}>
             <button onClick={() => setShowModal(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>

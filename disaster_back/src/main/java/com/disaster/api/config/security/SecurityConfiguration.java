@@ -111,6 +111,26 @@ public class SecurityConfiguration {
                                         "/**exception**"
                                 ).permitAll()
 
+                                // 재난 카테고리
+                                .requestMatchers(
+                                        "/disasterCategory",
+                                        "/disasterCategory/**"
+                                ).permitAll()
+
+                                // 재난 리스트(정보)
+                                .requestMatchers(
+                                        "/disasterInfo/**"
+                                ).permitAll()
+
+                                // 재난 스크랩
+                                .requestMatchers(
+                                        "/disasterScrap/**"
+                                ).permitAll()
+
+                                // 재난 정보 api 수집
+                                .requestMatchers(
+                                        "/api/disaster/**"
+                                ).permitAll()
                                 // 나머지 기능은 관리자만 접근
                                 .anyRequest().hasRole("ADMIN")
                 )

@@ -13,13 +13,13 @@ export default function DisasterDetail() {
   const [isScraped, setIsScraped] = useState(false);
   const [scrapLoading, setScrapLoading] = useState(false);
 
-  // TopNavi와 동일하게 localStorage의 "login" JSON 객체에서 id 추출
+  // localStorage의 "login" JSON 객체에서 id 추출
   const getLoginUserId = () => {
     const loginData = localStorage.getItem("login");
     if (!loginData) return null;
     try {
       const parsed = JSON.parse(loginData);
-      return parsed.sub || parsed.id || parsed.memberId || null; // 객체 내 id 필드
+      return parsed.sub || parsed.id || parsed.memberId || null;
     } catch {
       return null;
     }
@@ -69,24 +69,24 @@ export default function DisasterDetail() {
 
     try {
       setScrapLoading(true);
+
       const params = new URLSearchParams();
       params.append('id', memberId);
       params.append('no', id);
 
-      if (isScraped) {
-        // 스크랩 취소
-        await axios.post(`http://localhost/disasterScrap/remove`, params, {
-          withCredentials: true
-        });
-        setIsScraped(false);
-        alert("스크랩이 취소되었습니다.");
+      const targetUrl = isScraped 
+        ? `http://localhost/disasterScrap/remove` 
+        : `http://localhost/disasterScrap/add`;
+
+      const res = await axios.post(targetUrl, params, {
+        withCredentials: true
+      });
+
+      if (res.data.success) {
+        setIsScraped(!isScraped);
+        alert(res.data.message);
       } else {
-        // 스크랩 추가
-        await axios.post(`http://localhost/disasterScrap/add`, params, {
-          withCredentials: true
-        });
-        setIsScraped(true);
-        alert("스크랩에 추가되었습니다.");
+        alert(res.data.message || "처리에 실패했습니다.");
       }
     } catch (err) {
       console.error("스크랩 처리 중 오류 발생:", err);
@@ -96,138 +96,103 @@ export default function DisasterDetail() {
     }
   };
 
-  if (loading) {
-    return <div style={{ textAlign: 'center', marginTop: '50px' }}>상세 정보를 불러오는 중...</div>;
-  }
-
-  if (!disaster) {
-    return (
-      <div style={{ textAlign: 'center', marginTop: '50px' }}>
-        <h3>해당 재난 정보를 찾을 수 없습니다.</h3>
-        <button onClick={() => navigate(-1)} style={{ marginTop: '16px', padding: '8px 16px' }}>
-          뒤로 가기
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <div style={{ maxWidth: '800px', margin: '40px auto', padding: '0 20px' }}>
-      {/* 상세 카드 영역 */}
-      <div
-        style={{
-          padding: '30px',
-          border: '1px solid #e2e8f0',
-          borderRadius: '16px',
-          backgroundColor: '#ffffff',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
-        }}
-      >
-        {/* 카테고리 및 발생 일시 */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <span style={{ color: '#6366f1', fontWeight: 'bold', fontSize: '1rem', background: '#eef2ff', padding: '4px 12px', borderRadius: '20px' }}>
-            #{disaster.catName || '재난'}
-          </span>
-          <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
-            발생일시: {disaster.disasterDate ? new Date(disaster.disasterDate).toLocaleString() : '-'}
-          </span>
+    <div className="container mt-5">
+      <div className="card shadow-sm border-light">
+        {/* Header 영역 */}
+        <div className="card-header bg-white border-0 pt-4 pb-0 text-center">
+          <h2 className="fw-bold text-primary mb-0">
+            <i className="bi bi-info-circle-fill me-2"></i>재난 상세 정보
+          </h2>
+          <hr className="text-secondary opacity-25 mt-3 mb-0" />
         </div>
 
-        {/* 제목 */}
-        <h2 style={{ margin: '0 0 20px 0', fontSize: '1.6rem', color: '#1e293b', lineHeight: '1.4' }}>
-          {disaster.title}
-        </h2>
+        {/* Body 영역 */}
+        <div className="card-body p-4">
+          {loading ? (
+            <div className="text-center py-5 text-muted">상세 정보를 불러오는 중...</div>
+          ) : !disaster ? (
+            <div className="text-center py-5">
+              <h5 className="text-muted mb-3">해당 재난 정보를 찾을 수 없습니다.</h5>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="btn btn-outline-secondary btn-sm fw-bold"
+              >
+                뒤로 가기
+              </button>
+            </div>
+          ) : (
+            <div>
+              {/* 카테고리 및 발생 일시 */}
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <span className="badge bg-primary-subtle text-primary fs-6 px-3 py-2 fw-bold">
+                  #{disaster.catName || '재난'}
+                </span>
+                <span className="text-muted small">
+                  <strong>발생일시:</strong> {disaster.disasterDate ? new Date(disaster.disasterDate).toLocaleString() : '-'}
+                </span>
+              </div>
 
-        {/* 발생 위치 */}
-        <div style={{ padding: '12px 16px', backgroundColor: '#f8fafc', borderRadius: '8px', marginBottom: '24px', color: '#475569', fontSize: '0.95rem' }}>
-          📍 <strong>발생 위치:</strong> {disaster.location || '위치 정보 없음'}
+              {/* 제목 */}
+              <h3 className="fw-bold text-dark mb-3" style={{ lineHeight: '1.4' }}>
+                {disaster.title}
+              </h3>
+
+              {/* 발생 위치 */}
+              <div className="p-3 bg-light rounded-3 mb-4 text-secondary">
+                📍 <strong>발생 위치:</strong> {disaster.location || '위치 정보 없음'}
+              </div>
+
+              <hr className="text-secondary opacity-25 my-4" />
+
+              {/* 본문 내용 */}
+              <div 
+                className="text-dark mb-4 fs-6" 
+                style={{ lineHeight: '1.8', whiteSpace: 'pre-line', minHeight: '150px' }}
+              >
+                {disaster.content}
+              </div>
+
+              {/* 하단 버튼 그룹 */}
+              <div className="d-flex justify-content-center align-items-center gap-2 pt-3 border-top flex-wrap">
+                {/* 스크랩 버튼 */}
+                <button
+                  onClick={handleToggleScrap}
+                  disabled={scrapLoading}
+                  className={`btn ${isScraped ? 'btn-danger' : 'btn-outline-secondary'} fw-bold px-3 py-2`}
+                >
+                  {isScraped ? '❤️ 스크랩 취소' : '🤍 스크랩하기'}
+                </button>
+
+                {/* 카테고리로 돌아가기 */}
+                <button
+                  onClick={() => navigate('/disasterCategory/list')}
+                  className="btn btn-outline-secondary fw-bold px-3 py-2"
+                >
+                  📋 카테고리로 돌아가기
+                </button>
+
+                {/* 목록으로 돌아가기 */}
+                <button
+                  onClick={() => {
+                    if (disaster.catid) {
+                      navigate(`/disasterInfo/list/${disaster.catid}`);
+                    } else {
+                      navigate(-1);
+                    }
+                  }}
+                  className="btn btn-outline-secondary fw-bold px-3 py-2"
+                >
+                  ← 목록으로 돌아가기
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
-        <hr style={{ border: '0', borderTop: '1px solid #f1f5f9', margin: '24px 0' }} />
-
-        {/* 본문 내용 */}
-        <div style={{ fontSize: '1.05rem', color: '#334155', lineHeight: '1.7', whiteSpace: 'pre-line', marginBottom: '30px' }}>
-          {disaster.content}
-        </div>
-
-        {/* 하단 버튼 그룹 (스크랩하기 / 카테고리로 돌아가기 / 목록으로 돌아가기) */}
-        <div 
-          style={{ 
-            display: 'flex', 
-            justify: 'center', 
-            alignItems: 'center', 
-            gap: '12px', 
-            paddingTop: '20px', 
-            borderTop: '1px solid #f1f5f9',
-            flexWrap: 'wrap'
-          }}
-        >
-          {/* 스크랩 버튼 */}
-          <button
-            onClick={handleToggleScrap}
-            disabled={scrapLoading}
-            style={{
-              padding: '10px 20px',
-              borderRadius: '8px',
-              border: isScraped ? '1px solid #ef4444' : '1px solid #cbd5e1',
-              backgroundColor: isScraped ? '#fef2f2' : '#ffffff',
-              color: isScraped ? '#ef4444' : '#475569',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              fontSize: '0.95rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-              transition: 'all 0.2s'
-            }}
-          >
-            {isScraped ? '❤️ 스크랩 취소' : '🤍 스크랩하기'}
-          </button>
-
-          {/* 카테고리로 돌아가기 */}
-          <button
-            onClick={() => navigate('/disasterCategory/list')}
-            style={{
-              padding: '10px 20px',
-              borderRadius: '8px',
-              border: '1px solid #cbd5e1',
-              backgroundColor: '#f8fafc',
-              color: '#475569',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              fontSize: '0.95rem',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-              transition: 'all 0.2s'
-            }}
-          >
-            📋 카테고리로 돌아가기
-          </button>
-
-          {/* 목록으로 돌아가기 */}
-          <button
-            onClick={() => {
-              if (disaster.catid) {
-                navigate(`/disasterInfo/list/${disaster.catid}`);
-              } else {
-                navigate(-1);
-              }
-            }}
-            style={{
-              padding: '10px 20px',
-              borderRadius: '8px',
-              border: '1px solid #cbd5e1',
-              backgroundColor: '#f8fafc',
-              color: '#475569',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              fontSize: '0.95rem',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-              transition: 'all 0.2s'
-            }}
-          >
-            ← 목록으로 돌아가기
-          </button>
+        {/* Footer 영역 */}
+        <div className="card-footer bg-white border-0 pb-4 text-center text-muted small">
+          안전지침을 준수하여 재난 피해를 최소화하세요.
         </div>
       </div>
     </div>
