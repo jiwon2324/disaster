@@ -5,27 +5,27 @@ function TopNavi(){
 
   const [token, setToken] = useState(localStorage.getItem("token"));
 
-  // JWT 내부 정보
+  // JWT ?대? ?뺣낫
   const [login, setLogin] = useState(() => {
-    const data = localStorage.getItem("login"); // 문자열이므로
-    return data ? JSON.parse(data) : null; // JSON 데이터로 만들어 준다.
+    const data = localStorage.getItem("login"); // 臾몄옄?댁씠誘濡?
+    return data ? JSON.parse(data) : null; // JSON ?곗씠?곕줈 留뚮뱾??以??
   });
  
   console.log("TopNavi login = " + login);
-  console.log(login?"TopNavi login.name = " + login.name:'없음');
+  console.log(login?"TopNavi login.name = " + login.name:'?놁쓬');
 
-  // 로그아웃 처리
+  // 濡쒓렇?꾩썐 泥섎━
   const logout = (e) => {
     e.preventDefault();
 
-    // react에서만 token과 사용자 정보를 지운다.
+    // react?먯꽌留?token怨??ъ슜???뺣낫瑜?吏?대떎.
     localStorage.removeItem("token");
     localStorage.removeItem("login");
 
     setToken(null);
     setLogin(null);
 
-    alert("로그아웃 되었습니다.");
+    alert("濡쒓렇?꾩썐 ?섏뿀?듬땲??");
     // Navigate("/");
     location.href = "/";
   }
@@ -48,6 +48,12 @@ function TopNavi(){
             <li className="nav-item">
               <NavLink className="nav-link" to="/quiz/list">퀴즈</NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink to={"/edu"} className="nav-link">교육가이드</NavLink>&nbsp;
+            </li>
+            <li className="nav-item">
+              <NavLink to={"/checklists"} className="nav-link">체크리스트</NavLink>&nbsp;
+            </li>
           </ul>
           <ul className="navbar-nav ms-auto">
               {!token && (
@@ -66,7 +72,7 @@ function TopNavi(){
 
                       <li className="nav-item">
                           <Link className="nav-link" to="/member/find-id">
-                              아이디찾기
+                              ?꾩씠?붿갼湲?
                           </Link>
                       </li>
                   </>
