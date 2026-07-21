@@ -1,64 +1,77 @@
 package com.disaster.api.disaster.controller;
 
 import com.disaster.api.disaster.service.DisasterScrapService;
+import com.disaster.api.disaster.vo.DisasterScrapVO;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "DisasterScrap", description = "재난정보스크랩")
-@Controller
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Tag(name = "DisasterScrap", description = "재난 정보 스크랩 API")
+@RestController
 @RequestMapping("/disasterScrap")
+@RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class DisasterScrapController {
 
     private final DisasterScrapService disasterScrapService;
 
-    public DisasterScrapController(DisasterScrapService disasterScrapService) {
-        this.disasterScrapService = disasterScrapService;
+    // 1. 스크랩 추가
+    @Operation(summary = "스크랩 추가")
+    @PostMapping("/add")
+    public ResponseEntity<Map<String, Object>> addScrap(@RequestParam("id") String memberId,
+                                                        @RequestParam("no") Long disasterNo) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Long scrapNo = disasterScrapService.addScrap(memberId, disasterNo);
+            response.put("success", true);
+            response.put("message", "스크랩에 추가되었습니다.");
+            response.put("scrapNo", scrapNo);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 
-    // 스크랩 추가 요청 처리
-    @PostMapping("/add.do")
-    public String addScrap(
-            @RequestParam("no") Long no,
-            HttpServletRequest request,
-            RedirectAttributes redirectAttributes) {
-
-        HttpSession session = request.getSession();
-        String memberId = (String) session.getAttribute("memberId");
-
-        /* [원래 코드] - 회원 기능 로그인 체크가 완성되면 아래 주석을 풀고 임시 코드를 제거하세요.
-        if (memberId == null) {
-            redirectAttributes.addFlashAttribute("msg", "로그인이 필요한 서비스입니다.");
-            return "redirect:/member/login.do"; // 로그인 페이지 경로로 리다이렉트
-        }
-
+    // 2. 스크랩 취소
+    @Operation(summary = "스크랩 취소")
+    @PostMapping("/remove")
+    public ResponseEntity<Map<String, Object>> removeScrap(@RequestParam("id") String memberId,
+                                                           @RequestParam("no") Long disasterNo) {
+        Map<String, Object> response = new HashMap<>();
         try {
-            disasterScrapService.addScrap(memberId, no);
-            redirectAttributes.addFlashAttribute("msg", "스크랩에 성공하였습니다.");
+            disasterScrapService.removeScrap(memberId, disasterNo);
+            response.put("success", true);
+            response.put("message", "스크랩이 취소되었습니다.");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("msg", e.getMessage());
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
-        */
+    }
 
-        // ------------------ [임시 테스트 코드 시작] ------------------
-        // 세션에 로그인 정보가 없다면 임시 회원으로 우회하여 스크랩을 수행하게 만듭니다.
-        if (memberId == null || memberId.trim().isEmpty()) {
-            memberId = "test_member";
-        }
+    // 3. 내 스크랩 목록 조회
+    @Operation(summary = "내 스크랩 목록 조회")
+    @GetMapping("/list/{id}")
+    public ResponseEntity<List<DisasterScrapVO>> getMyScrapList(@PathVariable("id") String memberId) {
+        List<DisasterScrapVO> list = disasterScrapService.getMyScrapList(memberId);
+        return ResponseEntity.ok(list);
+    }
 
-        try {
-            disasterScrapService.addScrap(memberId, no);
-            redirectAttributes.addFlashAttribute("msg", "임시 계정(test_member)으로 스크랩에 성공하였습니다.");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("msg", e.getMessage());
-        }
-        // ------------------ [임시 테스트 코드 끝] ------------------
-
-        return "redirect:/disasterList/view.do?no=" + no;
+    // 4. 스크랩 여부 확인
+    @Operation(summary = "스크랩 여부 확인")
+    @GetMapping("/check")
+    public ResponseEntity<Boolean> checkScraped(@RequestParam("id") String memberId,
+                                                @RequestParam("no") Long disasterNo) {
+        boolean isScraped = disasterScrapService.isScraped(memberId, disasterNo);
+        return ResponseEntity.ok(isScraped);
     }
 }

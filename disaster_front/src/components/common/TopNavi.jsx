@@ -128,6 +128,24 @@ function TopNavi() {
                         <li className="nav-item">
                             <NavLink
                                 className="nav-link"
+                                to="/disasterCategory/list"
+                            >
+                                재난 정보
+                            </NavLink>
+                        </li>
+
+                        <li className="nav-item">
+                            <NavLink
+                                className="nav-link"
+                                to="/disasterScrap/list"
+                            >
+                                스크랩
+                            </NavLink>
+                        </li>
+
+                        <li className="nav-item">
+                            <NavLink
+                                className="nav-link"
                                 to="/quiz/list"
                             >
                                 퀴즈

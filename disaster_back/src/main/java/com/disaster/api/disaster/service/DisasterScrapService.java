@@ -1,85 +1,70 @@
 package com.disaster.api.disaster.service;
 
+import com.disaster.api.disaster.entity.DisasterInfo;
 import com.disaster.api.disaster.entity.DisasterScrap;
+import com.disaster.api.disaster.repository.DisasterInfoRepository;
 import com.disaster.api.disaster.repository.DisasterScrapRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.disaster.api.disaster.vo.DisasterScrapVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class DisasterScrapService {
 
     private final DisasterScrapRepository disasterScrapRepository;
+    private final DisasterInfoRepository disasterInfoRepository;
 
-    public DisasterScrapService(DisasterScrapRepository disasterScrapRepository) {
-        this.disasterScrapRepository = disasterScrapRepository;
-    }
-
-    // 1. 스크랩 등록
+    // 1. 스크랩 추가
     @Transactional
-    public void addScrap(String memberId, Long no) {
-        /* [원래 코드] - 회원 기능 연동 시 주석 해제 후 아래 임시 코드를 제거하세요.
-        if (disasterScrapRepository.existsByIdAndNo(memberId, no)) {
+    public Long addScrap(String memberId, Long disasterNo) {
+        if (disasterScrapRepository.existsByIdAndDisasterInfo_Id(memberId, disasterNo)) {
             throw new IllegalStateException("이미 스크랩한 재난 정보입니다.");
         }
 
-        DisasterScrap scrap = new DisasterScrap();
-        scrap.setId(memberId); // setMemberId 대신 setId 사용
-        scrap.setNo(no);
-
-        disasterScrapRepository.save(scrap);
-        */
-
-        // ------------------ [임시 테스트 코드 시작] ------------------
-        if (memberId == null || memberId.trim().isEmpty()) {
-            memberId = "test_member";
-        }
-
-        if (disasterScrapRepository.existsByIdAndNo(memberId, no)) {
-            throw new IllegalStateException("이미 스크랩한 재난 정보입니다.");
-        }
+        DisasterInfo disasterInfo = disasterInfoRepository.findById(disasterNo)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 재난 정보입니다. ID=" + disasterNo));
 
         DisasterScrap scrap = new DisasterScrap();
-        scrap.setId(memberId); // 엔티티 필드인 id에 맞춰 setId로 바인딩!
-        scrap.setNo(no);
+        scrap.setId(memberId);
+        scrap.setDisasterInfo(disasterInfo);
 
-        disasterScrapRepository.save(scrap);
-        // ------------------ [임시 테스트 코드 끝] ------------------
+        return disasterScrapRepository.save(scrap).getScrapNo();
     }
 
-    // 2. 스크랩 취소
+    // 2. 스크랩 취소/삭제
     @Transactional
-    public void removeScrap(String memberId, Long no) {
-        /* [원래 코드] - 회원 기능 연동 시 주석 해제 후 아래 임시 코드를 제거하세요.
-        DisasterScrap scrap = disasterScrapRepository.findByIdAndNo(memberId, no)
-                .orElseThrow(() -> new IllegalArgumentException("스크랩 내역을 찾을 수 없습니다."));
-        disasterScrapRepository.delete(scrap);
-        */
-
-        // ------------------ [임시 테스트 코드 시작] ------------------
-        if (memberId == null || memberId.trim().isEmpty()) {
-            memberId = "test_member";
-        }
-
-        DisasterScrap scrap = disasterScrapRepository.findByIdAndNo(memberId, no)
-                .orElseThrow(() -> new IllegalArgumentException("스크랩 내역을 찾을 수 없습니다."));
-        disasterScrapRepository.delete(scrap);
-        // ------------------ [임시 테스트 코드 끝] ------------------
+    public void removeScrap(String memberId, Long disasterNo) {
+        disasterScrapRepository.deleteByIdAndDisasterInfo_Id(memberId, disasterNo);
     }
 
     // 3. 내 스크랩 목록 조회
-    public Page<DisasterScrap> getMyScrapList(String memberId, Pageable pageable) {
-        /* [원래 코드] - 회원 기능 연동 시 주석 해제 후 아래 임시 코드를 제거하세요.
-        return disasterScrapRepository.findById(memberId, pageable);
-        */
+    public List<DisasterScrapVO> getMyScrapList(String memberId) {
+        List<DisasterScrap> scrapList = disasterScrapRepository.findByIdOrderByScrapDateDesc(memberId);
 
-        // ------------------ [임시 테스트 코드 시작] ------------------
-        if (memberId == null || memberId.trim().isEmpty()) {
-            memberId = "test_member";
-        }
-        return disasterScrapRepository.findById(memberId, pageable);
-        // ------------------ [임시 테스트 코드 끝] ------------------
+        return scrapList.stream().map(scrap -> {
+            DisasterInfo info = scrap.getDisasterInfo();
+            return DisasterScrapVO.builder()
+                    .scrapNo(scrap.getScrapNo())
+                    .id(scrap.getId())
+                    .no(info != null ? info.getId() : null)
+                    .title(info != null ? info.getTitle() : "삭제된 정보")
+                    .content(info != null ? info.getContent() : "")
+                    .location(info != null ? info.getLocation() : "")
+                    .disasterDate(info != null ? info.getDisasterDate() : null)
+                    .categoryName(info != null && info.getCategory() != null ? info.getCategory().getCatName() : null)
+                    .scrapDate(scrap.getScrapDate())
+                    .build();
+        }).collect(Collectors.toList());
+    }
+
+    // 4. 스크랩 여부 체크
+    public boolean isScraped(String memberId, Long disasterNo) {
+        return disasterScrapRepository.existsByIdAndDisasterInfo_Id(memberId, disasterNo);
     }
 }

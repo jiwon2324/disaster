@@ -55,7 +55,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize ->
                         authorize
 
-                                // CORS 사전 요청 허용
+                                // CORS 사전 요청
                                 .requestMatchers(
                                         HttpMethod.OPTIONS,
                                         "/**"
@@ -79,7 +79,7 @@ public class SecurityConfiguration {
                                         "/api/checklists/**"
                                 ).permitAll()
 
-                                // 비회원도 사용할 수 있는 회원 기능
+                                // 비회원 회원 기능
                                 .requestMatchers(
                                         "/member/login.do",
                                         "/member/write.do",
@@ -103,7 +103,7 @@ public class SecurityConfiguration {
                                         "/member/admin/**"
                                 ).hasRole("ADMIN")
 
-                                // 문의 목록과 상세 조회
+                                // 문의 목록 및 상세조회
                                 .requestMatchers(
                                         HttpMethod.GET,
                                         "/qna/list.do",
@@ -171,11 +171,33 @@ public class SecurityConfiguration {
                                         "/quiz/delete.do"
                                 ).permitAll()
 
+                                // 예외 테스트
                                 .requestMatchers(
                                         "/**exception**"
                                 ).permitAll()
 
-                                // 그 외 요청은 관리자만 허용
+                                // 재난 카테고리
+                                .requestMatchers(
+                                        "/disasterCategory",
+                                        "/disasterCategory/**"
+                                ).permitAll()
+
+                                // 재난 정보
+                                .requestMatchers(
+                                        "/disasterInfo/**"
+                                ).permitAll()
+
+                                // 재난 스크랩
+                                .requestMatchers(
+                                        "/disasterScrap/**"
+                                ).permitAll()
+
+                                // 재난 API 수집
+                                .requestMatchers(
+                                        "/api/disaster/**"
+                                ).permitAll()
+
+                                // 나머지는 관리자만 접근
                                 .anyRequest()
                                 .hasRole("ADMIN")
                 )

@@ -1,40 +1,57 @@
 package com.disaster.api.disaster.controller;
 
 import com.disaster.api.disaster.service.DisasterCategoryService;
-import com.disaster.api.util.page.PageObject;
+import com.disaster.api.disaster.vo.DisasterCategoryVO;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "DisasterCategory", description = "재난정보카테고리")
+import java.util.List;
+
+@Tag(name = "DisasterCategory", description = "재난 카테고리 API")
+@RestController
 @RequestMapping("/disasterCategory")
+@RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class DisasterCategoryController {
 
     private final DisasterCategoryService disasterCategoryService;
 
-    public DisasterCategoryController(DisasterCategoryService disasterCategoryService) {
-        this.disasterCategoryService = disasterCategoryService;
+    @Operation(summary = "카테고리 목록 조회", description = "React 카드로 표시할 카테고리 목록을 반환합니다.")
+    @GetMapping("/list.do")
+    public ResponseEntity<List<DisasterCategoryVO>> list() {
+        List<DisasterCategoryVO> categoryList = disasterCategoryService.getAllCategories();
+        return ResponseEntity.ok(categoryList);
     }
 
-    @GetMapping("/list.do")
-    public String list(HttpServletRequest request, Model model) {
-        try {
-            PageObject pageObject = PageObject.getInstance(request);
+    // 관리자 전용 추가, 수정, 삭제
+    @Operation(summary = "카테고리 상세 조회 (수정 폼용)", description = "수정 모달/폼에 기존 카테고리 정보를 채우기 위해 단건 조회합니다.")
+    @GetMapping("/get.do")
+    public ResponseEntity<DisasterCategoryVO> getCategory(@RequestParam("catid") Long catid) {
+        DisasterCategoryVO category = disasterCategoryService.getCategoryById(catid);
+        return ResponseEntity.ok(category);
+    }
 
-            // API 데이터 수집 호출
-            disasterCategoryService.updateDisasterData(10);
+    @Operation(summary = "카테고리 추가", description = "새로운 재난 카테고리를 등록합니다.")
+    @PostMapping("/add.do")
+    public ResponseEntity<String> addCategory(@RequestBody DisasterCategoryVO vo) {
+        disasterCategoryService.addCategory(vo);
+        return ResponseEntity.ok("카테고리가 정상적으로 추가되었습니다.");
+    }
 
-            model.addAttribute("pageObject", pageObject);
-            model.addAttribute("url", request.getRequestURL());
+    @Operation(summary = "카테고리 수정", description = "기존 카테고리명(catName)을 수정합니다.")
+    @PostMapping("/update.do")
+    public ResponseEntity<String> updateCategory(@RequestBody DisasterCategoryVO vo) {
+        disasterCategoryService.updateCategory(vo);
+        return ResponseEntity.ok("카테고리가 정상적으로 수정되었습니다.");
+    }
 
-            return "disasterCategory/list";
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("moduleName", "재난 카테고리");
-            model.addAttribute("e", e);
-            return "error/err_500";
-        }
+    @Operation(summary = "카테고리 삭제", description = "카테고리를 삭제합니다.")
+    @PostMapping("/delete.do")
+    public ResponseEntity<String> deleteCategory(@RequestParam("catid") Long catid) {
+        disasterCategoryService.deleteCategory(catid);
+        return ResponseEntity.ok("카테고리가 정상적으로 삭제되었습니다.");
     }
 }
