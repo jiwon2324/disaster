@@ -4,7 +4,9 @@ import com.disaster.api.member.dto.AdminMemberGradeRequest;
 import com.disaster.api.member.dto.AdminMemberStatusRequest;
 import com.disaster.api.member.dto.MemberResponse;
 import com.disaster.api.member.dto.MemberUpdateRequest;
+import com.disaster.api.member.dto.MemberWithdrawRequest;
 import com.disaster.api.member.dto.PasswordChangeRequest;
+import com.disaster.api.member.dto.PasswordFindRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -25,10 +27,19 @@ public interface MemberService {
             PasswordChangeRequest request
     );
 
-    void withdraw(String loginId);
+    void findPassword(
+            PasswordFindRequest request
+    );
+
+    void withdraw(
+            String loginId,
+            MemberWithdrawRequest request
+    );
 
     // 관리자 회원관리 기능
     Page<MemberResponse> getMemberList(
+            String loginId,
+            String searchType,
             String keyword,
             String status,
             Integer gradeNo,

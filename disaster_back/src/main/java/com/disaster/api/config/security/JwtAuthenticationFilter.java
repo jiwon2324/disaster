@@ -12,9 +12,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Log4j2
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter
+        extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
+
     private static final String[] PUBLIC_PREFIXES = {
             "/api/edu",
             "/api/checklists",
@@ -22,31 +24,58 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/api-docs",
             "/v3/api-docs"
     };
+
     private static final String[] PUBLIC_PATHS = {
             "/swagger",
             "/swagger-ui.html",
-            "/api-docs"
+            "/api-docs",
+
+            "/member/login.do",
+            "/member/write.do",
+            "/member/check-id.do",
+            "/member/find-password.do"
     };
 
-    // JwtTokenProvider를 세팅하는 생성자
-    // @Autowide 를 붙이지 않아도 spring 4.xx 부터 자동으로 DI 적용된다.
-    // 현재 spring 버전을 6.2.xx 버전이다.
-    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider){
-        this.jwtTokenProvider = jwtTokenProvider;
+    public JwtAuthenticationFilter(
+            JwtTokenProvider jwtTokenProvider
+    ) {
+        this.jwtTokenProvider =
+                jwtTokenProvider;
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getServletPath();
+    protected boolean shouldNotFilter(
+            HttpServletRequest request
+    ) {
+        String path =
+                request.getServletPath();
 
-        for (String publicPath : PUBLIC_PATHS) {
+        // CORS 사전 요청은 JWT 검사 제외
+        if ("OPTIONS".equalsIgnoreCase(
+                request.getMethod()
+        )) {
+            return true;
+        }
+
+        for (
+                String publicPath
+                : PUBLIC_PATHS
+        ) {
             if (publicPath.equals(path)) {
                 return true;
             }
         }
 
-        for (String publicPrefix : PUBLIC_PREFIXES) {
-            if (path.equals(publicPrefix) || path.startsWith(publicPrefix + "/")) {
+        for (
+                String publicPrefix
+                : PUBLIC_PREFIXES
+        ) {
+            if (
+                    path.equals(publicPrefix)
+                            || path.startsWith(
+                            publicPrefix + "/"
+                    )
+            ) {
                 return true;
             }
         }
@@ -55,26 +84,47 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal
-            (HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
-        // 여기에 작성하면 전처리 필터
-        // 토큰 처리
-        // request 안에 header에 있는 토큰 가져오기
-        String token = jwtTokenProvider.resolveToken(request);
-        log.info("[doFilterInternal] token 값 추출 완료. token : {}", token);
+        String token =
+                jwtTokenProvider.resolveToken(
+                        request
+                );
 
-        log.info("[doFilterInternal] token 값 유효성 체크 시작");
-        if(token != null && jwtTokenProvider.validateToken(token)){
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("[doFilterInternal] token 값 유효성 체크 성공");
+        log.info(
+                "[doFilterInternal] token 값 추출 완료. token 존재 여부 : {}",
+                token != null
+        );
+
+        if (
+                token != null
+                        && jwtTokenProvider
+                        .validateToken(token)
+        ) {
+            Authentication authentication =
+                    jwtTokenProvider
+                            .getAuthentication(
+                                    token
+                            );
+
+            SecurityContextHolder
+                    .getContext()
+                    .setAuthentication(
+                            authentication
+                    );
+
+            log.info(
+                    "[doFilterInternal] token 값 유효성 체크 성공"
+            );
         }
-        log.info("[doFilterInternal] token 값 유효성 체크 완료");
 
-
-        filterChain.doFilter(request, response); // 다음 필터나 요구 자원 처리를 진행시킨다.
-        // 여기에 작성하면 후처리 필터
+        filterChain.doFilter(
+                request,
+                response
+        );
     }
 }

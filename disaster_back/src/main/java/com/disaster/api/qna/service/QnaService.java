@@ -10,6 +10,7 @@ import java.util.List;
 public interface QnaService {
 
     Page<QnaResponse> getQuestionList(
+            String searchType,
             String keyword,
             String category,
             Pageable pageable
@@ -17,11 +18,25 @@ public interface QnaService {
 
     List<QnaResponse> getThread(Long no);
 
-    QnaResponse createQuestion(QnaRequest request, String loginId);
+    QnaResponse createQuestion(
+            QnaRequest request,
+            String loginId
+    );
 
-    QnaResponse updateQna(Long no, QnaRequest request, String loginId);
+    QnaResponse updateQna(
+            Long no,
+            QnaRequest request,
+            String loginId
+    );
 
-    void deleteQna(Long no, String loginId);
+    void deleteQna(
+            Long no,
+            String loginId
+    );
 
-    QnaResponse createAnswer(Long questionNo, QnaRequest request, String loginId);
+    QnaResponse createAnswer(
+            Long questionNo,
+            QnaRequest request,
+            String loginId
+    );
 }

@@ -18,8 +18,11 @@ public class SecurityConfiguration {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    public SecurityConfiguration(JwtTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
+    public SecurityConfiguration(
+            JwtTokenProvider jwtTokenProvider
+    ) {
+        this.jwtTokenProvider =
+                jwtTokenProvider;
     }
 
     @Bean
@@ -30,7 +33,10 @@ public class SecurityConfiguration {
         httpSecurity
                 .cors(cors -> {
                 })
-                .csrf(AbstractHttpConfigurer::disable)
+
+                .csrf(
+                        AbstractHttpConfigurer::disable
+                )
 
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
@@ -38,11 +44,23 @@ public class SecurityConfiguration {
                         )
                 )
 
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(
+                        AbstractHttpConfigurer::disable
+                )
+
+                .formLogin(
+                        AbstractHttpConfigurer::disable
+                )
 
                 .authorizeHttpRequests(authorize ->
                         authorize
+
+                                // CORS 사전 요청 허용
+                                .requestMatchers(
+                                        HttpMethod.OPTIONS,
+                                        "/**"
+                                ).permitAll()
+
                                 // Swagger
                                 .requestMatchers(
                                         "/swagger",
@@ -53,7 +71,7 @@ public class SecurityConfiguration {
                                         "/v3/api-docs/**"
                                 ).permitAll()
 
-                                // 교육 가이드 및 체크리스트
+                                // 교육가이드 및 체크리스트
                                 .requestMatchers(
                                         "/api/edu",
                                         "/api/edu/**",
@@ -61,35 +79,69 @@ public class SecurityConfiguration {
                                         "/api/checklists/**"
                                 ).permitAll()
 
-                                // 회원 공개 기능
+                                // 비회원도 사용할 수 있는 회원 기능
                                 .requestMatchers(
                                         "/member/login.do",
                                         "/member/write.do",
-                                        "/member/check-id.do"
+                                        "/member/check-id.do",
+                                        "/member/find-password.do"
                                 ).permitAll()
 
-                                // 일반 회원 기능
+                                // 로그인 회원 기능
                                 .requestMatchers(
                                         "/member/me.do",
                                         "/member/update.do",
                                         "/member/password.do",
                                         "/member/withdraw.do"
-                                ).hasAnyRole("USER", "ADMIN")
+                                ).hasAnyRole(
+                                        "USER",
+                                        "ADMIN"
+                                )
 
                                 // 관리자 회원관리
                                 .requestMatchers(
                                         "/member/admin/**"
                                 ).hasRole("ADMIN")
 
-                                // 관리자 QnA 답변
+                                // 문의 목록과 상세 조회
                                 .requestMatchers(
+                                        HttpMethod.GET,
+                                        "/qna/list.do",
+                                        "/qna/view.do"
+                                ).permitAll()
+
+                                // 문의 등록
+                                .requestMatchers(
+                                        HttpMethod.POST,
+                                        "/qna/write.do"
+                                ).hasAnyRole(
+                                        "USER",
+                                        "ADMIN"
+                                )
+
+                                // 문의 수정
+                                .requestMatchers(
+                                        HttpMethod.PUT,
+                                        "/qna/update.do"
+                                ).hasAnyRole(
+                                        "USER",
+                                        "ADMIN"
+                                )
+
+                                // 문의 삭제
+                                .requestMatchers(
+                                        HttpMethod.DELETE,
+                                        "/qna/delete.do"
+                                ).hasAnyRole(
+                                        "USER",
+                                        "ADMIN"
+                                )
+
+                                // 관리자 답변 등록
+                                .requestMatchers(
+                                        HttpMethod.POST,
                                         "/qna/answer.do"
                                 ).hasRole("ADMIN")
-
-                                // 일반 QnA 기능
-                                .requestMatchers(
-                                        "/qna/**"
-                                ).hasAnyRole("USER", "ADMIN")
 
                                 // 상품 조회
                                 .requestMatchers(
@@ -103,7 +155,7 @@ public class SecurityConfiguration {
                                         "/board/**"
                                 ).permitAll()
 
-                                // 업로드 파일 및 정적 파일
+                                // 업로드 및 정적 파일
                                 .requestMatchers(
                                         "/upload/**",
                                         "/txt/**",
@@ -123,47 +175,71 @@ public class SecurityConfiguration {
                                         "/**exception**"
                                 ).permitAll()
 
-                                // 위에서 정의되지 않은 요청은 관리자만 접근
-                                .anyRequest().hasRole("ADMIN")
+                                // 그 외 요청은 관리자만 허용
+                                .anyRequest()
+                                .hasRole("ADMIN")
                 )
 
                 .addFilterBefore(
-                        new JwtAuthenticationFilter(jwtTokenProvider),
+                        new JwtAuthenticationFilter(
+                                jwtTokenProvider
+                        ),
                         UsernamePasswordAuthenticationFilter.class
                 )
 
                 .exceptionHandling(exception ->
                         exception
-                                // 인증 실패: 401
+
                                 .authenticationEntryPoint(
-                                        (request, response, authException) -> {
+                                        (
+                                                request,
+                                                response,
+                                                authException
+                                        ) -> {
                                             response.setStatus(
-                                                    HttpServletResponse.SC_UNAUTHORIZED
+                                                    HttpServletResponse
+                                                            .SC_UNAUTHORIZED
                                             );
+
                                             response.setContentType(
-                                                    MediaType.APPLICATION_JSON_VALUE
+                                                    MediaType
+                                                            .APPLICATION_JSON_VALUE
                                             );
+
                                             response.setCharacterEncoding(
-                                                    StandardCharsets.UTF_8.name()
+                                                    StandardCharsets
+                                                            .UTF_8
+                                                            .name()
                                             );
+
                                             response.getWriter().write(
                                                     "{\"msg\":\"인증이 실패하였습니다.\"}"
                                             );
                                         }
                                 )
 
-                                // 권한 부족: 403
                                 .accessDeniedHandler(
-                                        (request, response, accessDeniedException) -> {
+                                        (
+                                                request,
+                                                response,
+                                                accessDeniedException
+                                        ) -> {
                                             response.setStatus(
-                                                    HttpServletResponse.SC_FORBIDDEN
+                                                    HttpServletResponse
+                                                            .SC_FORBIDDEN
                                             );
+
                                             response.setContentType(
-                                                    MediaType.APPLICATION_JSON_VALUE
+                                                    MediaType
+                                                            .APPLICATION_JSON_VALUE
                                             );
+
                                             response.setCharacterEncoding(
-                                                    StandardCharsets.UTF_8.name()
+                                                    StandardCharsets
+                                                            .UTF_8
+                                                            .name()
                                             );
+
                                             response.getWriter().write(
                                                     "{\"msg\":\"접근 권한이 없습니다.\"}"
                                             );

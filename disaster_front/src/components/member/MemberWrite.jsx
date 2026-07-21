@@ -1,180 +1,559 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function MemberWrite(){
-  // 데이터 처리 - 데이터 표시 전에 처리, 후에 처리 가능--------
-  // 항목 한개를 저장하는 상태 객체 작성 - 5개
-  const [id, setId] = useState('');
-  const [pw, setPw] = useState('');
-  const [pw2, setPw2] = useState('');
-  const [name, setName] = useState('');
-  const [gender, setGender] = useState('');
-  const [birth, setBirth] = useState('');
-  const [tel, setTel] = useState('');
-  const [postNo, setPostNo] = useState('');
-  const [address, setAddress] = useState('');
-  const [email, setEmail] = useState('');
-  const [roles, setRoles] = useState('');
+const API_BASE_URL = "http://localhost";
 
-  const navigate = useNavigate();
+function MemberWrite() {
+    const navigate = useNavigate();
+    const idInputRef = useRef(null);
 
-  // 맨 처음에 커서의 위치를 title로 만들어 보자.
-  useEffect(()=>{
-    document.getElementById('id').focus();
-  },[]);
+    const [form, setForm] = useState({
+        id: "",
+        pw: "",
+        pw2: "",
+        name: "",
+        gender: "",
+        birth: "",
+        tel: "",
+        email: ""
+    });
 
-  // 등록 버튼의 클릭 처리 -> 실제적으로 등록 시키는 것. 폼을 화면에 표시(랜더링 후) -> 데이터 수집 -> 등록
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // 기본 동작을 무시시킨다. 페이지를 이동시키면서 데이터 넘기기
+    const [idChecked, setIdChecked] = useState(false);
+    const [idAvailable, setIdAvailable] = useState(false);
+    const [idMessage, setIdMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    // 비밀번호 확인 - 비밀번호와 비밀번호 확인이 틀리면
-    if(pw != pw2){
-      alert('비밀번호와 비밀번호 확인은 같아야 합니다.'); // 경고 띄우기
-      // 데이터 지우기 - pw와 pw2를 value값으로 세팅하는 속성이 작성되어 있어야만 한다.
-      setPw('');
-      setPw2('');
-      // 비밀번호에 커서를 위치시킨다.
-      document.getElementById('pw').focus(); // $("#pw").focus()
-      return false;
-    }
+    useEffect(() => {
+        idInputRef.current?.focus();
+    }, []);
 
-    // 입력한 데이터를 JSON 데이터로 만든다.
-    const data = {
-      id : id,
-      pw : pw,
-      name : name,
-      gender : gender,
-      birth : birth,
-      tel : tel,
-      postNo : postNo,
-      address : address,
-      email : email,
-      roles : roles
-    }
+    const handleChange = (event) => {
+        const { name, value } = event.target;
 
-    // 수집한 데이터 출력 확인
-    console.log(data);
+        setForm((prev) => ({
+            ...prev,
+            [name]: value
+        }));
 
-    // Spring Boot로 백엔드 처리 APi 호출해서 데이터 전달
-    try {
-      const response = await axios.post("http://localhost/member/write.do",data);
-      alert(response.data); // 서버에서 보낸 데이터를 출력하자.
-      navigate("/"); // react 서버
-    } catch (error) { // 서버에서 오류가 난 경우 : 500번 오류
-      console.log(error);
-    }
+        if (name === "id") {
+            setIdChecked(false);
+            setIdAvailable(false);
+            setIdMessage("");
+        }
+    };
 
-  }
+    const checkId = async () => {
+        const id = form.id.trim();
 
-  // 데이터 표시--------------------------------
-  return(
-    <>
-      <div>/member/write</div>
-      <hr />
-      <p>회원 가입 페이지 입니다.</p>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3 mt-3">
-          <label htmlFor="id" className="form-label">아이디:</label>
-          <input type="text" className="form-control" id="id"
-           placeholder="아이디 입력" name="id" required maxLength={100}
-           onChange={(e) => setId(e.target.value)}/>
-        </div>
+        if (!id) {
+            setIdMessage("아이디를 입력해주세요.");
+            setIdAvailable(false);
+            return;
+        }
 
-        <div className="mb-3">
-          <label htmlFor="pw" className="form-label">비밀번호:</label>
-          <input type="password" className="form-control" id="pw"
-           placeholder="비밀번호를 입력하세요" name="pw" required maxLength={20}
-           value={pw}
-           onChange={(e) => setPw(e.target.value)} />
-        </div>
+        if (id.length < 4) {
+            setIdMessage("아이디는 4자 이상 입력해주세요.");
+            setIdAvailable(false);
+            return;
+        }
 
-        <div className="mb-3">
-          <label htmlFor="pw2" className="form-label">비밀번호 확인:</label>
-          <input type="password" className="form-control" id="pw2"
-           placeholder="비밀번호 확인을 입력하세요" required maxLength={20} 
-           value={pw2}
-           onChange={(e) => setPw2(e.target.value)} />
-        </div>
+        try {
+            const response = await axios.get(
+                `${API_BASE_URL}/member/check-id.do`,
+                {
+                    params: { id }
+                }
+            );
 
-         <div className="mb-3 mt-3">
-          <label htmlFor="name" className="form-label">이름:</label>
-          <input type="text" className="form-control" id="name"
-           placeholder="이름 입력" name="name" required maxLength={10}
-           onChange={(e) => setName(e.target.value)}/>
-        </div>
+            const available = response.data?.available === true;
 
-         <div className="mb-3 mt-3">
-          <label htmlFor="gender1" className="form-label">
-            <input type="radio" className="form-control" id="gender1"
-            name="gender" required value={"남자"}
-           onChange={(e) => setGender(e.target.value)}/> 남자</label>
-        </div>
+            setIdChecked(true);
+            setIdAvailable(available);
+            setIdMessage(
+                available
+                    ? "사용 가능한 아이디입니다."
+                    : "이미 사용 중인 아이디입니다."
+            );
+        } catch (error) {
+            console.error(error);
 
-         <div className="mb-3 mt-3">
-          <label htmlFor="gender2" className="form-label">
-            <input type="radio" className="form-control" id="gender2"
-            name="gender" required value={"여자"}
-           onChange={(e) => setGender(e.target.value)}/> 여자</label>
-        </div>
+            setIdChecked(false);
+            setIdAvailable(false);
+            setIdMessage("중복 확인 중 오류가 발생했습니다.");
+        }
+    };
 
-         <div className="mb-3 mt-3">
-          <label htmlFor="birth" className="form-label">생년월일:</label>
-          <input type="text" className="form-control" id="birth"
-           placeholder="yyyy-MM-dd HH:mm:ss" name="birth" required
-           onChange={(e) => setBirth(e.target.value)}/>
-        </div>
+    const validate = () => {
+        if (!idChecked || !idAvailable) {
+            return "아이디 중복 확인을 완료해주세요.";
+        }
 
-         <div className="mb-3 mt-3">
-          <label htmlFor="tel" className="form-label">전화번호:</label>
-          <input type="text" className="form-control" id="tel"
-           placeholder="전화번호 입력" name="tel" maxLength={13}
-           onChange={(e) => setTel(e.target.value)}/>
-        </div>
+        if (form.pw.length < 4) {
+            return "비밀번호는 4자 이상 입력해주세요.";
+        }
 
-         <div className="mb-3 mt-3">
-          <label htmlFor="postNo" className="form-label">우편번호:</label>
-          <input type="text" className="form-control" id="postNo"
-           placeholder="우편 번호 입력" name="postNo" required maxLength={5}
-           onChange={(e) => setPostNo(e.target.value)}/>
-        </div>
+        if (form.pw !== form.pw2) {
+            return "비밀번호가 일치하지 않습니다.";
+        }
 
-         <div className="mb-3 mt-3">
-          <label htmlFor="addresss" className="form-label">주소:</label>
-          <input type="text" className="form-control" id="addresss"
-           placeholder="주소 입력" name="addresss" required
-           onChange={(e) => setAddress(e.target.value)}/>
-        </div>
+        if (!form.gender) {
+            return "성별을 선택해주세요.";
+        }
 
-         <div className="mb-3 mt-3">
-          <label htmlFor="email" className="form-label">이메일:</label>
-          <input type="text" className="form-control" id="email"
-           placeholder="이메일 입력" name="email" required
-           onChange={(e) => setEmail(e.target.value)}/>
-        </div>
+        return "";
+    };
 
-         <div className="mb-3 mt-3">
-          <label htmlFor="roles1" className="form-label">일반 회원</label>
-          <input type="checkbox" className="form-control" id="roles1"
-           name="roles" value={"user"}
-           onChange={(e) => setRoles(e.target.value)}/>
-        </div>
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setErrorMessage("");
 
-         <div className="mb-3 mt-3">
-          <label htmlFor="roles2" className="form-label">관리자</label>
-          <input type="checkbox" className="form-control" id="roles2"
-           name="roles" value={"admin"}
-           onChange={(e) => setRoles(e.target.value)}/>
-        </div>
+        const validationMessage = validate();
 
-       <button type="submit" className="btn btn-primary mr-2">가입</button>
-        <button type="reset" className="btn btn-success mr-2">새로입력</button>
-        <button type="button" className="btn btn-warning"
-          onClick={() => navigate("/")}>취소</button>
+        if (validationMessage) {
+            setErrorMessage(validationMessage);
+            return;
+        }
 
-      </form>
-    </>
-  );
+        const requestData = {
+            id: form.id.trim(),
+            pw: form.pw,
+            name: form.name.trim(),
+            gender: form.gender,
+            birth: form.birth,
+            tel: form.tel.trim(),
+            email: form.email.trim()
+        };
+
+        try {
+            setLoading(true);
+
+            const response = await axios.post(
+                `${API_BASE_URL}/member/write.do`,
+                requestData
+            );
+
+            if (response.data?.success) {
+                alert("회원가입이 완료되었습니다.");
+                navigate("/member/login");
+                return;
+            }
+
+            setErrorMessage(
+                response.data?.msg || "회원가입에 실패했습니다."
+            );
+        } catch (error) {
+            const message =
+                error.response?.data?.message ||
+                error.response?.data?.msg;
+
+            if (!error.response) {
+                setErrorMessage("백엔드 서버에 연결할 수 없습니다.");
+            } else {
+                setErrorMessage(
+                    message || "회원가입 처리 중 오류가 발생했습니다."
+                );
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <main style={styles.page}>
+            <div style={styles.circleLarge} />
+            <div style={styles.circleSmall} />
+
+            <div className="container position-relative">
+                <section style={styles.formContainer}>
+                    <header style={styles.header}>
+                        <button
+                            type="button"
+                            style={styles.logoButton}
+                            onClick={() => navigate("/")}
+                        >
+                            재난안전정보
+                        </button>
+
+                        <h1 style={styles.title}>회원가입</h1>
+
+                        <p style={styles.description}>
+                            회원정보를 입력해주세요.
+                        </p>
+                    </header>
+
+                    {errorMessage && (
+                        <div
+                            className="alert alert-danger"
+                            role="alert"
+                            style={styles.alert}
+                        >
+                            {errorMessage}
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit}>
+                        <div className="row g-4">
+                            <div className="col-12">
+                                <label
+                                    htmlFor="id"
+                                    className="form-label fw-semibold"
+                                >
+                                    아이디
+                                </label>
+
+                                <div className="input-group">
+                                    <input
+                                        ref={idInputRef}
+                                        type="text"
+                                        id="id"
+                                        name="id"
+                                        className="form-control"
+                                        placeholder="아이디를 입력하세요"
+                                        maxLength={20}
+                                        value={form.id}
+                                        onChange={handleChange}
+                                        style={styles.input}
+                                        required
+                                    />
+
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline-primary"
+                                        style={styles.checkButton}
+                                        onClick={checkId}
+                                    >
+                                        중복 확인
+                                    </button>
+                                </div>
+
+                                {idMessage && (
+                                    <p
+                                        style={{
+                                            ...styles.message,
+                                            color: idAvailable
+                                                ? "#198754"
+                                                : "#dc3545"
+                                        }}
+                                    >
+                                        {idMessage}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="col-12 col-md-6">
+                                <label
+                                    htmlFor="pw"
+                                    className="form-label fw-semibold"
+                                >
+                                    비밀번호
+                                </label>
+
+                                <input
+                                    type="password"
+                                    id="pw"
+                                    name="pw"
+                                    className="form-control"
+                                    placeholder="비밀번호 입력"
+                                    value={form.pw}
+                                    onChange={handleChange}
+                                    style={styles.input}
+                                    autoComplete="new-password"
+                                    required
+                                />
+                            </div>
+
+                            <div className="col-12 col-md-6">
+                                <label
+                                    htmlFor="pw2"
+                                    className="form-label fw-semibold"
+                                >
+                                    비밀번호 확인
+                                </label>
+
+                                <input
+                                    type="password"
+                                    id="pw2"
+                                    name="pw2"
+                                    className="form-control"
+                                    placeholder="비밀번호 다시 입력"
+                                    value={form.pw2}
+                                    onChange={handleChange}
+                                    style={styles.input}
+                                    autoComplete="new-password"
+                                    required
+                                />
+                            </div>
+
+                            <div className="col-12 col-md-6">
+                                <label
+                                    htmlFor="name"
+                                    className="form-label fw-semibold"
+                                >
+                                    이름
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    className="form-control"
+                                    placeholder="이름을 입력하세요"
+                                    maxLength={30}
+                                    value={form.name}
+                                    onChange={handleChange}
+                                    style={styles.input}
+                                    required
+                                />
+                            </div>
+
+                            <div className="col-12 col-md-6">
+                                <label className="form-label fw-semibold">
+                                    성별
+                                </label>
+
+                                <div style={styles.genderBox}>
+                                    <label style={styles.radioLabel}>
+                                        <input
+                                            type="radio"
+                                            name="gender"
+                                            value="남자"
+                                            checked={form.gender === "남자"}
+                                            onChange={handleChange}
+                                        />
+                                        남자
+                                    </label>
+
+                                    <label style={styles.radioLabel}>
+                                        <input
+                                            type="radio"
+                                            name="gender"
+                                            value="여자"
+                                            checked={form.gender === "여자"}
+                                            onChange={handleChange}
+                                        />
+                                        여자
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div className="col-12 col-md-6">
+                                <label
+                                    htmlFor="birth"
+                                    className="form-label fw-semibold"
+                                >
+                                    생년월일
+                                </label>
+
+                                <input
+                                    type="date"
+                                    id="birth"
+                                    name="birth"
+                                    className="form-control"
+                                    value={form.birth}
+                                    onChange={handleChange}
+                                    style={styles.input}
+                                    required
+                                />
+                            </div>
+
+                            <div className="col-12 col-md-6">
+                                <label
+                                    htmlFor="tel"
+                                    className="form-label fw-semibold"
+                                >
+                                    전화번호
+                                </label>
+
+                                <input
+                                    type="tel"
+                                    id="tel"
+                                    name="tel"
+                                    className="form-control"
+                                    placeholder="010-0000-0000"
+                                    maxLength={13}
+                                    value={form.tel}
+                                    onChange={handleChange}
+                                    style={styles.input}
+                                    required
+                                />
+                            </div>
+
+                            <div className="col-12">
+                                <label
+                                    htmlFor="email"
+                                    className="form-label fw-semibold"
+                                >
+                                    이메일
+                                </label>
+
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    className="form-control"
+                                    placeholder="example@email.com"
+                                    value={form.email}
+                                    onChange={handleChange}
+                                    style={styles.input}
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="btn btn-primary w-100"
+                            style={styles.submitButton}
+                            disabled={loading}
+                        >
+                            {loading ? "가입 처리 중..." : "회원가입"}
+                        </button>
+
+                        <div style={styles.loginArea}>
+                            <span>이미 계정이 있으신가요?</span>
+
+                            <button
+                                type="button"
+                                className="btn btn-link p-0 text-decoration-none"
+                                onClick={() => navigate("/member/login")}
+                            >
+                                로그인
+                            </button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </main>
+    );
 }
+
+const styles = {
+    page: {
+        position: "relative",
+        overflow: "hidden",
+        minHeight: "calc(100vh - 70px)",
+        padding: "58px 24px 90px",
+        backgroundColor: "#f6f7fb"
+    },
+
+    circleLarge: {
+        position: "absolute",
+        top: "-240px",
+        left: "50%",
+        width: "900px",
+        height: "900px",
+        borderRadius: "50%",
+        backgroundColor: "#e9edff",
+        transform: "translateX(-50%)"
+    },
+
+    circleSmall: {
+        position: "absolute",
+        right: "-180px",
+        bottom: "-240px",
+        width: "540px",
+        height: "540px",
+        borderRadius: "50%",
+        backgroundColor: "#eef4ff"
+    },
+
+    formContainer: {
+        position: "relative",
+        zIndex: 1,
+        maxWidth: "760px",
+        margin: "0 auto",
+        padding: "44px 54px",
+        backgroundColor: "#ffffff",
+        border: "1px solid #eaecf0",
+        borderRadius: "16px",
+        boxShadow: "0 18px 50px rgba(37, 48, 76, 0.1)"
+    },
+
+    header: {
+        marginBottom: "32px",
+        textAlign: "center"
+    },
+
+    logoButton: {
+        marginBottom: "24px",
+        padding: 0,
+        color: "#0d6efd",
+        background: "none",
+        border: 0,
+        fontSize: "18px",
+        fontWeight: "800"
+    },
+
+    title: {
+        marginBottom: "10px",
+        color: "#20242c",
+        fontSize: "32px",
+        fontWeight: "800"
+    },
+
+    description: {
+        margin: 0,
+        color: "#7a818d",
+        fontSize: "15px"
+    },
+
+    alert: {
+        marginBottom: "26px"
+    },
+
+    input: {
+        height: "49px",
+        padding: "0 15px",
+        borderRadius: "7px",
+        fontSize: "15px"
+    },
+
+    checkButton: {
+        minWidth: "105px",
+        borderRadius: "0 7px 7px 0"
+    },
+
+    message: {
+        margin: "8px 0 0",
+        fontSize: "13px"
+    },
+
+    genderBox: {
+        display: "flex",
+        alignItems: "center",
+        gap: "32px",
+        height: "49px",
+        padding: "0 16px",
+        border: "1px solid #dee2e6",
+        borderRadius: "7px"
+    },
+
+    radioLabel: {
+        display: "flex",
+        alignItems: "center",
+        gap: "8px",
+        cursor: "pointer"
+    },
+
+    submitButton: {
+        height: "52px",
+        marginTop: "32px",
+        borderRadius: "7px",
+        fontSize: "16px",
+        fontWeight: "700"
+    },
+
+    loginArea: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: "8px",
+        marginTop: "22px",
+        color: "#777f8c",
+        fontSize: "14px"
+    }
+};
 
 export default MemberWrite;

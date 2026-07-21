@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -28,72 +29,244 @@ import java.util.List;
 public class QnaServiceImpl implements QnaService {
 
     private static final int ADMIN_GRADE_NO = 9;
-    private static final String DEFAULT_CATEGORY = "기타";
+
+    private static final String DEFAULT_CATEGORY =
+            "기타";
+
+    private static final Set<String> ALLOWED_CATEGORIES =
+            Set.of(
+                    "이용문의",
+                    "계정문의",
+                    "재난정보",
+                    "오류신고",
+                    "기타"
+            );
 
     private final QnaRepository qnaRepository;
+
     private final QMemberRepository memberRepository;
 
     @Override
     public Page<QnaResponse> getQuestionList(
+            String searchType,
             String keyword,
             String category,
             Pageable pageable
     ) {
-        Specification<Qna> specification = (root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
+        Specification<Qna> specification =
+                (root, query, criteriaBuilder) -> {
 
-            // 목록에는 답변글이 아닌 질문글만 표시한다.
-            predicates.add(criteriaBuilder.isNull(root.get("parentNo")));
+                    List<Predicate> predicates =
+                            new ArrayList<>();
 
-            if (keyword != null && !keyword.isBlank()) {
-                String likeKeyword = "%" + keyword.trim().toLowerCase() + "%";
+                    // 목록에는 질문글만 표시
+                    predicates.add(
+                            criteriaBuilder.isNull(
+                                    root.get("parentNo")
+                            )
+                    );
 
-                Predicate titleLike = criteriaBuilder.like(
-                        criteriaBuilder.lower(root.get("title")),
-                        likeKeyword
-                );
-                Predicate contentLike = criteriaBuilder.like(
-                        criteriaBuilder.lower(root.get("content")),
-                        likeKeyword
-                );
-                Predicate idLike = criteriaBuilder.like(
-                        criteriaBuilder.lower(root.get("member").get("id")),
-                        likeKeyword
-                );
+                    if (keyword != null
+                            && !keyword.isBlank()) {
 
-                predicates.add(criteriaBuilder.or(titleLike, contentLike, idLike));
-            }
+                        String likeKeyword =
+                                "%"
+                                        + keyword
+                                        .trim()
+                                        .toLowerCase()
+                                        + "%";
 
-            if (category != null
-                    && !category.isBlank()
-                    && !"전체".equals(category)) {
-                predicates.add(
-                        criteriaBuilder.equal(root.get("category"), category.trim())
-                );
-            }
+                        String selectedSearchType =
+                                searchType == null
+                                        || searchType.isBlank()
+                                        ? "all"
+                                        : searchType.trim();
 
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        };
+                        Predicate searchPredicate;
 
-        return qnaRepository.findAll(specification, pageable)
+                        if ("title".equals(
+                                selectedSearchType
+                        )) {
+                            searchPredicate =
+                                    criteriaBuilder.like(
+                                            criteriaBuilder.lower(
+                                                    root.get("title")
+                                            ),
+                                            likeKeyword
+                                    );
+
+                        } else if ("content".equals(
+                                selectedSearchType
+                        )) {
+                            searchPredicate =
+                                    criteriaBuilder.like(
+                                            criteriaBuilder.lower(
+                                                    root.get("content")
+                                            ),
+                                            likeKeyword
+                                    );
+
+                        } else if ("writer".equals(
+                                selectedSearchType
+                        )) {
+                            Predicate writerIdLike =
+                                    criteriaBuilder.like(
+                                            criteriaBuilder.lower(
+                                                    root.get("member")
+                                                            .get("id")
+                                            ),
+                                            likeKeyword
+                                    );
+
+                            Predicate writerNameLike =
+                                    criteriaBuilder.like(
+                                            criteriaBuilder.lower(
+                                                    root.get("member")
+                                                            .get("name")
+                                            ),
+                                            likeKeyword
+                                    );
+
+                            searchPredicate =
+                                    criteriaBuilder.or(
+                                            writerIdLike,
+                                            writerNameLike
+                                    );
+
+                        } else {
+                            Predicate titleLike =
+                                    criteriaBuilder.like(
+                                            criteriaBuilder.lower(
+                                                    root.get("title")
+                                            ),
+                                            likeKeyword
+                                    );
+
+                            Predicate contentLike =
+                                    criteriaBuilder.like(
+                                            criteriaBuilder.lower(
+                                                    root.get("content")
+                                            ),
+                                            likeKeyword
+                                    );
+
+                            Predicate writerIdLike =
+                                    criteriaBuilder.like(
+                                            criteriaBuilder.lower(
+                                                    root.get("member")
+                                                            .get("id")
+                                            ),
+                                            likeKeyword
+                                    );
+
+                            Predicate writerNameLike =
+                                    criteriaBuilder.like(
+                                            criteriaBuilder.lower(
+                                                    root.get("member")
+                                                            .get("name")
+                                            ),
+                                            likeKeyword
+                                    );
+
+                            searchPredicate =
+                                    criteriaBuilder.or(
+                                            titleLike,
+                                            contentLike,
+                                            writerIdLike,
+                                            writerNameLike
+                                    );
+                        }
+
+                        predicates.add(searchPredicate);
+                    }
+
+                    if (category != null
+                            && !category.isBlank()
+                            && !"전체".equals(category)) {
+
+                        String normalizedCategory =
+                                category.trim();
+
+                        if ("이용문의".equals(
+                                normalizedCategory
+                        )) {
+                            predicates.add(
+                                    root.get("category").in(
+                                            "이용문의",
+                                            "서비스문의"
+                                    )
+                            );
+
+                        } else if ("기타".equals(
+                                normalizedCategory
+                        )) {
+                            predicates.add(
+                                    root.get("category").in(
+                                            "기타",
+                                            "기타문의"
+                                    )
+                            );
+
+                        } else {
+                            predicates.add(
+                                    criteriaBuilder.equal(
+                                            root.get("category"),
+                                            normalizedCategory
+                                    )
+                            );
+                        }
+                    }
+
+                    return criteriaBuilder.and(
+                            predicates.toArray(
+                                    new Predicate[0]
+                            )
+                    );
+                };
+
+        return qnaRepository
+                .findAll(
+                        specification,
+                        pageable
+                )
                 .map(this::toResponse);
     }
 
     @Override
     @Transactional
-    public List<QnaResponse> getThread(Long no) {
+    public List<QnaResponse> getThread(
+            Long no
+    ) {
         Qna selected = getQna(no);
-        Long refNo = selected.getRefNo() == null ? selected.getNo() : selected.getRefNo();
 
-        Qna question = qnaRepository.findById(refNo)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "원본 질문을 찾을 수 없습니다."
-                ));
+        Long refNo =
+                selected.getRefNo() == null
+                        ? selected.getNo()
+                        : selected.getRefNo();
 
-        question.setHit((question.getHit() == null ? 0L : question.getHit()) + 1L);
+        Qna question =
+                qnaRepository.findById(refNo)
+                        .orElseThrow(
+                                () ->
+                                        new ResponseStatusException(
+                                                HttpStatus.NOT_FOUND,
+                                                "원본 질문을 찾을 수 없습니다."
+                                        )
+                        );
 
-        List<Qna> thread = qnaRepository.findAllByRefNoOrderByOrdNoAsc(refNo);
+        question.setHit(
+                (question.getHit() == null
+                        ? 0L
+                        : question.getHit())
+                        + 1L
+        );
+
+        List<Qna> thread =
+                qnaRepository
+                        .findAllByRefNoOrderByOrdNoAsc(
+                                refNo
+                        );
+
         if (thread.isEmpty()) {
             thread = List.of(question);
         }
@@ -105,67 +278,133 @@ public class QnaServiceImpl implements QnaService {
 
     @Override
     @Transactional
-    public QnaResponse createQuestion(QnaRequest request, String loginId) {
+    public QnaResponse createQuestion(
+            QnaRequest request,
+            String loginId
+    ) {
         validateRequest(request);
-        Member member = getMember(loginId);
 
-        Qna question = Qna.builder()
-                .title(request.getTitle().trim())
-                .content(request.getContent().trim())
-                .member(member)
-                .hit(0L)
-                .ordNo(0L)
-                .levNo(0L)
-                .parentNo(null)
-                .category(normalizeCategory(request.getCategory()))
-                .build();
+        Member member =
+                getMember(loginId);
 
-        Qna saved = qnaRepository.save(question);
+        Qna question =
+                Qna.builder()
+                        .title(
+                                request.getTitle().trim()
+                        )
+                        .content(
+                                request.getContent().trim()
+                        )
+                        .member(member)
+                        .hit(0L)
+                        .ordNo(0L)
+                        .levNo(0L)
+                        .parentNo(null)
+                        .category(
+                                normalizeCategory(
+                                        request.getCategory()
+                                )
+                        )
+                        .build();
+
+        Qna saved =
+                qnaRepository.save(question);
+
         saved.setRefNo(saved.getNo());
 
-        log.info("QnA 질문 등록 완료. no={}, writer={}", saved.getNo(), loginId);
+        log.info(
+                "문의 등록 완료. no={}, writer={}",
+                saved.getNo(),
+                loginId
+        );
+
         return toResponse(saved);
     }
 
     @Override
     @Transactional
-    public QnaResponse updateQna(Long no, QnaRequest request, String loginId) {
+    public QnaResponse updateQna(
+            Long no,
+            QnaRequest request,
+            String loginId
+    ) {
         validateRequest(request);
-        Qna qna = getQna(no);
-        validateOwner(qna, loginId);
 
-        if (qna.getParentNo() == null && qnaRepository.existsByParentNo(qna.getNo())) {
+        Qna qna = getQna(no);
+
+        validateOwner(
+                qna,
+                loginId
+        );
+
+        if (qna.getParentNo() == null
+                && qnaRepository.existsByParentNo(
+                qna.getNo()
+        )) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
-                    "답변이 등록된 질문은 수정할 수 없습니다."
+                    "답변이 등록된 문의는 수정할 수 없습니다."
             );
         }
 
-        qna.setTitle(request.getTitle().trim());
-        qna.setContent(request.getContent().trim());
+        qna.setTitle(
+                request.getTitle().trim()
+        );
+
+        qna.setContent(
+                request.getContent().trim()
+        );
 
         if (qna.getParentNo() == null) {
-            qna.setCategory(normalizeCategory(request.getCategory()));
+            qna.setCategory(
+                    normalizeCategory(
+                            request.getCategory()
+                    )
+            );
         }
+
+        log.info(
+                "문의 또는 답변 수정 완료. no={}, requester={}",
+                no,
+                loginId
+        );
 
         return toResponse(qna);
     }
 
     @Override
     @Transactional
-    public void deleteQna(Long no, String loginId) {
+    public void deleteQna(
+            Long no,
+            String loginId
+    ) {
         Qna qna = getQna(no);
-        validateOwner(qna, loginId);
+
+        validateOwner(
+                qna,
+                loginId
+        );
 
         if (qna.getParentNo() == null) {
-            List<Qna> answers = qnaRepository.findAllByParentNo(qna.getNo());
+            List<Qna> answers =
+                    qnaRepository.findAllByParentNo(
+                            qna.getNo()
+                    );
+
             if (!answers.isEmpty()) {
-                qnaRepository.deleteAll(answers);
+                qnaRepository.deleteAll(
+                        answers
+                );
             }
         }
 
         qnaRepository.delete(qna);
-        log.info("QnA 삭제 완료. no={}, requester={}", no, loginId);
+
+        log.info(
+                "문의 또는 답변 삭제 완료. no={}, requester={}",
+                no,
+                loginId
+        );
     }
 
     @Override
@@ -177,17 +416,25 @@ public class QnaServiceImpl implements QnaService {
     ) {
         validateRequest(request);
 
-        Member admin = getMember(loginId);
+        Member admin =
+                getMember(loginId);
+
         if (admin.getGrade() == null
-                || admin.getGrade().getGradeNo() == null
-                || admin.getGrade().getGradeNo() != ADMIN_GRADE_NO) {
+                || admin.getGrade()
+                .getGradeNo() == null
+                || admin.getGrade()
+                .getGradeNo()
+                != ADMIN_GRADE_NO) {
+
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN,
                     "관리자만 답변을 등록할 수 있습니다."
             );
         }
 
-        Qna question = getQna(questionNo);
+        Qna question =
+                getQna(questionNo);
+
         if (question.getParentNo() != null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -195,62 +442,120 @@ public class QnaServiceImpl implements QnaService {
             );
         }
 
-        if (qnaRepository.existsByParentNo(question.getNo())) {
+        if (question.getMember() != null
+                && question.getMember()
+                .getId()
+                .equals(loginId)) {
+
             throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "이미 답변이 등록된 질문입니다."
+                    HttpStatus.BAD_REQUEST,
+                    "관리자가 직접 작성한 문의에는 답변을 등록할 수 없습니다."
             );
         }
 
-        Long refNo = question.getRefNo() == null
-                ? question.getNo()
-                : question.getRefNo();
+        if (qnaRepository.existsByParentNo(
+                question.getNo()
+        )) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "이미 답변이 등록된 문의입니다."
+            );
+        }
 
-        Qna answer = Qna.builder()
-                .title(request.getTitle().trim())
-                .content(request.getContent().trim())
-                .member(admin)
-                .hit(0L)
-                .refNo(refNo)
-                .ordNo((question.getOrdNo() == null ? 0L : question.getOrdNo()) + 1L)
-                .levNo((question.getLevNo() == null ? 0L : question.getLevNo()) + 1L)
-                .parentNo(question.getNo())
-                .category(question.getCategory())
-                .build();
+        Long refNo =
+                question.getRefNo() == null
+                        ? question.getNo()
+                        : question.getRefNo();
 
-        Qna saved = qnaRepository.save(answer);
-        log.info("QnA 답변 등록 완료. questionNo={}, answerNo={}, admin={}",
-                questionNo, saved.getNo(), loginId);
+        Qna answer =
+                Qna.builder()
+                        .title(
+                                request.getTitle().trim()
+                        )
+                        .content(
+                                request.getContent().trim()
+                        )
+                        .member(admin)
+                        .hit(0L)
+                        .refNo(refNo)
+                        .ordNo(
+                                (question.getOrdNo() == null
+                                        ? 0L
+                                        : question.getOrdNo())
+                                        + 1L
+                        )
+                        .levNo(
+                                (question.getLevNo() == null
+                                        ? 0L
+                                        : question.getLevNo())
+                                        + 1L
+                        )
+                        .parentNo(
+                                question.getNo()
+                        )
+                        .category(
+                                question.getCategory()
+                        )
+                        .build();
+
+        Qna saved =
+                qnaRepository.save(answer);
+
+        log.info(
+                "관리자 답변 등록 완료. questionNo={}, answerNo={}, admin={}",
+                questionNo,
+                saved.getNo(),
+                loginId
+        );
 
         return toResponse(saved);
     }
 
-    private Qna getQna(Long no) {
+    private Qna getQna(
+            Long no
+    ) {
         return qnaRepository.findById(no)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "QnA 글을 찾을 수 없습니다."
-                ));
+                .orElseThrow(
+                        () ->
+                                new ResponseStatusException(
+                                        HttpStatus.NOT_FOUND,
+                                        "문의 글을 찾을 수 없습니다."
+                                )
+                );
     }
 
-    private Member getMember(String loginId) {
-        if (loginId == null || loginId.isBlank()) {
+    private Member getMember(
+            String loginId
+    ) {
+        if (loginId == null
+                || loginId.isBlank()) {
+
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
                     "로그인이 필요합니다."
             );
         }
 
-        return memberRepository.findById(loginId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.UNAUTHORIZED,
-                        "로그인 회원 정보를 찾을 수 없습니다."
-                ));
+        return memberRepository
+                .findById(loginId)
+                .orElseThrow(
+                        () ->
+                                new ResponseStatusException(
+                                        HttpStatus.UNAUTHORIZED,
+                                        "로그인 회원 정보를 찾을 수 없습니다."
+                                )
+                );
     }
 
-    private void validateOwner(Qna qna, String loginId) {
+    private void validateOwner(
+            Qna qna,
+            String loginId
+    ) {
         if (qna.getMember() == null
-                || !qna.getMember().getId().equals(loginId)) {
+                || !qna.getMember()
+                .getId()
+                .equals(loginId)) {
+
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN,
                     "본인이 작성한 글만 수정하거나 삭제할 수 있습니다."
@@ -258,17 +563,24 @@ public class QnaServiceImpl implements QnaService {
         }
     }
 
-    private void validateRequest(QnaRequest request) {
+    private void validateRequest(
+            QnaRequest request
+    ) {
         if (request == null
                 || request.getTitle() == null
-                || request.getTitle().isBlank()) {
+                || request.getTitle()
+                .isBlank()) {
+
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "제목은 필수입니다."
             );
         }
 
-        if (request.getContent() == null || request.getContent().isBlank()) {
+        if (request.getContent() == null
+                || request.getContent()
+                .isBlank()) {
+
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "내용은 필수입니다."
@@ -276,32 +588,85 @@ public class QnaServiceImpl implements QnaService {
         }
     }
 
-    private String normalizeCategory(String category) {
-        if (category == null || category.isBlank()) {
+    private String normalizeCategory(
+            String category
+    ) {
+        if (category == null
+                || category.isBlank()) {
             return DEFAULT_CATEGORY;
         }
 
-        return category.trim();
+        String normalizedCategory =
+                category.trim();
+
+        if ("서비스문의".equals(
+                normalizedCategory
+        )) {
+            return "이용문의";
+        }
+
+        if ("기타문의".equals(
+                normalizedCategory
+        )) {
+            return "기타";
+        }
+
+        if (!ALLOWED_CATEGORIES.contains(
+                normalizedCategory
+        )) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "올바른 문의 카테고리를 선택해주세요."
+            );
+        }
+
+        return normalizedCategory;
     }
 
-    private QnaResponse toResponse(Qna qna) {
-        boolean answered = qna.getParentNo() != null
-                || qnaRepository.existsByParentNo(qna.getNo());
+    private QnaResponse toResponse(
+            Qna qna
+    ) {
+        boolean answered =
+                qna.getParentNo() != null
+                        || qnaRepository
+                        .existsByParentNo(
+                                qna.getNo()
+                        );
 
         return QnaResponse.builder()
                 .no(qna.getNo())
                 .title(qna.getTitle())
                 .content(qna.getContent())
-                .writerId(qna.getMember() == null ? null : qna.getMember().getId())
-                .writerName(qna.getMember() == null ? null : qna.getMember().getName())
-                .writeDate(qna.getWriteDate())
+                .writerId(
+                        qna.getMember() == null
+                                ? null
+                                : qna.getMember()
+                                .getId()
+                )
+                .writerName(
+                        qna.getMember() == null
+                                ? null
+                                : qna.getMember()
+                                .getName()
+                )
+                .writeDate(
+                        qna.getWriteDate()
+                )
                 .hit(qna.getHit())
                 .refNo(qna.getRefNo())
                 .ordNo(qna.getOrdNo())
                 .levNo(qna.getLevNo())
-                .parentNo(qna.getParentNo())
-                .category(qna.getCategory())
-                .answerStatus(answered ? "답변완료" : "답변대기")
+                .parentNo(
+                        qna.getParentNo()
+                )
+                .category(
+                        qna.getCategory()
+                )
+                .answerStatus(
+                        answered
+                                ? "답변완료"
+                                : "답변대기"
+                )
                 .build();
     }
 }
