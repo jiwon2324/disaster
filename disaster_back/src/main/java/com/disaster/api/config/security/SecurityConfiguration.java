@@ -28,6 +28,8 @@ public class SecurityConfiguration {
     ) throws Exception {
 
         httpSecurity
+                .cors(cors -> {
+                })
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .sessionManagement(session ->
@@ -51,6 +53,14 @@ public class SecurityConfiguration {
                                         "/v3/api-docs/**"
                                 ).permitAll()
 
+                                // 교육 가이드 및 체크리스트
+                                .requestMatchers(
+                                        "/api/edu",
+                                        "/api/edu/**",
+                                        "/api/checklists",
+                                        "/api/checklists/**"
+                                ).permitAll()
+
                                 // 회원 공개 기능
                                 .requestMatchers(
                                         "/member/login.do",
@@ -71,29 +81,31 @@ public class SecurityConfiguration {
                                         "/member/admin/**"
                                 ).hasRole("ADMIN")
 
-                                // QnA 관리자 답변
+                                // 관리자 QnA 답변
                                 .requestMatchers(
                                         "/qna/answer.do"
                                 ).hasRole("ADMIN")
 
-                                // 나머지 QnA 기능
+                                // 일반 QnA 기능
                                 .requestMatchers(
                                         "/qna/**"
                                 ).hasAnyRole("USER", "ADMIN")
 
-                                // 상품
+                                // 상품 조회
                                 .requestMatchers(
                                         HttpMethod.GET,
                                         "/product/**"
                                 ).permitAll()
 
-                                // 커뮤니티
+                                // 커뮤니티 및 게시판
                                 .requestMatchers(
-                                        "/community/**"
+                                        "/community/**",
+                                        "/board/**"
                                 ).permitAll()
 
-                                // 텍스트 및 이미지
+                                // 업로드 파일 및 정적 파일
                                 .requestMatchers(
+                                        "/upload/**",
                                         "/txt/**",
                                         "/image/**"
                                 ).permitAll()
@@ -132,6 +144,7 @@ public class SecurityConfiguration {
                                         "/api/disaster/**"
                                 ).permitAll()
                                 // 나머지 기능은 관리자만 접근
+                                // 위에서 정의되지 않은 요청은 관리자만 접근
                                 .anyRequest().hasRole("ADMIN")
                 )
 
@@ -142,7 +155,7 @@ public class SecurityConfiguration {
 
                 .exceptionHandling(exception ->
                         exception
-                                // 토큰이 없거나 잘못된 경우: 401
+                                // 인증 실패: 401
                                 .authenticationEntryPoint(
                                         (request, response, authException) -> {
                                             response.setStatus(
@@ -160,7 +173,7 @@ public class SecurityConfiguration {
                                         }
                                 )
 
-                                // 로그인은 됐지만 권한이 없는 경우: 403
+                                // 권한 부족: 403
                                 .accessDeniedHandler(
                                         (request, response, accessDeniedException) -> {
                                             response.setStatus(

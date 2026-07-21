@@ -15,12 +15,43 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private static final String[] PUBLIC_PREFIXES = {
+            "/api/edu",
+            "/api/checklists",
+            "/swagger-ui",
+            "/api-docs",
+            "/v3/api-docs"
+    };
+    private static final String[] PUBLIC_PATHS = {
+            "/swagger",
+            "/swagger-ui.html",
+            "/api-docs"
+    };
 
     // JwtTokenProvider를 세팅하는 생성자
     // @Autowide 를 붙이지 않아도 spring 4.xx 부터 자동으로 DI 적용된다.
     // 현재 spring 버전을 6.2.xx 버전이다.
     public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider){
         this.jwtTokenProvider = jwtTokenProvider;
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+
+        for (String publicPath : PUBLIC_PATHS) {
+            if (publicPath.equals(path)) {
+                return true;
+            }
+        }
+
+        for (String publicPrefix : PUBLIC_PREFIXES) {
+            if (path.equals(publicPrefix) || path.startsWith(publicPrefix + "/")) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
