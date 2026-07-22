@@ -6,12 +6,17 @@ import {
   useState
 } from "react";
 import { useNavigate } from "react-router-dom";
+import { ShieldCheck } from "lucide-react";
 
-const API_BASE_URL = "http://localhost";
+const API_BASE_URL =
+    "http://localhost";
 
 function MemberLogin() {
-  const navigate = useNavigate();
-  const idInputRef = useRef(null);
+  const navigate =
+      useNavigate();
+
+  const idInputRef =
+      useRef(null);
 
   const [id, setId] =
       useState("");
@@ -19,8 +24,10 @@ function MemberLogin() {
   const [pw, setPw] =
       useState("");
 
-  const [errorMessage, setErrorMessage] =
-      useState("");
+  const [
+    errorMessage,
+    setErrorMessage
+  ] = useState("");
 
   const [loading, setLoading] =
       useState(false);
@@ -29,7 +36,9 @@ function MemberLogin() {
     idInputRef.current?.focus();
   }, []);
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (
+      event
+  ) => {
     event.preventDefault();
 
     setErrorMessage("");
@@ -38,30 +47,34 @@ function MemberLogin() {
       setErrorMessage(
           "아이디와 비밀번호를 입력해주세요."
       );
+
       return;
     }
 
     try {
       setLoading(true);
 
-      const response = await axios.post(
-          `${API_BASE_URL}/member/login.do`,
-          {
-            id: id.trim(),
-            pw
-          }
-      );
+      const response =
+          await axios.post(
+              `${API_BASE_URL}/member/login.do`,
+              {
+                id: id.trim(),
+                pw
+              }
+          );
 
       const result =
           response.data;
 
-      if (!result?.success
-          || !result?.token) {
-
+      if (
+          !result?.success
+          || !result?.token
+      ) {
         setErrorMessage(
-            result?.msg ||
-            "아이디 또는 비밀번호를 확인해주세요."
+            result?.msg
+            || "아이디 또는 비밀번호를 확인해주세요."
         );
+
         return;
       }
 
@@ -73,7 +86,6 @@ function MemberLogin() {
       try {
         loginInfo =
             jwtDecode(token);
-
       } catch {
         loginInfo = {
           id: id.trim()
@@ -87,9 +99,7 @@ function MemberLogin() {
 
       localStorage.setItem(
           "login",
-          JSON.stringify(
-              loginInfo
-          )
+          JSON.stringify(loginInfo)
       );
 
       window.location.href = "/";
@@ -99,20 +109,20 @@ function MemberLogin() {
           error.response?.status;
 
       const serverMessage =
-          error.response?.data?.message ||
-          error.response?.data?.detail ||
-          error.response?.data?.msg;
+          error.response?.data?.message
+          || error.response?.data?.detail
+          || error.response?.data?.msg;
 
       if (status === 401) {
         setErrorMessage(
-            serverMessage ||
-            "아이디 또는 비밀번호가 올바르지 않습니다."
+            serverMessage
+            || "아이디 또는 비밀번호가 올바르지 않습니다."
         );
 
       } else if (status === 403) {
         setErrorMessage(
-            serverMessage ||
-            "로그인할 수 없는 회원 상태입니다."
+            serverMessage
+            || "로그인할 수 없는 회원 상태입니다."
         );
 
       } else if (!error.response) {
@@ -122,8 +132,8 @@ function MemberLogin() {
 
       } else {
         setErrorMessage(
-            serverMessage ||
-            "로그인 처리 중 오류가 발생했습니다."
+            serverMessage
+            || "로그인 처리 중 오류가 발생했습니다."
         );
       }
 
@@ -142,7 +152,15 @@ function MemberLogin() {
                   navigate("/")
               }
           >
-            재난안전정보
+            <ShieldCheck
+                size={31}
+                strokeWidth={2.3}
+                style={styles.logoIcon}
+            />
+
+            <span style={styles.logoText}>
+                        안전온
+                    </span>
           </button>
 
           <header style={styles.header}>
@@ -151,8 +169,7 @@ function MemberLogin() {
             </h1>
 
             <p style={styles.description}>
-              아이디와 비밀번호를
-              입력해주세요.
+              아이디와 비밀번호를 입력해주세요.
             </p>
           </header>
 
@@ -184,9 +201,7 @@ function MemberLogin() {
                   maxLength={20}
                   value={id}
                   onChange={(event) =>
-                      setId(
-                          event.target.value
-                      )
+                      setId(event.target.value)
                   }
                   autoComplete="username"
                   style={styles.input}
@@ -210,9 +225,7 @@ function MemberLogin() {
                   maxLength={100}
                   value={pw}
                   onChange={(event) =>
-                      setPw(
-                          event.target.value
-                      )
+                      setPw(event.target.value)
                   }
                   autoComplete="current-password"
                   style={styles.input}
@@ -279,10 +292,9 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    minHeight: "calc(100vh - 70px)",
+    minHeight: "calc(100vh - 72px)",
     padding: "70px 24px",
-    background:
-        "linear-gradient(135deg, #f8fafc 0%, #eef3f9 100%)"
+    backgroundColor: "#ffffff"
   },
 
   loginBox: {
@@ -290,22 +302,34 @@ const styles = {
     maxWidth: "510px",
     padding: "52px 58px",
     backgroundColor: "#ffffff",
-    border: "1px solid #e5eaf0",
-    borderRadius: "16px",
+    border: "1px solid #e2e7ed",
+    borderRadius: "14px",
     boxShadow:
-        "0 14px 40px rgba(30,45,70,0.08)"
+        "0 10px 30px rgba(30, 45, 70, 0.07)"
   },
 
   logo: {
-    display: "block",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "fit-content",
+    gap: "9px",
     margin: "0 auto 28px",
     padding: 0,
-    color: "#0d6efd",
     background: "none",
     border: 0,
-    fontSize: "20px",
-    fontWeight: "800",
     cursor: "pointer"
+  },
+
+  logoIcon: {
+    color: "#1769e0"
+  },
+
+  logoText: {
+    color: "#172033",
+    fontSize: "23px",
+    fontWeight: "850",
+    letterSpacing: "-0.05em"
   },
 
   header: {
@@ -383,7 +407,7 @@ const styles = {
 
   primaryLink: {
     padding: 0,
-    color: "#0d6efd",
+    color: "#1769e0",
     background: "none",
     border: 0,
     fontSize: "13px",

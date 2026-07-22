@@ -1,5 +1,6 @@
 package com.disaster.api.qna.service.impl;
 
+import com.disaster.api.common.service.MailService;
 import com.disaster.api.member.entity.Member;
 import com.disaster.api.member.repository.QMemberRepository;
 import com.disaster.api.qna.dto.QnaRequest;
@@ -46,6 +47,8 @@ public class QnaServiceImpl implements QnaService {
 
     private final QMemberRepository memberRepository;
 
+    private final MailService mailService;
+
     @Override
     public Page<QnaResponse> getQuestionList(
             String searchType,
@@ -59,7 +62,6 @@ public class QnaServiceImpl implements QnaService {
                     List<Predicate> predicates =
                             new ArrayList<>();
 
-                    // 목록에는 질문글만 표시
                     predicates.add(
                             criteriaBuilder.isNull(
                                     root.get("parentNo")
@@ -508,7 +510,66 @@ public class QnaServiceImpl implements QnaService {
                 loginId
         );
 
+        sendAnswerNotification(
+                question
+        );
+
         return toResponse(saved);
+    }
+
+    private void sendAnswerNotification(
+            Qna question
+    ) {
+        if (question.getMember() == null) {
+            log.warn(
+                    "문의 답변 이메일 발송 생략: 작성자 정보 없음. questionNo={}",
+                    question.getNo()
+            );
+
+            return;
+        }
+
+        String recipient =
+                question.getMember()
+                        .getEmail();
+
+        if (recipient == null
+                || recipient.isBlank()) {
+
+            log.warn(
+                    "문의 답변 이메일 발송 생략: 이메일 없음. questionNo={}, writer={}",
+                    question.getNo(),
+                    question.getMember()
+                            .getId()
+            );
+
+            return;
+        }
+
+        try {
+            mailService.sendQnaAnswerNotification(
+                    recipient,
+                    question.getMember()
+                            .getName(),
+                    question.getTitle(),
+                    question.getNo()
+            );
+
+            log.info(
+                    "문의 답변 이메일 발송 완료. questionNo={}, recipient={}",
+                    question.getNo(),
+                    recipient
+            );
+
+        } catch (Exception exception) {
+            log.error(
+                    "문의 답변 이메일 발송 실패. questionNo={}, recipient={}, error={}",
+                    question.getNo(),
+                    recipient,
+                    exception.getMessage(),
+                    exception
+            );
+        }
     }
 
     private Qna getQna(

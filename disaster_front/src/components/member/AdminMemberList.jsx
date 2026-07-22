@@ -1,14 +1,20 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { RotateCcw } from "lucide-react";
 
-const API_BASE_URL = "http://localhost";
+const API_BASE_URL =
+    "http://localhost";
 
 function AdminMemberList() {
-    const navigate = useNavigate();
-    const token = localStorage.getItem("token");
+    const navigate =
+        useNavigate();
 
-    const [members, setMembers] = useState([]);
+    const token =
+        localStorage.getItem("token");
+
+    const [members, setMembers] =
+        useState([]);
 
     const [searchType, setSearchType] =
         useState("id");
@@ -16,11 +22,15 @@ function AdminMemberList() {
     const [keyword, setKeyword] =
         useState("");
 
-    const [appliedSearchType, setAppliedSearchType] =
-        useState("id");
+    const [
+        appliedSearchType,
+        setAppliedSearchType
+    ] = useState("id");
 
-    const [appliedKeyword, setAppliedKeyword] =
-        useState("");
+    const [
+        appliedKeyword,
+        setAppliedKeyword
+    ] = useState("");
 
     const [status, setStatus] =
         useState("");
@@ -37,14 +47,18 @@ function AdminMemberList() {
     const [sortBy, setSortBy] =
         useState("id");
 
-    const [sortDirection, setSortDirection] =
-        useState("asc");
+    const [
+        sortDirection,
+        setSortDirection
+    ] = useState("asc");
 
     const [totalPages, setTotalPages] =
         useState(0);
 
-    const [totalElements, setTotalElements] =
-        useState(0);
+    const [
+        totalElements,
+        setTotalElements
+    ] = useState(0);
 
     const [loading, setLoading] =
         useState(true);
@@ -54,13 +68,21 @@ function AdminMemberList() {
         setChangingMemberId
     ] = useState("");
 
-    const [errorMessage, setErrorMessage] =
-        useState("");
+    const [
+        errorMessage,
+        setErrorMessage
+    ] = useState("");
 
     useEffect(() => {
         if (!token) {
-            alert("관리자 로그인이 필요합니다.");
-            navigate("/member/login");
+            alert(
+                "관리자 로그인이 필요합니다."
+            );
+
+            navigate(
+                "/member/login"
+            );
+
             return;
         }
 
@@ -83,59 +105,66 @@ function AdminMemberList() {
             setLoading(true);
             setErrorMessage("");
 
-            const response = await axios.get(
-                `${API_BASE_URL}/member/admin/list.do`,
-                {
-                    params: {
-                        searchType:
-                        appliedSearchType,
+            const response =
+                await axios.get(
+                    `${API_BASE_URL}/member/admin/list.do`,
+                    {
+                        params: {
+                            searchType:
+                            appliedSearchType,
 
-                        keyword:
-                            appliedKeyword ||
-                            undefined,
+                            keyword:
+                                appliedKeyword
+                                || undefined,
 
-                        status:
-                            status ||
-                            undefined,
+                            status:
+                                status
+                                || undefined,
 
-                        gradeNo:
-                            gradeNo ||
-                            undefined,
+                            gradeNo:
+                                gradeNo
+                                || undefined,
 
-                        page,
-                        size: pageSize,
-                        sortBy,
-                        sortDirection
-                    },
+                            page,
+                            size: pageSize,
+                            sortBy,
+                            sortDirection
+                        },
 
-                    headers: {
-                        "X-AUTH-TOKEN": token
+                        headers: {
+                            "X-AUTH-TOKEN":
+                            token
+                        }
                     }
-                }
-            );
+                );
 
-            const data = response.data;
+            const data =
+                response.data;
 
             setMembers(
-                data?.content ?? []
+                data?.content
+                ?? []
             );
 
             setTotalPages(
-                data?.totalPages ?? 0
+                data?.totalPages
+                ?? 0
             );
 
             setTotalElements(
-                data?.totalElements ?? 0
+                data?.totalElements
+                ?? 0
             );
 
             if (
-                data?.totalPages > 0 &&
-                page >= data.totalPages
+                data?.totalPages > 0
+                && page >= data.totalPages
             ) {
                 setPage(
                     data.totalPages - 1
                 );
             }
+
         } catch (error) {
             console.error(
                 "회원 목록 조회 실패:",
@@ -147,15 +176,15 @@ function AdminMemberList() {
             setTotalElements(0);
 
             setErrorMessage(
-                error.response?.data?.message ||
-                error.response?.data?.msg ||
-                error.response?.data?.error ||
-                "회원 목록을 불러오지 못했습니다."
+                error.response?.data?.message
+                || error.response?.data?.msg
+                || error.response?.data?.error
+                || "회원 목록을 불러오지 못했습니다."
             );
 
             if (
-                error.response?.status === 401 ||
-                error.response?.status === 403
+                error.response?.status === 401
+                || error.response?.status === 403
             ) {
                 alert(
                     "관리자만 접근할 수 있습니다."
@@ -163,17 +192,26 @@ function AdminMemberList() {
 
                 navigate("/");
             }
+
         } finally {
             setLoading(false);
         }
     };
 
-    const handleSearch = (event) => {
+    const handleSearch = (
+        event
+    ) => {
         event.preventDefault();
 
         setPage(0);
-        setAppliedSearchType(searchType);
-        setAppliedKeyword(keyword.trim());
+
+        setAppliedSearchType(
+            searchType
+        );
+
+        setAppliedKeyword(
+            keyword.trim()
+        );
     };
 
     const handleReset = () => {
@@ -193,7 +231,9 @@ function AdminMemberList() {
         setSortDirection("asc");
     };
 
-    const handleSort = (column) => {
+    const handleSort = (
+        column
+    ) => {
         setPage(0);
 
         if (sortBy === column) {
@@ -210,7 +250,9 @@ function AdminMemberList() {
         setSortDirection("asc");
     };
 
-    const getSortMark = (column) => {
+    const getSortMark = (
+        column
+    ) => {
         if (sortBy !== column) {
             return "↕";
         }
@@ -230,11 +272,13 @@ function AdminMemberList() {
             event.target.value;
 
         const currentStatus =
-            displayStatus(member.status);
+            displayStatus(
+                member.status
+            );
 
         if (
-            !newStatus ||
-            newStatus === currentStatus
+            !newStatus
+            || newStatus === currentStatus
         ) {
             return;
         }
@@ -245,13 +289,15 @@ function AdminMemberList() {
             강퇴: "강제탈퇴"
         }[newStatus];
 
-        const confirmed = window.confirm(
-            `${member.id} 회원을 '${actionName}' 상태로 변경하시겠습니까?`
-        );
+        const confirmed =
+            window.confirm(
+                `${member.id} 회원을 '${actionName}' 상태로 변경하시겠습니까?`
+            );
 
         if (!confirmed) {
             event.target.value =
                 currentStatus;
+
             return;
         }
 
@@ -271,7 +317,8 @@ function AdminMemberList() {
                     },
 
                     headers: {
-                        "X-AUTH-TOKEN": token
+                        "X-AUTH-TOKEN":
+                        token
                     }
                 }
             );
@@ -281,6 +328,7 @@ function AdminMemberList() {
             );
 
             await loadMembers();
+
         } catch (error) {
             console.error(
                 "회원 상태 변경 실패:",
@@ -288,32 +336,44 @@ function AdminMemberList() {
             );
 
             alert(
-                error.response?.data?.message ||
-                error.response?.data?.msg ||
-                error.response?.data?.error ||
-                "회원 상태를 변경하지 못했습니다."
+                error.response?.data?.message
+                || error.response?.data?.msg
+                || error.response?.data?.error
+                || "회원 상태를 변경하지 못했습니다."
             );
 
             await loadMembers();
+
         } finally {
             setChangingMemberId("");
         }
     };
 
-    const formatDate = (value) => {
+    const formatDate = (
+        value
+    ) => {
         if (!value) {
             return "-";
         }
 
         if (Array.isArray(value)) {
-            const [year, month, day] =
-                value;
+            const [
+                year,
+                month,
+                day
+            ] = value;
 
             return `${year}-${String(
                 month
-            ).padStart(2, "0")}-${String(
+            ).padStart(
+                2,
+                "0"
+            )}-${String(
                 day
-            ).padStart(2, "0")}`;
+            ).padStart(
+                2,
+                "0"
+            )}`;
         }
 
         return String(value)
@@ -321,41 +381,43 @@ function AdminMemberList() {
             .slice(0, 10);
     };
 
-    const displayStatus = (value) => {
+    const displayStatus = (
+        value
+    ) => {
         if (!value) {
             return "-";
         }
 
         if (
-            value === "NORMAL" ||
-            value === "ACTIVE" ||
-            value === "정상"
+            value === "NORMAL"
+            || value === "ACTIVE"
+            || value === "정상"
         ) {
             return "정상";
         }
 
         if (
-            value === "DORMANT" ||
-            value === "SLEEP" ||
-            value === "휴면"
+            value === "DORMANT"
+            || value === "SLEEP"
+            || value === "휴면"
         ) {
             return "휴면";
         }
 
         if (
-            value === "STOP" ||
-            value === "SUSPENDED" ||
-            value === "FORCED" ||
-            value === "정지" ||
-            value === "강퇴"
+            value === "STOP"
+            || value === "SUSPENDED"
+            || value === "FORCED"
+            || value === "정지"
+            || value === "강퇴"
         ) {
             return "강퇴";
         }
 
         if (
-            value === "WITHDRAW" ||
-            value === "WITHDRAWN" ||
-            value === "탈퇴"
+            value === "WITHDRAW"
+            || value === "WITHDRAWN"
+            || value === "탈퇴"
         ) {
             return "탈퇴";
         }
@@ -370,7 +432,9 @@ function AdminMemberList() {
             ...styles.statusSelect
         };
 
-        if (memberStatus === "정상") {
+        if (
+            memberStatus === "정상"
+        ) {
             return {
                 ...baseStyle,
                 color: "#087f5b",
@@ -379,7 +443,9 @@ function AdminMemberList() {
             };
         }
 
-        if (memberStatus === "휴면") {
+        if (
+            memberStatus === "휴면"
+        ) {
             return {
                 ...baseStyle,
                 color: "#9a6700",
@@ -388,7 +454,9 @@ function AdminMemberList() {
             };
         }
 
-        if (memberStatus === "강퇴") {
+        if (
+            memberStatus === "강퇴"
+        ) {
             return {
                 ...baseStyle,
                 color: "#c92a2a",
@@ -397,7 +465,9 @@ function AdminMemberList() {
             };
         }
 
-        if (memberStatus === "탈퇴") {
+        if (
+            memberStatus === "탈퇴"
+        ) {
             return {
                 ...baseStyle,
                 color: "#59636f",
@@ -510,8 +580,13 @@ function AdminMemberList() {
                                     className="btn btn-outline-secondary"
                                     style={styles.resetButton}
                                     onClick={handleReset}
+                                    aria-label="검색 조건 초기화"
+                                    title="초기화"
                                 >
-                                    초기화
+                                    <RotateCcw
+                                        size={19}
+                                        strokeWidth={2.2}
+                                    />
                                 </button>
                             </div>
                         </div>
@@ -784,11 +859,13 @@ function AdminMemberList() {
                                                 </td>
 
                                                 <td>
-                                                    {member.name || "-"}
+                                                    {member.name
+                                                        || "-"}
                                                 </td>
 
                                                 <td>
-                                                    {member.gender || "-"}
+                                                    {member.gender
+                                                        || "-"}
                                                 </td>
 
                                                 <td>
@@ -798,7 +875,8 @@ function AdminMemberList() {
                                                 </td>
 
                                                 <td>
-                                                    {member.tel || "-"}
+                                                    {member.tel
+                                                        || "-"}
                                                 </td>
 
                                                 <td
@@ -811,8 +889,8 @@ function AdminMemberList() {
                                                         aria-label={`${member.id} 회원 상태 변경`}
                                                         value={memberStatus}
                                                         disabled={
-                                                            changingMemberId ===
-                                                            member.id
+                                                            changingMemberId
+                                                            === member.id
                                                         }
                                                         onClick={(event) =>
                                                             event.stopPropagation()
@@ -823,12 +901,14 @@ function AdminMemberList() {
                                                                 member
                                                             )
                                                         }
-                                                        style={getStatusSelectStyle(
-                                                            memberStatus
-                                                        )}
+                                                        style={
+                                                            getStatusSelectStyle(
+                                                                memberStatus
+                                                            )
+                                                        }
                                                     >
-                                                        {memberStatus ===
-                                                            "탈퇴" && (
+                                                        {memberStatus
+                                                            === "탈퇴" && (
                                                                 <option
                                                                     value="탈퇴"
                                                                     disabled
@@ -852,13 +932,13 @@ function AdminMemberList() {
                                                 </td>
 
                                                 <td>
-                                                    {member.gradeNo ??
-                                                        "-"}
+                                                    {member.gradeNo
+                                                        ?? "-"}
                                                 </td>
 
                                                 <td>
-                                                    {member.gradeName ||
-                                                        "-"}
+                                                    {member.gradeName
+                                                        || "-"}
                                                 </td>
 
                                                 <td>
@@ -879,26 +959,33 @@ function AdminMemberList() {
                         <div style={styles.paginationArea}>
                             {Array.from(
                                 {
-                                    length: totalPages
+                                    length:
+                                    totalPages
                                 },
-                                (_, index) => index
-                            ).map((pageNumber) => (
-                                <button
-                                    type="button"
-                                    key={pageNumber}
-                                    className={
-                                        page === pageNumber
-                                            ? "btn btn-primary btn-sm"
-                                            : "btn btn-outline-secondary btn-sm"
-                                    }
-                                    onClick={() =>
-                                        setPage(pageNumber)
-                                    }
-                                    style={styles.pageButton}
-                                >
-                                    {pageNumber + 1}
-                                </button>
-                            ))}
+                                (_, index) =>
+                                    index
+                            ).map(
+                                (pageNumber) => (
+                                    <button
+                                        type="button"
+                                        key={pageNumber}
+                                        className={
+                                            page
+                                            === pageNumber
+                                                ? "btn btn-primary btn-sm"
+                                                : "btn btn-outline-secondary btn-sm"
+                                        }
+                                        onClick={() =>
+                                            setPage(
+                                                pageNumber
+                                            )
+                                        }
+                                        style={styles.pageButton}
+                                    >
+                                        {pageNumber + 1}
+                                    </button>
+                                )
+                            )}
                         </div>
                     )}
                 </section>
@@ -917,7 +1004,9 @@ function SortableHeader({
         <th scope="col">
             <button
                 type="button"
-                onClick={() => onSort(column)}
+                onClick={() =>
+                    onSort(column)
+                }
                 style={styles.sortButton}
             >
                 {title}
@@ -932,9 +1021,12 @@ function SortableHeader({
 
 const styles = {
     page: {
-        minHeight: "calc(100vh - 70px)",
-        padding: "58px 20px 90px",
-        backgroundColor: "#f6f8fb"
+        minHeight:
+            "calc(100vh - 72px)",
+        padding:
+            "58px 20px 90px",
+        backgroundColor:
+            "#ffffff"
     },
 
     container: {
@@ -969,7 +1061,8 @@ const styles = {
     card: {
         padding: "26px",
         backgroundColor: "#ffffff",
-        border: "1px solid #e5e9ef",
+        border:
+            "1px solid #e5e9ef",
         borderRadius: "14px",
         boxShadow:
             "0 10px 30px rgba(30,45,70,0.05)"
@@ -979,7 +1072,8 @@ const styles = {
         marginBottom: "24px",
         padding: "20px",
         backgroundColor: "#f8fafc",
-        border: "1px solid #edf0f3",
+        border:
+            "1px solid #edf0f3",
         borderRadius: "10px"
     },
 
@@ -1026,19 +1120,25 @@ const styles = {
     },
 
     resetButton: {
-        width: "95px",
-        minHeight: "44px"
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "48px",
+        minHeight: "44px",
+        padding: 0
     },
 
     filterRow: {
         display: "flex",
-        justifyContent: "space-between",
+        justifyContent:
+            "space-between",
         alignItems: "center",
         flexWrap: "wrap",
         gap: "12px",
         marginTop: "16px",
         paddingTop: "16px",
-        borderTop: "1px solid #e4e8ed"
+        borderTop:
+            "1px solid #e4e8ed"
     },
 
     filterLeft: {
@@ -1074,7 +1174,8 @@ const styles = {
 
     listHeader: {
         display: "flex",
-        justifyContent: "space-between",
+        justifyContent:
+            "space-between",
         alignItems: "center",
         flexWrap: "wrap",
         gap: "10px",

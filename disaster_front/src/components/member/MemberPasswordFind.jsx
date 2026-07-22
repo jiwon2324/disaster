@@ -1,11 +1,14 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ShieldCheck } from "lucide-react";
 
-const API_BASE_URL = "http://localhost";
+const API_BASE_URL =
+    "http://localhost";
 
 function MemberPasswordFind() {
-    const navigate = useNavigate();
+    const navigate =
+        useNavigate();
 
     const [id, setId] =
         useState("");
@@ -16,13 +19,19 @@ function MemberPasswordFind() {
     const [loading, setLoading] =
         useState(false);
 
-    const [errorMessage, setErrorMessage] =
-        useState("");
+    const [
+        errorMessage,
+        setErrorMessage
+    ] = useState("");
 
-    const [successMessage, setSuccessMessage] =
-        useState("");
+    const [
+        successMessage,
+        setSuccessMessage
+    ] = useState("");
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (
+        event
+    ) => {
         event.preventDefault();
 
         setErrorMessage("");
@@ -32,6 +41,7 @@ function MemberPasswordFind() {
             setErrorMessage(
                 "아이디를 입력해주세요."
             );
+
             return;
         }
 
@@ -39,33 +49,40 @@ function MemberPasswordFind() {
             setErrorMessage(
                 "이메일을 입력해주세요."
             );
+
             return;
         }
 
         const emailPattern =
             /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
-        if (!emailPattern.test(email.trim())) {
+        if (
+            !emailPattern.test(
+                email.trim()
+            )
+        ) {
             setErrorMessage(
                 "이메일 형식이 올바르지 않습니다."
             );
+
             return;
         }
 
         try {
             setLoading(true);
 
-            const response = await axios.post(
-                `${API_BASE_URL}/member/find-password.do`,
-                {
-                    id: id.trim(),
-                    email: email.trim()
-                }
-            );
+            const response =
+                await axios.post(
+                    `${API_BASE_URL}/member/find-password.do`,
+                    {
+                        id: id.trim(),
+                        email: email.trim()
+                    }
+                );
 
             setSuccessMessage(
-                response.data?.message ||
-                "가입한 이메일로 임시 비밀번호를 발송했습니다."
+                response.data?.message
+                || "가입한 이메일로 임시 비밀번호를 발송했습니다."
             );
 
             setId("");
@@ -78,12 +95,13 @@ function MemberPasswordFind() {
             );
 
             setErrorMessage(
-                error.response?.data?.message ||
-                error.response?.data?.detail ||
-                error.response?.data?.msg ||
-                error.response?.data?.error ||
-                "임시 비밀번호 발송에 실패했습니다."
+                error.response?.data?.message
+                || error.response?.data?.detail
+                || error.response?.data?.msg
+                || error.response?.data?.error
+                || "임시 비밀번호 발송에 실패했습니다."
             );
+
         } finally {
             setLoading(false);
         }
@@ -99,7 +117,15 @@ function MemberPasswordFind() {
                         navigate("/")
                     }
                 >
-                    재난안전정보
+                    <ShieldCheck
+                        size={31}
+                        strokeWidth={2.3}
+                        style={styles.logoIcon}
+                    />
+
+                    <span style={styles.logoText}>
+                        안전온
+                    </span>
                 </button>
 
                 <header style={styles.header}>
@@ -108,8 +134,7 @@ function MemberPasswordFind() {
                     </h1>
 
                     <p style={styles.description}>
-                        가입한 아이디와 이메일을
-                        입력해주세요.
+                        가입한 아이디와 이메일을 입력해주세요.
                     </p>
                 </header>
 
@@ -211,7 +236,9 @@ function MemberPasswordFind() {
                         className="btn btn-outline-secondary w-100"
                         style={styles.backButton}
                         onClick={() =>
-                            navigate("/member/login")
+                            navigate(
+                                "/member/login"
+                            )
                         }
                     >
                         로그인 화면으로
@@ -227,10 +254,9 @@ const styles = {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        minHeight: "calc(100vh - 70px)",
+        minHeight: "calc(100vh - 72px)",
         padding: "70px 24px",
-        background:
-            "linear-gradient(135deg, #f8fafc 0%, #eef3f9 100%)"
+        backgroundColor: "#ffffff"
     },
 
     findBox: {
@@ -238,22 +264,34 @@ const styles = {
         maxWidth: "510px",
         padding: "52px 58px",
         backgroundColor: "#ffffff",
-        border: "1px solid #e5eaf0",
-        borderRadius: "16px",
+        border: "1px solid #e2e7ed",
+        borderRadius: "14px",
         boxShadow:
-            "0 14px 40px rgba(30,45,70,0.08)"
+            "0 10px 30px rgba(30, 45, 70, 0.07)"
     },
 
     logo: {
-        display: "block",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "fit-content",
+        gap: "9px",
         margin: "0 auto 28px",
         padding: 0,
-        color: "#0d6efd",
         background: "none",
         border: 0,
-        fontSize: "20px",
-        fontWeight: "800",
         cursor: "pointer"
+    },
+
+    logoIcon: {
+        color: "#1769e0"
+    },
+
+    logoText: {
+        color: "#172033",
+        fontSize: "23px",
+        fontWeight: "850",
+        letterSpacing: "-0.05em"
     },
 
     header: {

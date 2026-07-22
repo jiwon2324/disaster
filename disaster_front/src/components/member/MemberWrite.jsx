@@ -1,36 +1,62 @@
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import {
+    useEffect,
+    useRef,
+    useState
+} from "react";
 import { useNavigate } from "react-router-dom";
+import { ShieldCheck } from "lucide-react";
 
-const API_BASE_URL = "http://localhost";
+const API_BASE_URL =
+    "http://localhost";
 
 function MemberWrite() {
-    const navigate = useNavigate();
-    const idInputRef = useRef(null);
+    const navigate =
+        useNavigate();
 
-    const [form, setForm] = useState({
-        id: "",
-        pw: "",
-        pw2: "",
-        name: "",
-        gender: "",
-        birth: "",
-        tel: "",
-        email: ""
-    });
+    const idInputRef =
+        useRef(null);
 
-    const [idChecked, setIdChecked] = useState(false);
-    const [idAvailable, setIdAvailable] = useState(false);
-    const [idMessage, setIdMessage] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [form, setForm] =
+        useState({
+            id: "",
+            pw: "",
+            pw2: "",
+            name: "",
+            gender: "",
+            birth: "",
+            tel: "",
+            email: ""
+        });
+
+    const [idChecked, setIdChecked] =
+        useState(false);
+
+    const [idAvailable, setIdAvailable] =
+        useState(false);
+
+    const [idMessage, setIdMessage] =
+        useState("");
+
+    const [
+        errorMessage,
+        setErrorMessage
+    ] = useState("");
+
+    const [loading, setLoading] =
+        useState(false);
 
     useEffect(() => {
         idInputRef.current?.focus();
     }, []);
 
-    const handleChange = (event) => {
-        const { name, value } = event.target;
+    const handleChange = (
+        event
+    ) => {
+        const {
+            name,
+            value
+        } = event.target;
 
         setForm((prev) => ({
             ...prev,
@@ -45,48 +71,68 @@ function MemberWrite() {
     };
 
     const checkId = async () => {
-        const id = form.id.trim();
+        const id =
+            form.id.trim();
 
         if (!id) {
-            setIdMessage("아이디를 입력해주세요.");
+            setIdMessage(
+                "아이디를 입력해주세요."
+            );
+
             setIdAvailable(false);
             return;
         }
 
         if (id.length < 4) {
-            setIdMessage("아이디는 4자 이상 입력해주세요.");
+            setIdMessage(
+                "아이디는 4자 이상 입력해주세요."
+            );
+
             setIdAvailable(false);
             return;
         }
 
         try {
-            const response = await axios.get(
-                `${API_BASE_URL}/member/check-id.do`,
-                {
-                    params: { id }
-                }
-            );
+            const response =
+                await axios.get(
+                    `${API_BASE_URL}/member/check-id.do`,
+                    {
+                        params: {
+                            id
+                        }
+                    }
+                );
 
-            const available = response.data?.available === true;
+            const available =
+                response.data?.available
+                === true;
 
             setIdChecked(true);
             setIdAvailable(available);
+
             setIdMessage(
                 available
                     ? "사용 가능한 아이디입니다."
                     : "이미 사용 중인 아이디입니다."
             );
+
         } catch (error) {
             console.error(error);
 
             setIdChecked(false);
             setIdAvailable(false);
-            setIdMessage("중복 확인 중 오류가 발생했습니다.");
+
+            setIdMessage(
+                "중복 확인 중 오류가 발생했습니다."
+            );
         }
     };
 
     const validate = () => {
-        if (!idChecked || !idAvailable) {
+        if (
+            !idChecked
+            || !idAvailable
+        ) {
             return "아이디 중복 확인을 완료해주세요.";
         }
 
@@ -94,7 +140,10 @@ function MemberWrite() {
             return "비밀번호는 4자 이상 입력해주세요.";
         }
 
-        if (form.pw !== form.pw2) {
+        if (
+            form.pw
+            !== form.pw2
+        ) {
             return "비밀번호가 일치하지 않습니다.";
         }
 
@@ -105,14 +154,21 @@ function MemberWrite() {
         return "";
     };
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (
+        event
+    ) => {
         event.preventDefault();
+
         setErrorMessage("");
 
-        const validationMessage = validate();
+        const validationMessage =
+            validate();
 
         if (validationMessage) {
-            setErrorMessage(validationMessage);
+            setErrorMessage(
+                validationMessage
+            );
+
             return;
         }
 
@@ -129,32 +185,48 @@ function MemberWrite() {
         try {
             setLoading(true);
 
-            const response = await axios.post(
-                `${API_BASE_URL}/member/write.do`,
-                requestData
-            );
+            const response =
+                await axios.post(
+                    `${API_BASE_URL}/member/write.do`,
+                    requestData
+                );
 
-            if (response.data?.success) {
-                alert("회원가입이 완료되었습니다.");
-                navigate("/member/login");
+            if (
+                response.data?.success
+            ) {
+                alert(
+                    "회원가입이 완료되었습니다."
+                );
+
+                navigate(
+                    "/member/login"
+                );
+
                 return;
             }
 
             setErrorMessage(
-                response.data?.msg || "회원가입에 실패했습니다."
+                response.data?.msg
+                || "회원가입에 실패했습니다."
             );
+
         } catch (error) {
             const message =
-                error.response?.data?.message ||
-                error.response?.data?.msg;
+                error.response?.data?.message
+                || error.response?.data?.msg;
 
             if (!error.response) {
-                setErrorMessage("백엔드 서버에 연결할 수 없습니다.");
+                setErrorMessage(
+                    "백엔드 서버에 연결할 수 없습니다."
+                );
+
             } else {
                 setErrorMessage(
-                    message || "회원가입 처리 중 오류가 발생했습니다."
+                    message
+                    || "회원가입 처리 중 오류가 발생했습니다."
                 );
             }
+
         } finally {
             setLoading(false);
         }
@@ -162,21 +234,30 @@ function MemberWrite() {
 
     return (
         <main style={styles.page}>
-            <div style={styles.circleLarge} />
-            <div style={styles.circleSmall} />
-
-            <div className="container position-relative">
+            <div className="container">
                 <section style={styles.formContainer}>
                     <header style={styles.header}>
                         <button
                             type="button"
-                            style={styles.logoButton}
-                            onClick={() => navigate("/")}
+                            style={styles.logo}
+                            onClick={() =>
+                                navigate("/")
+                            }
                         >
-                            재난안전정보
+                            <ShieldCheck
+                                size={31}
+                                strokeWidth={2.3}
+                                style={styles.logoIcon}
+                            />
+
+                            <span style={styles.logoText}>
+                                안전온
+                            </span>
                         </button>
 
-                        <h1 style={styles.title}>회원가입</h1>
+                        <h1 style={styles.title}>
+                            회원가입
+                        </h1>
 
                         <p style={styles.description}>
                             회원정보를 입력해주세요.
@@ -319,9 +400,13 @@ function MemberWrite() {
                                             type="radio"
                                             name="gender"
                                             value="남자"
-                                            checked={form.gender === "남자"}
+                                            checked={
+                                                form.gender
+                                                === "남자"
+                                            }
                                             onChange={handleChange}
                                         />
+
                                         남자
                                     </label>
 
@@ -330,9 +415,13 @@ function MemberWrite() {
                                             type="radio"
                                             name="gender"
                                             value="여자"
-                                            checked={form.gender === "여자"}
+                                            checked={
+                                                form.gender
+                                                === "여자"
+                                            }
                                             onChange={handleChange}
                                         />
+
                                         여자
                                     </label>
                                 </div>
@@ -408,16 +497,26 @@ function MemberWrite() {
                             style={styles.submitButton}
                             disabled={loading}
                         >
-                            {loading ? "가입 처리 중..." : "회원가입"}
+                            {
+                                loading
+                                    ? "가입 처리 중..."
+                                    : "회원가입"
+                            }
                         </button>
 
                         <div style={styles.loginArea}>
-                            <span>이미 계정이 있으신가요?</span>
+                            <span>
+                                이미 계정이 있으신가요?
+                            </span>
 
                             <button
                                 type="button"
                                 className="btn btn-link p-0 text-decoration-none"
-                                onClick={() => navigate("/member/login")}
+                                onClick={() =>
+                                    navigate(
+                                        "/member/login"
+                                    )
+                                }
                             >
                                 로그인
                             </button>
@@ -431,44 +530,24 @@ function MemberWrite() {
 
 const styles = {
     page: {
-        position: "relative",
-        overflow: "hidden",
-        minHeight: "calc(100vh - 70px)",
+        display: "flex",
+        alignItems: "flex-start",
+        justifyContent: "center",
+        minHeight: "calc(100vh - 72px)",
         padding: "58px 24px 90px",
-        backgroundColor: "#f6f7fb"
-    },
-
-    circleLarge: {
-        position: "absolute",
-        top: "-240px",
-        left: "50%",
-        width: "900px",
-        height: "900px",
-        borderRadius: "50%",
-        backgroundColor: "#e9edff",
-        transform: "translateX(-50%)"
-    },
-
-    circleSmall: {
-        position: "absolute",
-        right: "-180px",
-        bottom: "-240px",
-        width: "540px",
-        height: "540px",
-        borderRadius: "50%",
-        backgroundColor: "#eef4ff"
+        backgroundColor: "#ffffff"
     },
 
     formContainer: {
-        position: "relative",
-        zIndex: 1,
+        width: "100%",
         maxWidth: "760px",
         margin: "0 auto",
         padding: "44px 54px",
         backgroundColor: "#ffffff",
-        border: "1px solid #eaecf0",
-        borderRadius: "16px",
-        boxShadow: "0 18px 50px rgba(37, 48, 76, 0.1)"
+        border: "1px solid #e2e7ed",
+        borderRadius: "14px",
+        boxShadow:
+            "0 10px 30px rgba(30, 45, 70, 0.07)"
     },
 
     header: {
@@ -476,14 +555,28 @@ const styles = {
         textAlign: "center"
     },
 
-    logoButton: {
-        marginBottom: "24px",
+    logo: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "fit-content",
+        gap: "9px",
+        margin: "0 auto 24px",
         padding: 0,
-        color: "#0d6efd",
         background: "none",
         border: 0,
-        fontSize: "18px",
-        fontWeight: "800"
+        cursor: "pointer"
+    },
+
+    logoIcon: {
+        color: "#1769e0"
+    },
+
+    logoText: {
+        color: "#172033",
+        fontSize: "23px",
+        fontWeight: "850",
+        letterSpacing: "-0.05em"
     },
 
     title: {
@@ -506,6 +599,7 @@ const styles = {
     input: {
         height: "49px",
         padding: "0 15px",
+        borderColor: "#dfe4eb",
         borderRadius: "7px",
         fontSize: "15px"
     },
@@ -526,8 +620,9 @@ const styles = {
         gap: "32px",
         height: "49px",
         padding: "0 16px",
-        border: "1px solid #dee2e6",
-        borderRadius: "7px"
+        border: "1px solid #dfe4eb",
+        borderRadius: "7px",
+        backgroundColor: "#ffffff"
     },
 
     radioLabel: {

@@ -18,6 +18,9 @@ public class MailService {
     @Value("${spring.mail.username:}")
     private String senderEmail;
 
+    @Value("${app.frontend-url:http://localhost:5173}")
+    private String frontendUrl;
+
     public void sendMail(
             String recipient,
             String subject,
@@ -79,6 +82,46 @@ public class MailService {
                         + "임시 비밀번호로 로그인한 후 "
                         + "비밀번호 변경 메뉴에서 새로운 비밀번호로 변경해 주세요.\n\n"
                         + "본인이 요청하지 않았다면 관리자에게 문의해 주세요.";
+
+        sendMail(
+                recipient,
+                subject,
+                content
+        );
+    }
+
+    public void sendQnaAnswerNotification(
+            String recipient,
+            String memberName,
+            String questionTitle,
+            Long questionNo
+    ) {
+        String detailUrl =
+                frontendUrl
+                        + "/qna/"
+                        + questionNo;
+
+        String displayName =
+                memberName == null
+                        || memberName.isBlank()
+                        ? "회원"
+                        : memberName;
+
+        String subject =
+                "[재난안전정보] 문의 답변이 등록되었습니다.";
+
+        String content =
+                "안녕하세요. "
+                        + displayName
+                        + "님.\n\n"
+                        + "작성하신 문의에 관리자 답변이 등록되었습니다.\n\n"
+                        + "문의 제목: "
+                        + questionTitle
+                        + "\n\n"
+                        + "아래 주소에서 답변 내용을 확인할 수 있습니다.\n"
+                        + detailUrl
+                        + "\n\n"
+                        + "감사합니다.";
 
         sendMail(
                 recipient,

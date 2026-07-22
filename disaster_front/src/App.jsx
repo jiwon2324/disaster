@@ -32,7 +32,11 @@ function App() {
         <>
             <TopNavi />
 
-            <div style={{ paddingTop: "56px" }}>
+            <div
+                style={{
+                    paddingTop: "96px"
+                }}
+            >
                 <Routes>
                     <Route
                         path="/"

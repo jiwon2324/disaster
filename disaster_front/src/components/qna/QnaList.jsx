@@ -2,6 +2,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { RotateCcw } from "lucide-react";
 
 const API_BASE_URL = "http://localhost";
 const PAGE_SIZE = 10;
@@ -17,10 +18,14 @@ const CATEGORY_OPTIONS = [
 function QnaList() {
     const navigate = useNavigate();
 
-    const token = localStorage.getItem("token");
-    const savedLogin = localStorage.getItem("login");
+    const token =
+        localStorage.getItem("token");
 
-    const [qnaList, setQnaList] = useState([]);
+    const savedLogin =
+        localStorage.getItem("login");
+
+    const [qnaList, setQnaList] =
+        useState([]);
 
     const [searchType, setSearchType] =
         useState("all");
@@ -28,11 +33,15 @@ function QnaList() {
     const [keyword, setKeyword] =
         useState("");
 
-    const [appliedSearchType, setAppliedSearchType] =
-        useState("all");
+    const [
+        appliedSearchType,
+        setAppliedSearchType
+    ] = useState("all");
 
-    const [appliedKeyword, setAppliedKeyword] =
-        useState("");
+    const [
+        appliedKeyword,
+        setAppliedKeyword
+    ] = useState("");
 
     const [category, setCategory] =
         useState("");
@@ -43,14 +52,18 @@ function QnaList() {
     const [totalPages, setTotalPages] =
         useState(0);
 
-    const [totalElements, setTotalElements] =
-        useState(0);
+    const [
+        totalElements,
+        setTotalElements
+    ] = useState(0);
 
     const [loading, setLoading] =
         useState(true);
 
-    const [errorMessage, setErrorMessage] =
-        useState("");
+    const [
+        errorMessage,
+        setErrorMessage
+    ] = useState("");
 
     let loginInfo = null;
 
@@ -64,23 +77,32 @@ function QnaList() {
         loginInfo = null;
     }
 
-    const rawRoles = loginInfo?.roles;
+    const rawRoles =
+        loginInfo?.roles
+        || loginInfo?.role
+        || [];
 
-    const roles = Array.isArray(rawRoles)
-        ? rawRoles
-        : rawRoles
-            ? [rawRoles]
-            : [];
+    const roles =
+        Array.isArray(rawRoles)
+            ? rawRoles
+            : rawRoles
+                ? [rawRoles]
+                : [];
 
-    const isAdmin = roles.some((role) => {
-        const normalizedRole =
-            String(role).toUpperCase();
+    const isAdmin =
+        roles.some((role) => {
+            const normalizedRole =
+                String(role).toUpperCase();
 
-        return (
-            normalizedRole === "ROLE_ADMIN" ||
-            normalizedRole === "ADMIN"
-        );
-    });
+            return (
+                normalizedRole === "ROLE_ADMIN"
+                || normalizedRole === "ADMIN"
+            );
+        })
+        || Number(loginInfo?.gradeNo) === 9
+        || String(
+            loginInfo?.gradeName || ""
+        ).includes("관리자");
 
     useEffect(() => {
         loadQnaList();
@@ -96,68 +118,98 @@ function QnaList() {
             setLoading(true);
             setErrorMessage("");
 
-            const response = await axios.get(
-                `${API_BASE_URL}/qna/list.do`,
-                {
-                    params: {
-                        searchType: appliedSearchType,
-                        keyword:
-                            appliedKeyword || undefined,
-                        category:
-                            category || undefined,
-                        page,
-                        size: PAGE_SIZE
+            const response =
+                await axios.get(
+                    `${API_BASE_URL}/qna/list.do`,
+                    {
+                        params: {
+                            searchType:
+                            appliedSearchType,
+
+                            keyword:
+                                appliedKeyword
+                                || undefined,
+
+                            category:
+                                category
+                                || undefined,
+
+                            page,
+                            size: PAGE_SIZE
+                        }
                     }
-                }
-            );
+                );
 
             setQnaList(
-                response.data?.content ?? []
+                response.data?.content
+                ?? []
             );
 
             setTotalPages(
-                response.data?.totalPages ?? 0
+                response.data?.totalPages
+                ?? 0
             );
 
             setTotalElements(
-                response.data?.totalElements ?? 0
+                response.data?.totalElements
+                ?? 0
             );
+
         } catch (error) {
-            console.error(error);
+            console.error(
+                "문의 목록 조회 실패:",
+                error
+            );
 
             setQnaList([]);
             setTotalPages(0);
             setTotalElements(0);
 
             setErrorMessage(
-                error.response?.data?.message ||
-                error.response?.data?.msg ||
-                "문의 목록을 불러오지 못했습니다."
+                error.response?.data?.message
+                || error.response?.data?.msg
+                || "문의 목록을 불러오지 못했습니다."
             );
+
         } finally {
             setLoading(false);
         }
     };
 
-    const handleSearch = (event) => {
+    const handleSearch = (
+        event
+    ) => {
         event.preventDefault();
 
         setPage(0);
-        setAppliedSearchType(searchType);
-        setAppliedKeyword(keyword.trim());
+
+        setAppliedSearchType(
+            searchType
+        );
+
+        setAppliedKeyword(
+            keyword.trim()
+        );
     };
 
     const handleReset = () => {
         setSearchType("all");
         setKeyword("");
+
         setAppliedSearchType("all");
         setAppliedKeyword("");
+
         setCategory("");
         setPage(0);
     };
 
-    const handleCategoryChange = (event) => {
-        setCategory(event.target.value);
+    const handleCategoryChange = (
+        event
+    ) => {
+        setCategory(
+            event.target.value
+        );
+
         setPage(0);
     };
 
@@ -167,25 +219,43 @@ function QnaList() {
                 "글 등록은 로그인 후 이용할 수 있습니다."
             );
 
-            navigate("/member/login");
+            navigate(
+                "/member/login"
+            );
+
             return;
         }
 
-        navigate("/qna/write");
+        navigate(
+            "/qna/write"
+        );
     };
 
-    const formatDate = (value) => {
+    const formatDate = (
+        value
+    ) => {
         if (!value) {
             return "-";
         }
 
         if (Array.isArray(value)) {
-            const [year, month, day] = value;
+            const [
+                year,
+                month,
+                day
+            ] = value;
 
-            return `${year}-${String(month).padStart(
+            return `${year}-${String(
+                month
+            ).padStart(
                 2,
                 "0"
-            )}-${String(day).padStart(2, "0")}`;
+            )}-${String(
+                day
+            ).padStart(
+                2,
+                "0"
+            )}`;
         }
 
         return String(value)
@@ -193,12 +263,18 @@ function QnaList() {
             .slice(0, 10);
     };
 
-    const displayCategory = (value) => {
-        if (value === "서비스문의") {
+    const displayCategory = (
+        value
+    ) => {
+        if (
+            value === "서비스문의"
+        ) {
             return "이용문의";
         }
 
-        if (value === "기타문의") {
+        if (
+            value === "기타문의"
+        ) {
             return "기타";
         }
 
@@ -249,7 +325,9 @@ function QnaList() {
                             <select
                                 className="form-select"
                                 value={category}
-                                onChange={handleCategoryChange}
+                                onChange={
+                                    handleCategoryChange
+                                }
                                 style={styles.searchInput}
                             >
                                 <option value="">
@@ -313,7 +391,7 @@ function QnaList() {
                             />
                         </div>
 
-                        <div className="col-6 col-lg-2">
+                        <div className="col-9 col-lg-2">
                             <button
                                 type="submit"
                                 className="btn btn-dark w-100"
@@ -323,21 +401,31 @@ function QnaList() {
                             </button>
                         </div>
 
-                        <div className="col-6 col-lg-1">
+                        <div className="col-3 col-lg-1">
                             <button
                                 type="button"
                                 className="btn btn-outline-secondary w-100"
-                                style={styles.searchButton}
+                                style={{
+                                    ...styles.searchButton,
+                                    ...styles.resetButton
+                                }}
                                 onClick={handleReset}
+                                aria-label="검색 조건 초기화"
+                                title="초기화"
                             >
-                                초기화
+                                <RotateCcw
+                                    size={19}
+                                    strokeWidth={2.2}
+                                />
                             </button>
                         </div>
                     </form>
 
                     <div style={styles.listHeader}>
                         총{" "}
-                        <strong>{totalElements}</strong>
+                        <strong>
+                            {totalElements}
+                        </strong>
                         개의 문의
                     </div>
 
@@ -368,7 +456,9 @@ function QnaList() {
                                         카테고리
                                     </th>
 
-                                    <th>제목</th>
+                                    <th>
+                                        제목
+                                    </th>
 
                                     <th style={styles.writerColumn}>
                                         작성자
@@ -389,71 +479,73 @@ function QnaList() {
                                 </thead>
 
                                 <tbody>
-                                {qnaList.map((qna) => (
-                                    <tr key={qna.no}>
-                                        <td className="text-secondary">
-                                            {qna.no}
-                                        </td>
+                                {qnaList.map(
+                                    (qna) => (
+                                        <tr key={qna.no}>
+                                            <td className="text-secondary">
+                                                {qna.no}
+                                            </td>
 
-                                        <td>
-                        <span
-                            style={
-                                styles.categoryBadge
-                            }
-                        >
-                          {displayCategory(
-                              qna.category
-                          )}
-                        </span>
-                                        </td>
+                                            <td>
+                                                <span
+                                                    style={
+                                                        styles.categoryBadge
+                                                    }
+                                                >
+                                                    {displayCategory(
+                                                        qna.category
+                                                    )}
+                                                </span>
+                                            </td>
 
-                                        <td>
-                                            <button
-                                                type="button"
-                                                style={
-                                                    styles.titleButton
-                                                }
-                                                onClick={() =>
-                                                    navigate(
-                                                        `/qna/${qna.no}`
-                                                    )
-                                                }
-                                            >
-                                                {qna.title}
-                                            </button>
-                                        </td>
+                                            <td>
+                                                <button
+                                                    type="button"
+                                                    style={
+                                                        styles.titleButton
+                                                    }
+                                                    onClick={() =>
+                                                        navigate(
+                                                            `/qna/${qna.no}`
+                                                        )
+                                                    }
+                                                >
+                                                    {qna.title}
+                                                </button>
+                                            </td>
 
-                                        <td>
-                                            {qna.writerName ||
-                                                qna.writerId ||
-                                                "-"}
-                                        </td>
+                                            <td>
+                                                {qna.writerName
+                                                    || qna.writerId
+                                                    || "-"}
+                                            </td>
 
-                                        <td className="text-secondary">
-                                            {qna.hit ?? 0}
-                                        </td>
+                                            <td className="text-secondary">
+                                                {qna.hit ?? 0}
+                                            </td>
 
-                                        <td>
-                        <span
-                            style={
-                                qna.answerStatus ===
-                                "답변완료"
-                                    ? styles.completeBadge
-                                    : styles.waitingBadge
-                            }
-                        >
-                          {qna.answerStatus ||
-                              "답변대기"}
-                        </span>
-                                        </td>
+                                            <td>
+                                                <span
+                                                    style={
+                                                        qna.answerStatus
+                                                        === "답변완료"
+                                                            ? styles.completeBadge
+                                                            : styles.waitingBadge
+                                                    }
+                                                >
+                                                    {qna.answerStatus
+                                                        || "답변대기"}
+                                                </span>
+                                            </td>
 
-                                        <td className="text-secondary">
-                                            {formatDate(
-                                                qna.writeDate
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
+                                            <td className="text-secondary">
+                                                {formatDate(
+                                                    qna.writeDate
+                                                )}
+                                            </td>
+                                        </tr>
+                                    )
+                                )}
                                 </tbody>
                             </table>
                         </div>
@@ -462,24 +554,33 @@ function QnaList() {
                     {totalPages > 1 && (
                         <nav style={styles.paginationArea}>
                             {Array.from(
-                                { length: totalPages },
-                                (_, index) => index
-                            ).map((pageNumber) => (
-                                <button
-                                    type="button"
-                                    key={pageNumber}
-                                    className={
-                                        page === pageNumber
-                                            ? "btn btn-primary btn-sm"
-                                            : "btn btn-outline-secondary btn-sm"
-                                    }
-                                    onClick={() =>
-                                        setPage(pageNumber)
-                                    }
-                                >
-                                    {pageNumber + 1}
-                                </button>
-                            ))}
+                                {
+                                    length:
+                                    totalPages
+                                },
+                                (_, index) =>
+                                    index
+                            ).map(
+                                (pageNumber) => (
+                                    <button
+                                        type="button"
+                                        key={pageNumber}
+                                        className={
+                                            page
+                                            === pageNumber
+                                                ? "btn btn-primary btn-sm"
+                                                : "btn btn-outline-secondary btn-sm"
+                                        }
+                                        onClick={() =>
+                                            setPage(
+                                                pageNumber
+                                            )
+                                        }
+                                    >
+                                        {pageNumber + 1}
+                                    </button>
+                                )
+                            )}
                         </nav>
                     )}
                 </section>
@@ -490,9 +591,12 @@ function QnaList() {
 
 const styles = {
     page: {
-        minHeight: "calc(100vh - 70px)",
-        padding: "58px 24px 90px",
-        backgroundColor: "#f6f8fb"
+        minHeight:
+            "calc(100vh - 72px)",
+        padding:
+            "58px 24px 90px",
+        backgroundColor:
+            "#ffffff"
     },
 
     container: {
@@ -501,7 +605,8 @@ const styles = {
 
     header: {
         display: "flex",
-        justifyContent: "space-between",
+        justifyContent:
+            "space-between",
         alignItems: "flex-end",
         gap: "20px",
         marginBottom: "28px"
@@ -535,7 +640,8 @@ const styles = {
     contentBox: {
         padding: "30px",
         backgroundColor: "#ffffff",
-        border: "1px solid #e6eaf0",
+        border:
+            "1px solid #e6eaf0",
         borderRadius: "14px",
         boxShadow:
             "0 10px 30px rgba(30,45,70,0.05)"
@@ -554,6 +660,13 @@ const styles = {
 
     searchButton: {
         height: "46px"
+    },
+
+    resetButton: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 0
     },
 
     listHeader: {

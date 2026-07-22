@@ -4,6 +4,9 @@ import {
     NavLink,
     useNavigate
 } from "react-router-dom";
+import { ShieldCheck } from "lucide-react";
+
+import "./TopNavi.css";
 
 function TopNavi() {
     const navigate = useNavigate();
@@ -13,13 +16,15 @@ function TopNavi() {
     );
 
     const [login, setLogin] = useState(() => {
-        const data =
+        const savedLogin =
             localStorage.getItem("login");
 
+        if (!savedLogin) {
+            return null;
+        }
+
         try {
-            return data
-                ? JSON.parse(data)
-                : null;
+            return JSON.parse(savedLogin);
         } catch {
             return null;
         }
@@ -39,21 +44,22 @@ function TopNavi() {
     };
 
     const loginName =
-        login?.name ||
-        login?.id ||
-        login?.sub ||
-        "회원";
+        login?.name
+        || login?.id
+        || login?.sub
+        || "회원";
 
     const rawRoles =
-        login?.roles ||
-        login?.role ||
-        [];
+        login?.roles
+        || login?.role
+        || [];
 
-    const roles = Array.isArray(rawRoles)
-        ? rawRoles
-        : rawRoles
-            ? [rawRoles]
-            : [];
+    const roles =
+        Array.isArray(rawRoles)
+            ? rawRoles
+            : rawRoles
+                ? [rawRoles]
+                : [];
 
     const isAdmin =
         roles.some((role) => {
@@ -61,24 +67,37 @@ function TopNavi() {
                 String(role).toUpperCase();
 
             return (
-                normalizedRole === "ROLE_ADMIN" ||
-                normalizedRole === "ADMIN"
+                normalizedRole === "ROLE_ADMIN"
+                || normalizedRole === "ADMIN"
             );
-        }) ||
-        Number(login?.gradeNo) === 9 ||
-        String(
-            login?.gradeName || ""
-        ).includes("관리자") ||
-        String(loginName).includes("관리자");
+        })
+        || Number(login?.gradeNo) === 9
+        || String(login?.gradeName || "").includes("관리자")
+        || String(loginName).includes("관리자");
+
+    const getNavClassName = ({ isActive }) => {
+        return isActive
+            ? "nav-link active"
+            : "nav-link";
+    };
 
     return (
-        <nav className="navbar navbar-expand-lg bg-dark navbar-dark fixed-top">
+        <nav className="navbar navbar-expand-lg safety-navbar fixed-top">
             <div className="container-fluid">
                 <Link
-                    className="navbar-brand"
+                    className="navbar-brand safety-brand"
                     to="/"
+                    aria-label="안전온 홈으로 이동"
                 >
-                    재난안전정보
+                    <ShieldCheck
+                        className="safety-brand-icon"
+                        size={32}
+                        strokeWidth={2.3}
+                    />
+
+                    <span className="safety-brand-text">
+                        안전온
+                    </span>
                 </Link>
 
                 <button
@@ -100,16 +119,7 @@ function TopNavi() {
                     <ul className="navbar-nav me-auto">
                         <li className="nav-item">
                             <NavLink
-                                className="nav-link"
-                                to="/"
-                            >
-                                홈
-                            </NavLink>
-                        </li>
-
-                        <li className="nav-item">
-                            <NavLink
-                                className="nav-link"
+                                className={getNavClassName}
                                 to="/community/list"
                             >
                                 제보게시판
@@ -118,7 +128,7 @@ function TopNavi() {
 
                         <li className="nav-item">
                             <NavLink
-                                className="nav-link"
+                                className={getNavClassName}
                                 to="/qna"
                             >
                                 문의게시판
@@ -127,7 +137,7 @@ function TopNavi() {
 
                         <li className="nav-item">
                             <NavLink
-                                className="nav-link"
+                                className={getNavClassName}
                                 to="/disasterCategory/list"
                             >
                                 재난 정보
@@ -136,7 +146,7 @@ function TopNavi() {
 
                         <li className="nav-item">
                             <NavLink
-                                className="nav-link"
+                                className={getNavClassName}
                                 to="/disasterScrap/list"
                             >
                                 스크랩
@@ -145,7 +155,7 @@ function TopNavi() {
 
                         <li className="nav-item">
                             <NavLink
-                                className="nav-link"
+                                className={getNavClassName}
                                 to="/quiz/list"
                             >
                                 퀴즈
@@ -154,7 +164,7 @@ function TopNavi() {
 
                         <li className="nav-item">
                             <NavLink
-                                className="nav-link"
+                                className={getNavClassName}
                                 to="/edu"
                             >
                                 교육가이드
@@ -163,7 +173,7 @@ function TopNavi() {
 
                         <li className="nav-item">
                             <NavLink
-                                className="nav-link"
+                                className={getNavClassName}
                                 to="/checklists"
                             >
                                 체크리스트
@@ -175,21 +185,21 @@ function TopNavi() {
                         {!token ? (
                             <>
                                 <li className="nav-item">
-                                    <Link
-                                        className="nav-link"
+                                    <NavLink
+                                        className={getNavClassName}
                                         to="/member/login"
                                     >
                                         로그인
-                                    </Link>
+                                    </NavLink>
                                 </li>
 
                                 <li className="nav-item">
-                                    <Link
-                                        className="nav-link"
+                                    <NavLink
+                                        className={getNavClassName}
                                         to="/member/write"
                                     >
                                         회원가입
-                                    </Link>
+                                    </NavLink>
                                 </li>
                             </>
                         ) : (
@@ -197,7 +207,7 @@ function TopNavi() {
                                 {isAdmin ? (
                                     <li className="nav-item">
                                         <NavLink
-                                            className="nav-link"
+                                            className={getNavClassName}
                                             to="/member/admin"
                                         >
                                             회원관리
@@ -207,7 +217,7 @@ function TopNavi() {
                                     <>
                                         <li className="nav-item">
                                             <NavLink
-                                                className="nav-link"
+                                                className={getNavClassName}
                                                 to="/member/mypage"
                                             >
                                                 마이페이지
@@ -216,7 +226,7 @@ function TopNavi() {
 
                                         <li className="nav-item">
                                             <NavLink
-                                                className="nav-link"
+                                                className={getNavClassName}
                                                 to="/member/password"
                                             >
                                                 비밀번호 변경
@@ -226,8 +236,10 @@ function TopNavi() {
                                 )}
 
                                 <li className="nav-item">
-                                    <span className="nav-link">
-                                        {loginName}님
+                                    <span className="nav-link safety-member-name">
+                                        {isAdmin
+                                            ? "관리자님"
+                                            : `${loginName}님`}
                                     </span>
                                 </li>
 
