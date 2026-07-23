@@ -7,56 +7,53 @@ import {
 import { useNavigate } from "react-router-dom";
 import { ShieldCheck } from "lucide-react";
 
-const API_BASE_URL =
-    "http://localhost";
+const API_BASE_URL = "http://localhost";
+
+const ID_PATTERN = /^[A-Za-z0-9]{3,20}$/;
+const NAME_PATTERN = /^[가-힣]{2,10}$/;
+const TEL_PATTERN = /^01[016789]-\d{3,4}-\d{4}$/;
+const EMAIL_PATTERN =
+    /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
 function MemberWrite() {
-    const navigate =
-        useNavigate();
+    const navigate = useNavigate();
+    const idInputRef = useRef(null);
 
-    const idInputRef =
-        useRef(null);
-
-    const [form, setForm] =
-        useState({
-            id: "",
-            pw: "",
-            pw2: "",
-            name: "",
-            gender: "",
-            birth: "",
-            tel: "",
-            email: ""
-        });
+    const [form, setForm] = useState({
+        id: "",
+        pw: "",
+        pw2: "",
+        name: "",
+        gender: "",
+        birth: "",
+        tel: "",
+        email: ""
+    });
 
     const [idChecked, setIdChecked] =
         useState(false);
-
     const [idAvailable, setIdAvailable] =
         useState(false);
-
     const [idMessage, setIdMessage] =
         useState("");
-
     const [
         errorMessage,
         setErrorMessage
     ] = useState("");
-
     const [loading, setLoading] =
         useState(false);
+
+    const today = new Date()
+        .toISOString()
+        .slice(0, 10);
 
     useEffect(() => {
         idInputRef.current?.focus();
     }, []);
 
-    const handleChange = (
-        event
-    ) => {
-        const {
-            name,
-            value
-        } = event.target;
+    const handleChange = (event) => {
+        const { name, value } =
+            event.target;
 
         setForm((prev) => ({
             ...prev,
@@ -71,24 +68,22 @@ function MemberWrite() {
     };
 
     const checkId = async () => {
-        const id =
-            form.id.trim();
+        const id = form.id.trim();
+
+        setIdChecked(false);
+        setIdAvailable(false);
 
         if (!id) {
             setIdMessage(
                 "아이디를 입력해주세요."
             );
-
-            setIdAvailable(false);
             return;
         }
 
-        if (id.length < 4) {
+        if (!ID_PATTERN.test(id)) {
             setIdMessage(
-                "아이디는 4자 이상 입력해주세요."
+                "아이디는 영문과 숫자만 사용하여 3~20자로 입력해주세요."
             );
-
-            setIdAvailable(false);
             return;
         }
 
@@ -97,9 +92,7 @@ function MemberWrite() {
                 await axios.get(
                     `${API_BASE_URL}/member/check-id.do`,
                     {
-                        params: {
-                            id
-                        }
+                        params: { id }
                     }
                 );
 
@@ -109,18 +102,13 @@ function MemberWrite() {
 
             setIdChecked(true);
             setIdAvailable(available);
-
             setIdMessage(
                 available
                     ? "사용 가능한 아이디입니다."
                     : "이미 사용 중인 아이디입니다."
             );
-
         } catch (error) {
             console.error(error);
-
-            setIdChecked(false);
-            setIdAvailable(false);
 
             setIdMessage(
                 "중복 확인 중 오류가 발생했습니다."
@@ -129,6 +117,15 @@ function MemberWrite() {
     };
 
     const validate = () => {
+        const id = form.id.trim();
+        const name = form.name.trim();
+        const tel = form.tel.trim();
+        const email = form.email.trim();
+
+        if (!ID_PATTERN.test(id)) {
+            return "아이디는 영문과 숫자만 사용하여 3~20자로 입력해주세요.";
+        }
+
         if (
             !idChecked
             || !idAvailable
@@ -136,19 +133,50 @@ function MemberWrite() {
             return "아이디 중복 확인을 완료해주세요.";
         }
 
-        if (form.pw.length < 4) {
-            return "비밀번호는 4자 이상 입력해주세요.";
+        if (
+            form.pw.length < 4
+            || form.pw.length > 20
+        ) {
+            return "비밀번호는 4~20자로 입력해주세요.";
         }
 
-        if (
-            form.pw
-            !== form.pw2
-        ) {
+        if (form.pw !== form.pw2) {
             return "비밀번호가 일치하지 않습니다.";
+        }
+
+        if (!NAME_PATTERN.test(name)) {
+            return "이름은 한글 2~10자로 입력해주세요.";
         }
 
         if (!form.gender) {
             return "성별을 선택해주세요.";
+        }
+
+        if (!form.birth) {
+            return "생년월일을 입력해주세요.";
+        }
+
+        if (form.birth > today) {
+            return "생년월일은 오늘 이후 날짜로 입력할 수 없습니다.";
+        }
+
+        if (
+            tel
+            && !TEL_PATTERN.test(tel)
+        ) {
+            return "전화번호는 010-0000-0000 형식으로 입력해주세요.";
+        }
+
+        if (!email) {
+            return "이메일을 입력해주세요.";
+        }
+
+        if (email.length > 50) {
+            return "이메일은 50자 이하로 입력해주세요.";
+        }
+
+        if (!EMAIL_PATTERN.test(email)) {
+            return "이메일 형식이 올바르지 않습니다.";
         }
 
         return "";
@@ -158,7 +186,6 @@ function MemberWrite() {
         event
     ) => {
         event.preventDefault();
-
         setErrorMessage("");
 
         const validationMessage =
@@ -168,7 +195,6 @@ function MemberWrite() {
             setErrorMessage(
                 validationMessage
             );
-
             return;
         }
 
@@ -178,7 +204,9 @@ function MemberWrite() {
             name: form.name.trim(),
             gender: form.gender,
             birth: form.birth,
-            tel: form.tel.trim(),
+            tel:
+                form.tel.trim()
+                || null,
             email: form.email.trim()
         };
 
@@ -201,7 +229,6 @@ function MemberWrite() {
                 navigate(
                     "/member/login"
                 );
-
                 return;
             }
 
@@ -209,7 +236,6 @@ function MemberWrite() {
                 response.data?.msg
                 || "회원가입에 실패했습니다."
             );
-
         } catch (error) {
             const message =
                 error.response?.data?.message
@@ -219,14 +245,12 @@ function MemberWrite() {
                 setErrorMessage(
                     "백엔드 서버에 연결할 수 없습니다."
                 );
-
             } else {
                 setErrorMessage(
                     message
                     || "회원가입 처리 중 오류가 발생했습니다."
                 );
             }
-
         } finally {
             setLoading(false);
         }
@@ -235,8 +259,14 @@ function MemberWrite() {
     return (
         <main style={styles.page}>
             <div className="container">
-                <section style={styles.formContainer}>
-                    <header style={styles.header}>
+                <section
+                    style={
+                        styles.formContainer
+                    }
+                >
+                    <header
+                        style={styles.header}
+                    >
                         <button
                             type="button"
                             style={styles.logo}
@@ -247,19 +277,31 @@ function MemberWrite() {
                             <ShieldCheck
                                 size={31}
                                 strokeWidth={2.3}
-                                style={styles.logoIcon}
+                                style={
+                                    styles.logoIcon
+                                }
                             />
 
-                            <span style={styles.logoText}>
+                            <span
+                                style={
+                                    styles.logoText
+                                }
+                            >
                                 안전온
                             </span>
                         </button>
 
-                        <h1 style={styles.title}>
+                        <h1
+                            style={styles.title}
+                        >
                             회원가입
                         </h1>
 
-                        <p style={styles.description}>
+                        <p
+                            style={
+                                styles.description
+                            }
+                        >
                             회원정보를 입력해주세요.
                         </p>
                     </header>
@@ -274,7 +316,11 @@ function MemberWrite() {
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit}>
+                    <form
+                        onSubmit={
+                            handleSubmit
+                        }
+                    >
                         <div className="row g-4">
                             <div className="col-12">
                                 <label
@@ -286,24 +332,37 @@ function MemberWrite() {
 
                                 <div className="input-group">
                                     <input
-                                        ref={idInputRef}
+                                        ref={
+                                            idInputRef
+                                        }
                                         type="text"
                                         id="id"
                                         name="id"
                                         className="form-control"
-                                        placeholder="아이디를 입력하세요"
+                                        placeholder="영문·숫자 3~20자"
+                                        minLength={3}
                                         maxLength={20}
-                                        value={form.id}
-                                        onChange={handleChange}
-                                        style={styles.input}
+                                        value={
+                                            form.id
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
+                                        style={
+                                            styles.input
+                                        }
                                         required
                                     />
 
                                     <button
                                         type="button"
                                         className="btn btn-outline-primary"
-                                        style={styles.checkButton}
-                                        onClick={checkId}
+                                        style={
+                                            styles.checkButton
+                                        }
+                                        onClick={
+                                            checkId
+                                        }
                                     >
                                         중복 확인
                                     </button>
@@ -313,12 +372,15 @@ function MemberWrite() {
                                     <p
                                         style={{
                                             ...styles.message,
-                                            color: idAvailable
-                                                ? "#198754"
-                                                : "#dc3545"
+                                            color:
+                                                idAvailable
+                                                    ? "#198754"
+                                                    : "#dc3545"
                                         }}
                                     >
-                                        {idMessage}
+                                        {
+                                            idMessage
+                                        }
                                     </p>
                                 )}
                             </div>
@@ -336,10 +398,18 @@ function MemberWrite() {
                                     id="pw"
                                     name="pw"
                                     className="form-control"
-                                    placeholder="비밀번호 입력"
-                                    value={form.pw}
-                                    onChange={handleChange}
-                                    style={styles.input}
+                                    placeholder="4~20자"
+                                    minLength={4}
+                                    maxLength={20}
+                                    value={
+                                        form.pw
+                                    }
+                                    onChange={
+                                        handleChange
+                                    }
+                                    style={
+                                        styles.input
+                                    }
                                     autoComplete="new-password"
                                     required
                                 />
@@ -359,9 +429,17 @@ function MemberWrite() {
                                     name="pw2"
                                     className="form-control"
                                     placeholder="비밀번호 다시 입력"
-                                    value={form.pw2}
-                                    onChange={handleChange}
-                                    style={styles.input}
+                                    minLength={4}
+                                    maxLength={20}
+                                    value={
+                                        form.pw2
+                                    }
+                                    onChange={
+                                        handleChange
+                                    }
+                                    style={
+                                        styles.input
+                                    }
                                     autoComplete="new-password"
                                     required
                                 />
@@ -380,11 +458,18 @@ function MemberWrite() {
                                     id="name"
                                     name="name"
                                     className="form-control"
-                                    placeholder="이름을 입력하세요"
-                                    maxLength={30}
-                                    value={form.name}
-                                    onChange={handleChange}
-                                    style={styles.input}
+                                    placeholder="한글 2~10자"
+                                    minLength={2}
+                                    maxLength={10}
+                                    value={
+                                        form.name
+                                    }
+                                    onChange={
+                                        handleChange
+                                    }
+                                    style={
+                                        styles.input
+                                    }
                                     required
                                 />
                             </div>
@@ -394,8 +479,16 @@ function MemberWrite() {
                                     성별
                                 </label>
 
-                                <div style={styles.genderBox}>
-                                    <label style={styles.radioLabel}>
+                                <div
+                                    style={
+                                        styles.genderBox
+                                    }
+                                >
+                                    <label
+                                        style={
+                                            styles.radioLabel
+                                        }
+                                    >
                                         <input
                                             type="radio"
                                             name="gender"
@@ -404,13 +497,18 @@ function MemberWrite() {
                                                 form.gender
                                                 === "남자"
                                             }
-                                            onChange={handleChange}
+                                            onChange={
+                                                handleChange
+                                            }
                                         />
-
                                         남자
                                     </label>
 
-                                    <label style={styles.radioLabel}>
+                                    <label
+                                        style={
+                                            styles.radioLabel
+                                        }
+                                    >
                                         <input
                                             type="radio"
                                             name="gender"
@@ -419,9 +517,10 @@ function MemberWrite() {
                                                 form.gender
                                                 === "여자"
                                             }
-                                            onChange={handleChange}
+                                            onChange={
+                                                handleChange
+                                            }
                                         />
-
                                         여자
                                     </label>
                                 </div>
@@ -440,9 +539,16 @@ function MemberWrite() {
                                     id="birth"
                                     name="birth"
                                     className="form-control"
-                                    value={form.birth}
-                                    onChange={handleChange}
-                                    style={styles.input}
+                                    max={today}
+                                    value={
+                                        form.birth
+                                    }
+                                    onChange={
+                                        handleChange
+                                    }
+                                    style={
+                                        styles.input
+                                    }
                                     required
                                 />
                             </div>
@@ -453,6 +559,13 @@ function MemberWrite() {
                                     className="form-label fw-semibold"
                                 >
                                     전화번호
+                                    <span
+                                        style={
+                                            styles.optional
+                                        }
+                                    >
+                                        {" "}(선택)
+                                    </span>
                                 </label>
 
                                 <input
@@ -462,10 +575,15 @@ function MemberWrite() {
                                     className="form-control"
                                     placeholder="010-0000-0000"
                                     maxLength={13}
-                                    value={form.tel}
-                                    onChange={handleChange}
-                                    style={styles.input}
-                                    required
+                                    value={
+                                        form.tel
+                                    }
+                                    onChange={
+                                        handleChange
+                                    }
+                                    style={
+                                        styles.input
+                                    }
                                 />
                             </div>
 
@@ -483,9 +601,16 @@ function MemberWrite() {
                                     name="email"
                                     className="form-control"
                                     placeholder="example@email.com"
-                                    value={form.email}
-                                    onChange={handleChange}
-                                    style={styles.input}
+                                    maxLength={50}
+                                    value={
+                                        form.email
+                                    }
+                                    onChange={
+                                        handleChange
+                                    }
+                                    style={
+                                        styles.input
+                                    }
                                     required
                                 />
                             </div>
@@ -494,7 +619,9 @@ function MemberWrite() {
                         <button
                             type="submit"
                             className="btn btn-primary w-100"
-                            style={styles.submitButton}
+                            style={
+                                styles.submitButton
+                            }
                             disabled={loading}
                         >
                             {
@@ -504,7 +631,11 @@ function MemberWrite() {
                             }
                         </button>
 
-                        <div style={styles.loginArea}>
+                        <div
+                            style={
+                                styles.loginArea
+                            }
+                        >
                             <span>
                                 이미 계정이 있으신가요?
                             </span>
@@ -533,7 +664,8 @@ const styles = {
         display: "flex",
         alignItems: "flex-start",
         justifyContent: "center",
-        minHeight: "calc(100vh - 72px)",
+        minHeight:
+            "calc(100vh - 72px)",
         padding: "58px 24px 90px",
         backgroundColor: "#ffffff"
     },
@@ -544,7 +676,8 @@ const styles = {
         margin: "0 auto",
         padding: "44px 54px",
         backgroundColor: "#ffffff",
-        border: "1px solid #e2e7ed",
+        border:
+            "1px solid #e2e7ed",
         borderRadius: "14px",
         boxShadow:
             "0 10px 30px rgba(30, 45, 70, 0.07)"
@@ -606,12 +739,19 @@ const styles = {
 
     checkButton: {
         minWidth: "105px",
-        borderRadius: "0 7px 7px 0"
+        borderRadius:
+            "0 7px 7px 0"
     },
 
     message: {
         margin: "8px 0 0",
         fontSize: "13px"
+    },
+
+    optional: {
+        color: "#8a929f",
+        fontSize: "13px",
+        fontWeight: "400"
     },
 
     genderBox: {
@@ -620,7 +760,8 @@ const styles = {
         gap: "32px",
         height: "49px",
         padding: "0 16px",
-        border: "1px solid #dfe4eb",
+        border:
+            "1px solid #dfe4eb",
         borderRadius: "7px",
         backgroundColor: "#ffffff"
     },

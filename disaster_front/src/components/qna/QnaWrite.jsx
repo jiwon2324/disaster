@@ -13,6 +13,9 @@ const CATEGORY_OPTIONS = [
     "기타"
 ];
 
+const TITLE_MAX_LENGTH = 300;
+const CONTENT_MAX_LENGTH = 2000;
+
 function QnaWrite() {
     const navigate = useNavigate();
 
@@ -83,16 +86,33 @@ function QnaWrite() {
 
         setErrorMessage("");
 
-        if (!title.trim()) {
+        const trimmedTitle = title.trim();
+        const trimmedContent = content.trim();
+
+        if (!trimmedTitle) {
             setErrorMessage(
                 "제목을 입력해주세요."
             );
             return;
         }
 
-        if (!content.trim()) {
+        if (trimmedTitle.length > TITLE_MAX_LENGTH) {
+            setErrorMessage(
+                `제목은 ${TITLE_MAX_LENGTH}자 이하로 입력해주세요.`
+            );
+            return;
+        }
+
+        if (!trimmedContent) {
             setErrorMessage(
                 "내용을 입력해주세요."
+            );
+            return;
+        }
+
+        if (trimmedContent.length > CONTENT_MAX_LENGTH) {
+            setErrorMessage(
+                `내용은 ${CONTENT_MAX_LENGTH}자 이하로 입력해주세요.`
             );
             return;
         }
@@ -103,8 +123,8 @@ function QnaWrite() {
             const response = await axios.post(
                 `${API_BASE_URL}/qna/write.do`,
                 {
-                    title: title.trim(),
-                    content: content.trim(),
+                    title: trimmedTitle,
+                    content: trimmedContent,
                     category
                 },
                 {
@@ -219,7 +239,7 @@ function QnaWrite() {
                                         ? "제목을 입력해주세요."
                                         : "문의 제목을 입력해주세요."
                                 }
-                                maxLength={200}
+                                maxLength={TITLE_MAX_LENGTH}
                                 value={title}
                                 onChange={(event) =>
                                     setTitle(
@@ -229,6 +249,10 @@ function QnaWrite() {
                                 style={styles.input}
                                 required
                             />
+
+                            <div style={styles.lengthText}>
+                                {title.length}/{TITLE_MAX_LENGTH}
+                            </div>
                         </div>
 
                         <div className="mb-4">
@@ -250,6 +274,7 @@ function QnaWrite() {
                                         ? "내용을 입력해주세요."
                                         : "문의 내용을 자세히 입력해주세요."
                                 }
+                                maxLength={CONTENT_MAX_LENGTH}
                                 value={content}
                                 onChange={(event) =>
                                     setContent(
@@ -259,6 +284,10 @@ function QnaWrite() {
                                 style={styles.textarea}
                                 required
                             />
+
+                            <div style={styles.lengthText}>
+                                {content.length}/{CONTENT_MAX_LENGTH}
+                            </div>
                         </div>
 
                         <div style={styles.buttonArea}>
@@ -339,6 +368,13 @@ const styles = {
     textarea: {
         resize: "vertical",
         lineHeight: "1.7"
+    },
+
+    lengthText: {
+        marginTop: "7px",
+        color: "#7b8492",
+        fontSize: "13px",
+        textAlign: "right"
     },
 
     buttonArea: {

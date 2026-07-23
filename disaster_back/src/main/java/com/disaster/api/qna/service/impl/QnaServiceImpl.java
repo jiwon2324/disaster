@@ -31,6 +31,10 @@ public class QnaServiceImpl implements QnaService {
 
     private static final int ADMIN_GRADE_NO = 9;
 
+    private static final int TITLE_MAX_LENGTH = 300;
+
+    private static final int CONTENT_MAX_LENGTH = 2000;
+
     private static final String DEFAULT_CATEGORY =
             "기타";
 
@@ -62,6 +66,7 @@ public class QnaServiceImpl implements QnaService {
                     List<Predicate> predicates =
                             new ArrayList<>();
 
+                    // 답변글은 제외하고 원본 문의글만 조회한다.
                     predicates.add(
                             criteriaBuilder.isNull(
                                     root.get("parentNo")
@@ -387,6 +392,7 @@ public class QnaServiceImpl implements QnaService {
                 loginId
         );
 
+        // 질문 삭제 시 연결된 관리자 답변도 함께 삭제한다.
         if (qna.getParentNo() == null) {
             List<Qna> answers =
                     qnaRepository.findAllByParentNo(
@@ -638,6 +644,18 @@ public class QnaServiceImpl implements QnaService {
             );
         }
 
+        String trimmedTitle =
+                request.getTitle().trim();
+
+        if (trimmedTitle.length()
+                > TITLE_MAX_LENGTH) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "제목은 300자 이하로 입력해주세요."
+            );
+        }
+
         if (request.getContent() == null
                 || request.getContent()
                 .isBlank()) {
@@ -645,6 +663,18 @@ public class QnaServiceImpl implements QnaService {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "내용은 필수입니다."
+            );
+        }
+
+        String trimmedContent =
+                request.getContent().trim();
+
+        if (trimmedContent.length()
+                > CONTENT_MAX_LENGTH) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "내용은 2000자 이하로 입력해주세요."
             );
         }
     }

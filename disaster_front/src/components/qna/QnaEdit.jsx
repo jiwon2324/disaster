@@ -16,6 +16,9 @@ const CATEGORY_OPTIONS = [
     "기타"
 ];
 
+const TITLE_MAX_LENGTH = 300;
+const CONTENT_MAX_LENGTH = 2000;
+
 function QnaEdit() {
     const { no } = useParams();
     const navigate = useNavigate();
@@ -178,6 +181,8 @@ function QnaEdit() {
                 )
             );
         } catch (error) {
+            console.error(error);
+
             setErrorMessage(
                 error.response?.data?.message ||
                 error.response?.data?.msg ||
@@ -191,29 +196,47 @@ function QnaEdit() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if (!title.trim()) {
+        setErrorMessage("");
+
+        const trimmedTitle = title.trim();
+        const trimmedContent = content.trim();
+
+        if (!trimmedTitle) {
             setErrorMessage(
                 "제목을 입력해주세요."
             );
             return;
         }
 
-        if (!content.trim()) {
+        if (trimmedTitle.length > TITLE_MAX_LENGTH) {
+            setErrorMessage(
+                `제목은 ${TITLE_MAX_LENGTH}자 이하로 입력해주세요.`
+            );
+            return;
+        }
+
+        if (!trimmedContent) {
             setErrorMessage(
                 "내용을 입력해주세요."
             );
             return;
         }
 
+        if (trimmedContent.length > CONTENT_MAX_LENGTH) {
+            setErrorMessage(
+                `내용은 ${CONTENT_MAX_LENGTH}자 이하로 입력해주세요.`
+            );
+            return;
+        }
+
         try {
             setSaving(true);
-            setErrorMessage("");
 
             await axios.put(
                 `${API_BASE_URL}/qna/update.do`,
                 {
-                    title: title.trim(),
-                    content: content.trim(),
+                    title: trimmedTitle,
+                    content: trimmedContent,
                     category
                 },
                 {
@@ -234,6 +257,8 @@ function QnaEdit() {
                 `/qna/${questionNo}`
             );
         } catch (error) {
+            console.error(error);
+
             setErrorMessage(
                 error.response?.data?.message ||
                 error.response?.data?.msg ||
@@ -326,6 +351,7 @@ function QnaEdit() {
                                 type="text"
                                 id="title"
                                 className="form-control"
+                                maxLength={TITLE_MAX_LENGTH}
                                 value={title}
                                 onChange={(event) =>
                                     setTitle(
@@ -335,6 +361,10 @@ function QnaEdit() {
                                 style={styles.input}
                                 required
                             />
+
+                            <div style={styles.lengthText}>
+                                {title.length}/{TITLE_MAX_LENGTH}
+                            </div>
                         </div>
 
                         <div className="mb-4">
@@ -351,6 +381,7 @@ function QnaEdit() {
                                 id="content"
                                 className="form-control"
                                 rows={12}
+                                maxLength={CONTENT_MAX_LENGTH}
                                 value={content}
                                 onChange={(event) =>
                                     setContent(
@@ -360,6 +391,10 @@ function QnaEdit() {
                                 style={styles.textarea}
                                 required
                             />
+
+                            <div style={styles.lengthText}>
+                                {content.length}/{CONTENT_MAX_LENGTH}
+                            </div>
                         </div>
 
                         <div style={styles.buttonArea}>
@@ -436,6 +471,13 @@ const styles = {
     textarea: {
         resize: "vertical",
         lineHeight: "1.7"
+    },
+
+    lengthText: {
+        marginTop: "7px",
+        color: "#7b8492",
+        fontSize: "13px",
+        textAlign: "right"
     },
 
     buttonArea: {

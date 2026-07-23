@@ -231,6 +231,19 @@ function QnaList() {
         );
     };
 
+    const handleRowKeyDown = (
+        event,
+        no
+    ) => {
+        if (
+            event.key === "Enter"
+            || event.key === " "
+        ) {
+            event.preventDefault();
+            navigate(`/qna/${no}`);
+        }
+    };
+
     const formatDate = (
         value
     ) => {
@@ -481,7 +494,23 @@ function QnaList() {
                                 <tbody>
                                 {qnaList.map(
                                     (qna) => (
-                                        <tr key={qna.no}>
+                                        <tr
+                                            key={qna.no}
+                                            role="button"
+                                            tabIndex={0}
+                                            style={styles.clickableRow}
+                                            onClick={() =>
+                                                navigate(
+                                                    `/qna/${qna.no}`
+                                                )
+                                            }
+                                            onKeyDown={(event) =>
+                                                handleRowKeyDown(
+                                                    event,
+                                                    qna.no
+                                                )
+                                            }
+                                        >
                                             <td className="text-secondary">
                                                 {qna.no}
                                             </td>
@@ -498,25 +527,13 @@ function QnaList() {
                                                 </span>
                                             </td>
 
-                                            <td>
-                                                <button
-                                                    type="button"
-                                                    style={
-                                                        styles.titleButton
-                                                    }
-                                                    onClick={() =>
-                                                        navigate(
-                                                            `/qna/${qna.no}`
-                                                        )
-                                                    }
-                                                >
-                                                    {qna.title}
-                                                </button>
+                                            <td style={styles.titleCell}>
+                                                {qna.title}
                                             </td>
 
                                             <td>
-                                                {qna.writerName
-                                                    || qna.writerId
+                                                {qna.writerId
+                                                    || qna.writerName
                                                     || "-"}
                                             </td>
 
@@ -681,6 +698,16 @@ const styles = {
         textAlign: "center"
     },
 
+    clickableRow: {
+        cursor: "pointer"
+    },
+
+    titleCell: {
+        color: "#242a33",
+        fontSize: "15px",
+        fontWeight: "600"
+    },
+
     numberColumn: {
         width: "70px"
     },
@@ -713,16 +740,6 @@ const styles = {
         borderRadius: "6px",
         fontSize: "12px",
         fontWeight: "650"
-    },
-
-    titleButton: {
-        padding: 0,
-        color: "#242a33",
-        background: "none",
-        border: 0,
-        fontSize: "15px",
-        fontWeight: "600",
-        textAlign: "left"
     },
 
     completeBadge: {
