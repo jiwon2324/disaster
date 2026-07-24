@@ -6,8 +6,8 @@ import com.disaster.api.qna.service.QnaService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -31,8 +31,9 @@ public class QnaController {
     private final QnaService qnaService;
 
     @GetMapping("/list.do")
-    @Operation(summary = "QnA 질문 목록")
+    @Operation(summary = "문의 목록 및 검색")
     public Page<QnaResponse> list(
+            @RequestParam(required = false) String searchType,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String category,
             @RequestParam(defaultValue = "0") int page,
@@ -41,10 +42,14 @@ public class QnaController {
         Pageable pageable = PageRequest.of(
                 page,
                 size,
-                Sort.by(Sort.Direction.DESC, "no")
+                Sort.by(
+                        Sort.Direction.DESC,
+                        "no"
+                )
         );
 
         return qnaService.getQuestionList(
+                searchType,
                 keyword,
                 category,
                 pageable
@@ -52,13 +57,15 @@ public class QnaController {
     }
 
     @GetMapping("/view.do")
-    @Operation(summary = "QnA 질문과 답변 상세보기")
-    public List<QnaResponse> view(@RequestParam Long no) {
+    @Operation(summary = "문의 질문과 답변 상세조회")
+    public List<QnaResponse> view(
+            @RequestParam Long no
+    ) {
         return qnaService.getThread(no);
     }
 
     @PostMapping("/write.do")
-    @Operation(summary = "QnA 질문 등록")
+    @Operation(summary = "문의 등록")
     public QnaResponse write(
             @RequestBody QnaRequest request,
             Authentication authentication
@@ -70,7 +77,7 @@ public class QnaController {
     }
 
     @PutMapping("/update.do")
-    @Operation(summary = "QnA 수정")
+    @Operation(summary = "문의 또는 답변 수정")
     public QnaResponse update(
             @RequestParam Long no,
             @RequestBody QnaRequest request,
@@ -84,7 +91,7 @@ public class QnaController {
     }
 
     @DeleteMapping("/delete.do")
-    @Operation(summary = "QnA 삭제")
+    @Operation(summary = "문의 또는 답변 삭제")
     public void delete(
             @RequestParam Long no,
             Authentication authentication
@@ -96,7 +103,7 @@ public class QnaController {
     }
 
     @PostMapping("/answer.do")
-    @Operation(summary = "관리자 QnA 답변 등록")
+    @Operation(summary = "관리자 문의 답변 등록")
     public QnaResponse answer(
             @RequestParam Long no,
             @RequestBody QnaRequest request,

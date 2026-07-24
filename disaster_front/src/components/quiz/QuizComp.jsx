@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom"; 
+import { Routes, Route } from "react-router-dom";
 import QuizList from "./QuizList";
 import QuizWrite from "./QuizWrite";
 import QuizView from "./QuizView";
@@ -16,7 +16,7 @@ function QuizComp(){
           </h2>
           <hr className="text-secondary opacity-25 mt-3 mb-0" />
         </div>
-        
+
         {/* 내부 라우터들이 렌더링되는 바디 영역 */}
         <div className="card-body p-4">
           <Routes>
@@ -27,7 +27,7 @@ function QuizComp(){
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>
-        
+
         <div className="card-footer bg-white border-0 pb-4 text-center text-muted small">
           매일 새로운 퀴즈로 지식을 넓혀보세요!
         </div>
