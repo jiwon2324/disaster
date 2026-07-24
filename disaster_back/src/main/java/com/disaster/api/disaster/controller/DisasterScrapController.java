@@ -28,7 +28,7 @@ public class DisasterScrapController {
                                                         @RequestParam("no") Long disasterNo) {
         Map<String, Object> response = new HashMap<>();
         try {
-            Long scrapNo = disasterScrapService.addScrap(memberId, disasterNo);
+            Long scrapNo = disasterScrapService.add(memberId, disasterNo);
             response.put("success", true);
             response.put("message", "스크랩에 추가되었습니다.");
             response.put("scrapNo", scrapNo);
@@ -47,7 +47,7 @@ public class DisasterScrapController {
                                                            @RequestParam("no") Long disasterNo) {
         Map<String, Object> response = new HashMap<>();
         try {
-            disasterScrapService.removeScrap(memberId, disasterNo);
+            disasterScrapService.remove(memberId, disasterNo);
             response.put("success", true);
             response.put("message", "스크랩이 취소되었습니다.");
             return ResponseEntity.ok(response);
@@ -62,7 +62,7 @@ public class DisasterScrapController {
     @Operation(summary = "내 스크랩 목록 조회")
     @GetMapping("/list/{id}")
     public ResponseEntity<List<DisasterScrapVO>> list(@PathVariable("id") String memberId) {
-        List<DisasterScrapVO> list = disasterScrapService.getMyScrapList(memberId);
+        List<DisasterScrapVO> list = disasterScrapService.list(memberId);
         return ResponseEntity.ok(list);
     }
 
@@ -71,7 +71,7 @@ public class DisasterScrapController {
     @GetMapping("/check")
     public ResponseEntity<Boolean> check(@RequestParam("id") String memberId,
                                                 @RequestParam("no") Long disasterNo) {
-        boolean isScraped = disasterScrapService.isScraped(memberId, disasterNo);
+        boolean isScraped = disasterScrapService.check(memberId, disasterNo);
         return ResponseEntity.ok(isScraped);
     }
 }

@@ -40,7 +40,7 @@ public class DisasterApiService {
     // 1. 행안부 재난문자 수집 (300개 수동 & 30분 주기 자동)
     // =========================================================================
     @Transactional
-    public int fetchAndSaveDisasterData(int totalPages) {
+    public int serviceSavedMsg(int totalPages) {
         int totalSavedCount = 0;
         for (int page = 1; page <= totalPages; page++) {
             String urlStr = "https://www.safetydata.go.kr/V2/api/DSSP-IF-00247"
@@ -51,7 +51,7 @@ public class DisasterApiService {
             try {
                 DisasterApiResponseDTO response = restTemplate.getForObject(URI.create(urlStr), DisasterApiResponseDTO.class);
                 if (response != null && response.getBody() != null) {
-                    totalSavedCount += processAndSaveRows(response.getBody());
+                    totalSavedCount += analyzeCategory(response.getBody());
                 }
             } catch (Exception e) {
                 log.error("[재난문자] {}페이지 수집 에러: {}", page, e.getMessage());
@@ -61,13 +61,13 @@ public class DisasterApiService {
     }
 
     @Transactional
-    public int fetchAndSaveDisasterData() {
-        return fetchAndSaveDisasterData(3);
+    public int serviceSavedMsg() {
+        return serviceSavedMsg(3);
     }
 
     @Scheduled(cron = "0 0/30 * * * *")
     @Transactional
-    public void safeAutoFetchSchedule() {
+    public void serviceauto() {
         log.info("[정기 수집] 최신 재난 정보 자동 확인 중...");
         String urlStr = "https://www.safetydata.go.kr/V2/api/DSSP-IF-00247"
                 + "?serviceKey=" + serviceKey
@@ -76,7 +76,7 @@ public class DisasterApiService {
         try {
             DisasterApiResponseDTO response = restTemplate.getForObject(URI.create(urlStr), DisasterApiResponseDTO.class);
             if (response != null && response.getBody() != null) {
-                int count = processAndSaveRows(response.getBody());
+                int count = analyzeCategory(response.getBody());
                 log.info("[정기 수집] 신규 데이터 {}건 추가됨", count);
             }
         } catch (Exception e) {
@@ -88,7 +88,7 @@ public class DisasterApiService {
     // 2. 기상청 단기예보 API 연동
     // =========================================================================
     @Transactional
-    public int fetchVilageFcst() {
+    public int serviceWeather() {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String urlStr = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"
                 + "?serviceKey=" + serviceKey
@@ -127,7 +127,7 @@ public class DisasterApiService {
     // 3. 산림청 산불발생통계 API 연동
     // =========================================================================
     @Transactional
-    public int fetchForestFire() {
+    public int serviceFire() {
         // 20200101부터 현재까지의 산불 통계를 100건 수집하도록 기간 지정
         String urlStr = "http://apis.data.go.kr/1400000/forestFireStatService/getforestFireStatList"
                 + "?serviceKey=" + serviceKey
@@ -194,7 +194,7 @@ public class DisasterApiService {
     // 4. 기상청 지진정보 조회 API 연동
     // =========================================================================
     @Transactional
-    public int fetchEarthquake() {
+    public int serviceEarthquake() {
         String urlStr = "http://apis.data.go.kr/1360000/EqkInfoService_2/getEqkMsg"
                 + "?serviceKey=" + serviceKey
                 + "&pageNo=1&numOfRows=50&dataType=JSON";
@@ -213,7 +213,7 @@ public class DisasterApiService {
                     disasterInfo.setTitle("[지진] 규모 " + item.getMt() + " 지진 발생 - " + item.getLoc());
                     disasterInfo.setContent(item.getRem() != null ? item.getRem() : "진앙위치: " + item.getLoc() + ", 최대진도: " + item.getInT());
                     disasterInfo.setLocation(safeSubstring(item.getLoc(), 1000));
-                    disasterInfo.setDisasterDate(parseLocalDateTime(item.getTmEqk()));
+                    disasterInfo.setDisasterDate(localDateTime(item.getTmEqk()));
 
                     // 2번 카테고리인 '지진/해일'로 매핑
                     DisasterCategory category = findOrCreateCategory("지진", item.getRem());
@@ -229,10 +229,8 @@ public class DisasterApiService {
         return savedCount;
     }
 
-    // =========================================================================
     // 5. 공통 처리 메서드 및 카테고리 분석
-    // =========================================================================
-    private int processAndSaveRows(List<DisasterApiRow> rowList) {
+    private int analyzeCategory(List<DisasterApiRow> rowList) {
         int count = 0;
         for (DisasterApiRow row : rowList) {
             if (row.getSn() != null && disasterInfoRepository.existsByApiId(row.getSn())) {
@@ -250,7 +248,7 @@ public class DisasterApiService {
             disasterInfo.setTitle("[" + (row.getDstSeNm() != null ? row.getDstSeNm() : "재난") + "] " + summaryTitle);
             disasterInfo.setContent(rawMsg);
             disasterInfo.setLocation(safeSubstring(row.getRcptnRgnNm(), 1000));
-            disasterInfo.setDisasterDate(parseLocalDateTime(row.getCrtDt()));
+            disasterInfo.setDisasterDate(localDateTime(row.getCrtDt()));
 
             DisasterCategory category = findOrCreateCategory(row.getDstSeNm(), rawMsg);
             disasterInfo.setCategory(category);
@@ -267,7 +265,7 @@ public class DisasterApiService {
     }
 
     private DisasterCategory findOrCreateCategory(String dstSeNm, String msgCn) {
-        String catName = analyzeCategoryName(dstSeNm, msgCn);
+        String catName = CategoryName(dstSeNm, msgCn);
 
         return disasterCategoryRepository.findByCatName(catName)
                 .orElseGet(() -> {
@@ -277,7 +275,7 @@ public class DisasterApiService {
                 });
     }
 
-    private String analyzeCategoryName(String dstSeNm, String msgCn) {
+    private String CategoryName(String dstSeNm, String msgCn) {
         String combinedText = ((dstSeNm != null ? dstSeNm : "") + " " + (msgCn != null ? msgCn : "")).trim();
 
         if (combinedText.isEmpty()) return "기타/미분류";
@@ -318,7 +316,7 @@ public class DisasterApiService {
         return "기타/미분류";
     }
 
-    private LocalDateTime parseLocalDateTime(String dateStr) {
+    private LocalDateTime localDateTime(String dateStr) {
         if (dateStr == null || dateStr.trim().isEmpty()) return LocalDateTime.now();
         try {
             String cleaned = dateStr.replaceAll("[^0-9]", "");

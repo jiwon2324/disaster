@@ -26,7 +26,7 @@ public class DisasterApiController {
             @RequestParam(name = "pages", defaultValue = "3") int pages) {
 
         Map<String, Object> response = new HashMap<>();
-        int savedCount = disasterApiService.fetchAndSaveDisasterData(pages);
+        int savedCount = disasterApiService.serviceSavedMsg(pages);
         response.put("success", true);
         response.put("savedCount", savedCount);
         return ResponseEntity.ok(response);
@@ -37,7 +37,7 @@ public class DisasterApiController {
     @GetMapping("/collect/weather")
     public ResponseEntity<Map<String, Object>> weather() {
         Map<String, Object> response = new HashMap<>();
-        int savedCount = disasterApiService.fetchVilageFcst();
+        int savedCount = disasterApiService.serviceWeather();
         response.put("success", true);
         response.put("savedCount", savedCount);
         return ResponseEntity.ok(response);
@@ -48,7 +48,7 @@ public class DisasterApiController {
     @GetMapping("/collect/forest-fire")
     public ResponseEntity<Map<String, Object>> forestFire() {
         Map<String, Object> response = new HashMap<>();
-        int savedCount = disasterApiService.fetchForestFire();
+        int savedCount = disasterApiService.serviceFire();
         response.put("success", true);
         response.put("savedCount", savedCount);
         return ResponseEntity.ok(response);
@@ -59,7 +59,7 @@ public class DisasterApiController {
     @GetMapping("/collect/earthquake")
     public ResponseEntity<Map<String, Object>> earthquake() {
         Map<String, Object> response = new HashMap<>();
-        int savedCount = disasterApiService.fetchEarthquake();
+        int savedCount = disasterApiService.serviceEarthquake();
         response.put("success", true);
         response.put("savedCount", savedCount);
         return ResponseEntity.ok(response);
@@ -70,10 +70,10 @@ public class DisasterApiController {
     @GetMapping("/collect/all")
     public ResponseEntity<Map<String, Object>> all() {
         Map<String, Object> response = new HashMap<>();
-        int msgCount = disasterApiService.fetchAndSaveDisasterData(3);
-        int weatherCount = disasterApiService.fetchVilageFcst();
-        int fireCount = disasterApiService.fetchForestFire();
-        int eqkCount = disasterApiService.fetchEarthquake();
+        int msgCount = disasterApiService.serviceSavedMsg(3);
+        int weatherCount = disasterApiService.serviceWeather();
+        int fireCount = disasterApiService.serviceFire();
+        int eqkCount = disasterApiService.serviceEarthquake();
 
         response.put("success", true);
         response.put("totalSaved", msgCount + weatherCount + fireCount + eqkCount);

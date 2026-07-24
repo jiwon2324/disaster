@@ -36,7 +36,7 @@ public class DisasterCategoryService {
     }
 
     // 1. 전체 카테고리 목록 조회
-    public List<DisasterCategoryVO> getAllCategories() {
+    public List<DisasterCategoryVO> allCategory() {
         return disasterCategoryRepository.findAll()
                 .stream()
                 .map(this::entityToVO)
@@ -44,7 +44,7 @@ public class DisasterCategoryService {
     }
 
     // 2. 단건 조회 (수정 폼 불러오기용)
-    public DisasterCategoryVO getCategoryById(Long catid) {
+    public DisasterCategoryVO getCategory(Long catid) {
         DisasterCategory entity = disasterCategoryRepository.findById(catid)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다. catid=" + catid));
         return entityToVO(entity);

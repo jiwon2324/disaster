@@ -22,7 +22,7 @@ public class DisasterCategoryController {
     @Operation(summary = "카테고리 목록 조회", description = "React 카드로 표시할 카테고리 목록을 반환합니다.")
     @GetMapping("/list.do")
     public ResponseEntity<List<DisasterCategoryVO>> list() {
-        List<DisasterCategoryVO> categoryList = disasterCategoryService.getAllCategories();
+        List<DisasterCategoryVO> categoryList = disasterCategoryService.allCategory();
         return ResponseEntity.ok(categoryList);
     }
 
@@ -30,7 +30,7 @@ public class DisasterCategoryController {
     @Operation(summary = "카테고리 상세 조회 (수정 폼용)", description = "수정 모달/폼에 기존 카테고리 정보를 채우기 위해 단건 조회합니다.")
     @GetMapping("/get.do")
     public ResponseEntity<DisasterCategoryVO> get(@RequestParam("catid") Long catid) {
-        DisasterCategoryVO category = disasterCategoryService.getCategoryById(catid);
+        DisasterCategoryVO category = disasterCategoryService.getCategory(catid);
         return ResponseEntity.ok(category);
     }
 

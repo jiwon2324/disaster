@@ -26,6 +26,9 @@ public class DisasterScrap {
     @JoinColumn(name = "disaster_info_id", nullable = false)
     private DisasterInfo disasterInfo;
 
+    @Column(name = "no", nullable = false)
+    private Long no; // 재난 번호 (disasterInfo.id 값)
+
     @Column(name = "scrap_date", nullable = false, updatable = false)
     private LocalDateTime scrapDate;
 

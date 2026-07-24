@@ -22,7 +22,7 @@ public class DisasterScrapService {
 
     // 1. 스크랩 추가
     @Transactional
-    public Long addScrap(String memberId, Long disasterNo) {
+    public Long add(String memberId, Long disasterNo) {
         if (disasterScrapRepository.existsByIdAndDisasterInfo_Id(memberId, disasterNo)) {
             throw new IllegalStateException("이미 스크랩한 재난 정보입니다.");
         }
@@ -33,18 +33,19 @@ public class DisasterScrapService {
         DisasterScrap scrap = new DisasterScrap();
         scrap.setId(memberId);
         scrap.setDisasterInfo(disasterInfo);
+        scrap.setNo(disasterNo);
 
         return disasterScrapRepository.save(scrap).getScrapNo();
     }
 
     // 2. 스크랩 취소/삭제
     @Transactional
-    public void removeScrap(String memberId, Long disasterNo) {
+    public void remove(String memberId, Long disasterNo) {
         disasterScrapRepository.deleteByIdAndDisasterInfo_Id(memberId, disasterNo);
     }
 
     // 3. 내 스크랩 목록 조회
-    public List<DisasterScrapVO> getMyScrapList(String memberId) {
+    public List<DisasterScrapVO> list(String memberId) {
         List<DisasterScrap> scrapList = disasterScrapRepository.findByIdOrderByScrapDateDesc(memberId);
 
         return scrapList.stream().map(scrap -> {
@@ -64,7 +65,7 @@ public class DisasterScrapService {
     }
 
     // 4. 스크랩 여부 체크
-    public boolean isScraped(String memberId, Long disasterNo) {
+    public boolean check(String memberId, Long disasterNo) {
         return disasterScrapRepository.existsByIdAndDisasterInfo_Id(memberId, disasterNo);
     }
 }
