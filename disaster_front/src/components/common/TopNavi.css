@@ -60,7 +60,9 @@
     font-size: 0.94rem;
     font-weight: 650;
     white-space: nowrap;
-    transition: color 0.16s ease;
+    transition:
+            color 0.16s ease,
+            background-color 0.16s ease;
 }
 
 .safety-navbar .nav-link:hover {
@@ -109,8 +111,144 @@
 }
 
 .safety-navbar .navbar-toggler:focus {
-    box-shadow: 0 0 0 3px rgba(23, 105, 224, 0.13);
+    box-shadow:
+            0 0 0 3px rgba(23, 105, 224, 0.13);
 }
+
+/* ========================================
+   로그아웃 완료 모달
+======================================== */
+
+.safety-logout-modal-backdrop {
+    position: fixed;
+    z-index: 9999;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    background-color: rgba(15, 23, 42, 0.62);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+}
+
+.safety-logout-modal {
+    width: min(100%, 430px);
+    padding: 43px 38px 34px;
+
+    border: 1px solid #e3e8ef;
+    border-radius: 18px;
+
+    background-color: #ffffff;
+    box-shadow:
+            0 25px 60px rgba(15, 23, 42, 0.24);
+
+    text-align: center;
+
+    animation:
+            safetyLogoutModalOpen 0.22s ease-out;
+}
+
+.safety-logout-icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 66px;
+    height: 66px;
+    margin: 0 auto 24px;
+
+    border: 3px solid #2f6fed;
+    border-radius: 50%;
+
+    background-color: #f7faff;
+}
+
+.safety-logout-icon {
+    color: #2f6fed;
+}
+
+.safety-logout-title {
+    margin: 0;
+
+    color: #151d2c;
+    font-size: 1.34rem;
+    font-weight: 800;
+    line-height: 1.45;
+    letter-spacing: -0.035em;
+}
+
+.safety-logout-description {
+    margin: 10px 0 30px;
+
+    color: #77808e;
+    font-size: 0.92rem;
+    font-weight: 500;
+    line-height: 1.6;
+}
+
+.safety-logout-confirm-button {
+    min-width: 88px;
+    height: 43px;
+    padding: 0 24px;
+
+    border: 0;
+    border-radius: 10px;
+
+    background-color: #275ed7;
+    color: #ffffff;
+
+    font-size: 0.94rem;
+    font-weight: 750;
+
+    cursor: pointer;
+
+    transition:
+            background-color 0.16s ease,
+            transform 0.16s ease,
+            box-shadow 0.16s ease;
+}
+
+.safety-logout-confirm-button:hover {
+    background-color: #194fc5;
+
+    box-shadow:
+            0 8px 18px rgba(39, 94, 215, 0.23);
+
+    transform: translateY(-1px);
+}
+
+.safety-logout-confirm-button:active {
+    transform: translateY(0);
+}
+
+.safety-logout-confirm-button:focus-visible {
+    outline: 3px solid rgba(39, 94, 215, 0.25);
+    outline-offset: 3px;
+}
+
+@keyframes safetyLogoutModalOpen {
+    from {
+        opacity: 0;
+        transform:
+                translateY(10px)
+                scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+                translateY(0)
+                scale(1);
+    }
+}
+
+/* ========================================
+   반응형
+======================================== */
 
 @media (max-width: 1100px) {
     .safety-navbar {
@@ -164,5 +302,42 @@
 
     .safety-navbar .nav-link.active::after {
         display: none;
+    }
+}
+
+@media (max-width: 520px) {
+    .safety-logout-modal-backdrop {
+        padding: 18px;
+    }
+
+    .safety-logout-modal {
+        padding:
+                36px
+                24px
+                28px;
+        border-radius: 16px;
+    }
+
+    .safety-logout-icon-wrap {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 21px;
+    }
+
+    .safety-logout-title {
+        font-size: 1.2rem;
+    }
+
+    .safety-logout-description {
+        margin-bottom: 25px;
+        font-size: 0.88rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .safety-logout-modal,
+    .safety-logout-confirm-button {
+        animation: none;
+        transition: none;
     }
 }

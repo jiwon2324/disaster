@@ -1,80 +1,83 @@
 package com.disaster.api.common.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.mail.MailException;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class MailService {
+
+    private static final String QNA_DETAIL_URL =
+            "http://localhost:5173/qna/";
 
     private final JavaMailSender mailSender;
 
-    @Value("${spring.mail.username:}")
-    private String senderEmail;
-
-    @Value("${app.frontend-url:http://localhost:5173}")
-    private String frontendUrl;
-
+    /**
+     * 공통 메일 발송
+     */
     public void sendMail(
             String recipient,
             String subject,
             String content
     ) {
-        if (senderEmail == null
-                || senderEmail.isBlank()) {
-
-            throw new ResponseStatusException(
-                    HttpStatus.SERVICE_UNAVAILABLE,
-                    "메일 발송 계정이 설정되지 않았습니다."
-            );
-        }
-
         if (recipient == null
                 || recipient.isBlank()) {
 
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "받는 사람의 이메일이 없습니다."
+            throw new IllegalArgumentException(
+                    "수신자 이메일이 없습니다."
             );
         }
 
-        try {
-            SimpleMailMessage message =
-                    new SimpleMailMessage();
+        SimpleMailMessage message =
+                new SimpleMailMessage();
 
-            message.setFrom(senderEmail);
-            message.setTo(recipient);
-            message.setSubject(subject);
-            message.setText(content);
+        message.setTo(
+                recipient.trim()
+        );
 
-            mailSender.send(message);
+        message.setSubject(
+                subject
+        );
 
-        } catch (MailException exception) {
+        message.setText(
+                content
+        );
 
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "이메일 발송에 실패했습니다."
-            );
-        }
+        mailSender.send(
+                message
+        );
+
+        log.info(
+                "메일 발송 완료. recipient={}, subject={}",
+                recipient,
+                subject
+        );
     }
 
+    /**
+     * 임시 비밀번호 안내 메일
+     */
     public void sendTemporaryPassword(
             String recipient,
-            String memberId,
+            String memberName,
             String temporaryPassword
     ) {
+        String displayName =
+                memberName == null
+                        || memberName.isBlank()
+                        ? "회원"
+                        : memberName.trim();
+
         String subject =
-                "[재난안전정보] 임시 비밀번호 안내";
+                "[안전온] 임시 비밀번호 안내";
 
         String content =
-                "안녕하세요. 재난안전정보입니다.\n\n"
-                        + memberId
+                "안녕하세요. 안전온입니다.\n\n"
+                        + displayName
                         + " 회원님의 임시 비밀번호가 발급되었습니다.\n\n"
                         + "임시 비밀번호: "
                         + temporaryPassword
@@ -90,33 +93,42 @@ public class MailService {
         );
     }
 
+    /**
+     * Q&A 관리자 답변 등록 알림 메일
+     */
     public void sendQnaAnswerNotification(
             String recipient,
             String memberName,
             String questionTitle,
             Long questionNo
     ) {
-        String detailUrl =
-                frontendUrl
-                        + "/qna/"
-                        + questionNo;
-
         String displayName =
                 memberName == null
                         || memberName.isBlank()
                         ? "회원"
-                        : memberName;
+                        : memberName.trim();
+
+        String displayQuestionTitle =
+                questionTitle == null
+                        || questionTitle.isBlank()
+                        ? "문의"
+                        : questionTitle.trim();
+
+        String detailUrl =
+                QNA_DETAIL_URL
+                        + questionNo;
 
         String subject =
-                "[재난안전정보] 문의 답변이 등록되었습니다.";
+                "[안전온] 문의 답변이 등록되었습니다.";
 
         String content =
                 "안녕하세요. "
                         + displayName
                         + "님.\n\n"
-                        + "작성하신 문의에 관리자 답변이 등록되었습니다.\n\n"
+                        + "안전온에 작성하신 문의에 "
+                        + "관리자 답변이 등록되었습니다.\n\n"
                         + "문의 제목: "
-                        + questionTitle
+                        + displayQuestionTitle
                         + "\n\n"
                         + "아래 주소에서 답변 내용을 확인할 수 있습니다.\n"
                         + detailUrl
