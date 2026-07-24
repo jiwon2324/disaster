@@ -22,7 +22,7 @@ public class DisasterApiController {
     // 1. 행안부 재난문자 수집
     @Operation(summary = "재난문자 데이터 수집")
     @GetMapping("/collect")
-    public ResponseEntity<Map<String, Object>> collectDisasterMsg(
+    public ResponseEntity<Map<String, Object>> disasterMsg(
             @RequestParam(name = "pages", defaultValue = "3") int pages) {
 
         Map<String, Object> response = new HashMap<>();
@@ -35,7 +35,7 @@ public class DisasterApiController {
     // 2. 기상청 단기예보 수집
     @Operation(summary = "기상청 단기예보 데이터 수집")
     @GetMapping("/collect/weather")
-    public ResponseEntity<Map<String, Object>> collectWeather() {
+    public ResponseEntity<Map<String, Object>> weather() {
         Map<String, Object> response = new HashMap<>();
         int savedCount = disasterApiService.fetchVilageFcst();
         response.put("success", true);
@@ -46,7 +46,7 @@ public class DisasterApiController {
     // 3. 산림청 산불통계 수집
     @Operation(summary = "산림청 산불발생통계 데이터 수집")
     @GetMapping("/collect/forest-fire")
-    public ResponseEntity<Map<String, Object>> collectForestFire() {
+    public ResponseEntity<Map<String, Object>> forestFire() {
         Map<String, Object> response = new HashMap<>();
         int savedCount = disasterApiService.fetchForestFire();
         response.put("success", true);
@@ -57,7 +57,7 @@ public class DisasterApiController {
     // 4. 기상청 지진정보 수집
     @Operation(summary = "기상청 지진정보 데이터 수집")
     @GetMapping("/collect/earthquake")
-    public ResponseEntity<Map<String, Object>> collectEarthquake() {
+    public ResponseEntity<Map<String, Object>> earthquake() {
         Map<String, Object> response = new HashMap<>();
         int savedCount = disasterApiService.fetchEarthquake();
         response.put("success", true);
@@ -68,7 +68,7 @@ public class DisasterApiController {
     // 5. 전체 데이터 통합 수집
     @Operation(summary = "전체 기관(행안부, 기상청, 산림청) 데이터 통합 수집")
     @GetMapping("/collect/all")
-    public ResponseEntity<Map<String, Object>> collectAll() {
+    public ResponseEntity<Map<String, Object>> all() {
         Map<String, Object> response = new HashMap<>();
         int msgCount = disasterApiService.fetchAndSaveDisasterData(3);
         int weatherCount = disasterApiService.fetchVilageFcst();

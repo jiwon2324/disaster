@@ -25,7 +25,7 @@ public class DisasterInfoController {
     // 예시 요청: GET /disasterInfo/category/1
     @Operation(summary = "카테고리별 재난 전체 목록 조회", description = "특정 카테고리에 속한 모든 재난 정보를 조회합니다.")
     @GetMapping("/category/{catid}")
-    public ResponseEntity<List<DisasterInfoVO>> getListByCategory(@PathVariable("catid") Long catid) {
+    public ResponseEntity<List<DisasterInfoVO>> list(@PathVariable("catid") Long catid) {
         List<DisasterInfoVO> list = disasterInfoService.getDisasterListByCategory(catid);
         return ResponseEntity.ok(list);
     }
@@ -34,7 +34,7 @@ public class DisasterInfoController {
     // 예시 요청: GET /disasterInfo/category/1/paged?page=0&size=10
     @Operation(summary = "카테고리별 재난 목록 페이징 조회", description = "특정 카테고리의 재난 목록을 페이징(Page, Size) 처리하여 반환합니다.")
     @GetMapping("/category/{catid}/paged")
-    public ResponseEntity<Page<DisasterInfoVO>> getListByCategoryPaged(
+    public ResponseEntity<Page<DisasterInfoVO>> listPaged(
             @PathVariable("catid") Long catid,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size) {
@@ -46,7 +46,7 @@ public class DisasterInfoController {
     // 3. 재난 정보 상세 조희
     @Operation(summary = "재난 정보 상세 조회", description = "PK(id) 값을 통해 특정 재난 정보의 상세 내용을 조회합니다.")
     @GetMapping("/detail/{id}")
-    public ResponseEntity<DisasterInfoVO> getDisasterDetail(@PathVariable("id") Long id) {
+    public ResponseEntity<DisasterInfoVO> detail(@PathVariable("id") Long id) {
         DisasterInfoVO detail = disasterInfoService.getDisasterDetail(id);
         return ResponseEntity.ok(detail);
     }
@@ -55,7 +55,7 @@ public class DisasterInfoController {
     @Operation(summary = "재난 정보 등록 (관리자)", description = "관리자가 직접 재난 정보를 입력하여 등록합니다.")
     // @PreAuthorize("hasRole('ADMIN')") // 관리자 권한 체크 필요 시 주석 해제
     @PostMapping
-    public ResponseEntity<Long> createDisaster(@RequestBody DisasterInfoRequestVO requestVO) {
+    public ResponseEntity<Long> create(@RequestBody DisasterInfoRequestVO requestVO) {
         Long savedId = disasterInfoService.createDisaster(requestVO);
         return ResponseEntity.ok(savedId);
     }
@@ -64,7 +64,7 @@ public class DisasterInfoController {
     @Operation(summary = "재난 정보 수정 (관리자)", description = "관리자가 기존 재난 정보를 수정합니다.")
     // @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateDisaster(
+    public ResponseEntity<Void> update(
             @PathVariable("id") Long id,
             @RequestBody DisasterInfoRequestVO requestVO) {
         disasterInfoService.updateDisaster(id, requestVO);
@@ -75,7 +75,7 @@ public class DisasterInfoController {
     @Operation(summary = "재난 정보 삭제 (관리자)", description = "관리자가 특정 재난 정보를 삭제합니다.")
     // @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDisaster(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         disasterInfoService.deleteDisaster(id);
         return ResponseEntity.ok().build();
     }

@@ -24,7 +24,7 @@ public class DisasterScrapController {
     // 1. 스크랩 추가
     @Operation(summary = "스크랩 추가")
     @PostMapping("/add")
-    public ResponseEntity<Map<String, Object>> addScrap(@RequestParam("id") String memberId,
+    public ResponseEntity<Map<String, Object>> add(@RequestParam("id") String memberId,
                                                         @RequestParam("no") Long disasterNo) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -43,7 +43,7 @@ public class DisasterScrapController {
     // 2. 스크랩 취소
     @Operation(summary = "스크랩 취소")
     @PostMapping("/remove")
-    public ResponseEntity<Map<String, Object>> removeScrap(@RequestParam("id") String memberId,
+    public ResponseEntity<Map<String, Object>> remove(@RequestParam("id") String memberId,
                                                            @RequestParam("no") Long disasterNo) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -61,7 +61,7 @@ public class DisasterScrapController {
     // 3. 내 스크랩 목록 조회
     @Operation(summary = "내 스크랩 목록 조회")
     @GetMapping("/list/{id}")
-    public ResponseEntity<List<DisasterScrapVO>> getMyScrapList(@PathVariable("id") String memberId) {
+    public ResponseEntity<List<DisasterScrapVO>> list(@PathVariable("id") String memberId) {
         List<DisasterScrapVO> list = disasterScrapService.getMyScrapList(memberId);
         return ResponseEntity.ok(list);
     }
@@ -69,7 +69,7 @@ public class DisasterScrapController {
     // 4. 스크랩 여부 확인
     @Operation(summary = "스크랩 여부 확인")
     @GetMapping("/check")
-    public ResponseEntity<Boolean> checkScraped(@RequestParam("id") String memberId,
+    public ResponseEntity<Boolean> check(@RequestParam("id") String memberId,
                                                 @RequestParam("no") Long disasterNo) {
         boolean isScraped = disasterScrapService.isScraped(memberId, disasterNo);
         return ResponseEntity.ok(isScraped);
