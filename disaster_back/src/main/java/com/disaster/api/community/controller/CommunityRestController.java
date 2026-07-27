@@ -46,15 +46,9 @@ public class CommunityRestController {
 
     @PostMapping(value = "/write.do", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> write(@RequestPart CommunityVO vo, @RequestPart MultipartFile imageFile) throws IOException {
-        // 1. 이미지 필수 체크
         if (imageFile == null || imageFile.isEmpty()) {
             throw new RuntimeException("제보 게시판은 이미지가 필수항목입니다.");
         }
-
-        // 2. [추가] 예전 수업 코드처럼 임시 회원/인증 정보 세팅
-        // 만약 VO에 회원 아이디를 담는 필드(예: id)가 있다면 아래와 같이 임시 하드코딩을 추가합니다.
-        // vo.setId("test");
-        // (현재 코드에서는 Swagger 입력창에서 writer에 "강해"를 넣어 보내므로 필요 시 활성화하세요)
 
         // 3. 파일명 생성 (UUID 활용)
         String originalFilename = imageFile.getOriginalFilename();

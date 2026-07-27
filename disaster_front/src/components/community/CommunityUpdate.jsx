@@ -9,6 +9,7 @@ function CommunityUpdate(){
   const location = useLocation(); 
   
   const [vo, setVo] = useState({});
+  const [imageFile, setImageFile] = useState(null); // 새로 첨부할 이미지 파일 State
 
   const loginInfoStr = localStorage.getItem("login");
   const loginInfo = loginInfoStr ? JSON.parse(loginInfoStr) : null;
@@ -27,6 +28,13 @@ function CommunityUpdate(){
     })
   }, [no]);
 
+  // 파일 선택 이벤트 처리
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -37,10 +45,26 @@ function CommunityUpdate(){
     };
 
     try {
-      const response = await axios.post("http://localhost/community/update.do", updateVo);
-      alert(response.data);
+      // 1. 텍스트 정보 수정 요청 (/community/update.do)
+      await axios.post("http://localhost/community/update.do", updateVo);
+
+      // 2. 새 이미지 파일이 첨부되어 있다면 이미지 교체 API 호출 (/community/changeImage.do)
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("no", no);
+        formData.append("changeImage", imageFile); // 백엔드 파라미터명과 동일하게 지정
+
+        await axios.post("http://localhost/community/changeImage.do", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        });
+      }
+
+      alert("제보글 및 이미지가 성공적으로 수정되었습니다.");
       navigate(`/community/view?no=${no}&inc=0`);
     } catch (error) {
+      console.error("수정 실패:", error);
       alert(error.response?.data || '글수정 중 서버 오류가 발생되었습니다.');
     }
   }
@@ -52,7 +76,6 @@ function CommunityUpdate(){
 
   return(
     <>
-
       {/* 수정 폼 카드 스타일 적용 */}
       <div className="card border-light shadow-sm mb-4">
         <div className="card-header bg-white border-bottom border-light p-3">
@@ -89,16 +112,30 @@ function CommunityUpdate(){
               <textarea className="form-control rounded border-secondary-subtle" rows="10" name="content" value={vo.content || ''} required onChange={changeData} placeholder="내용을 입력하세요."></textarea>
             </div>
 
-            {/* 이미지 영역 (수정페이지에서는 보기만 하거나, 파일 인풋 틀을 위치 유지) */}
-            {vo.fileName && (
-                <div className="mb-3 p-3 bg-light rounded text-center border border-light shadow-inner">
+            {/* 이미지 영역 */}
+            <div className="mb-3 p-3 bg-light rounded text-center border border-light shadow-inner">
+                {vo.fileName ? (
+                  <>
                     <p className="text-muted small mb-2">현재 첨부된 이미지</p>
-                    <img src={`http://localhost/image/${vo.fileName}`} alt="현재 제보사진" className="img-thumbnail rounded shadow-sm" style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain' }} />
-                    <div className="form-text text-muted small mt-2">이미지 변경은 현재 지원하지 않습니다. (로직 위치 유지)</div>
+                    <img src={`http://localhost/image/${vo.fileName}`} alt="현재 제보사진" className="img-thumbnail rounded shadow-sm mb-3" style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain' }} />
+                  </>
+                ) : (
+                  <p className="text-muted small mb-2">현재 첨부된 이미지가 없습니다.</p>
+                )}
+                
+                <div className="text-start mt-2 border-top pt-2">
+                  <label className="form-label fw-bold text-secondary small">새 이미지로 변경 (선택)</label>
+                  <input 
+                    type="file" 
+                    className="form-control form-control-sm rounded border-secondary-subtle" 
+                    accept="image/*" 
+                    onChange={handleFileChange} 
+                  />
+                  <div className="form-text text-muted small">새 이미지를 첨부하면 기존 이미지가 교체됩니다.</div>
                 </div>
-            )}
+            </div>
 
-            {/* 비밀번호 입력창 (관리자가 아닐 때만) 디자인 개선 */}
+            {/* 비밀번호 입력창 (관리자가 아닐 때만) */}
             {!isAdmin && (
               <div className="mb-3 border-top border-light pt-3 mt-3">
                 <label className="form-label fw-bold text-danger"><i className="bi bi-shield-lock-fill me-1"></i>본인 확인 비밀번호</label>
@@ -106,7 +143,7 @@ function CommunityUpdate(){
               </div>
             )}
 
-            {/* 하단 버튼 영역 정렬 및 디자인 변경 */}
+            {/* 하단 버튼 영역 */}
             <div className="d-flex justify-content-end align-items-center gap-2 border-top pt-4 mt-4">
                 <button type="submit" className="btn btn-warning px-5 rounded-pill text-white fw-bold">
                     <i className="bi bi-check-circle me-1"></i>수정 완료

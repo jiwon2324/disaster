@@ -81,7 +81,6 @@ public class QuizServiceImpl implements QuizService {
         explanation.setOrdNo(2);
         explanation.setLevNo(1);
 
-        // 🚨 중요: 새로 생성된 savedQuestion.getNo() 부모 PK를 안전하게 자식 parentNo로 바인딩합니다.
         explanation.setParentNo(savedQuestion.getNo());
 
         quizRepositoryCustom.writeQuiz(explanation);

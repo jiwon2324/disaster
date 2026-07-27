@@ -30,29 +30,19 @@ public class CommunityRepositoryCustomImpl implements CommunityRepositoryCustom 
                         community.fileName
                 )
                 .from(community)
-                .where(search(key, word))
                 .orderBy(community.no.desc())
                 .limit(perPageNum)
                 .offset((page - 1) * perPageNum)
                 .fetch();
     }
 
-    private BooleanBuilder search(String key, String word) {
-        BooleanBuilder builder = new BooleanBuilder();
-        if (word == null || word.trim().isEmpty()) return builder;
 
-        if (key.contains("t")) builder.or(community.title.contains(word));
-        if (key.contains("c")) builder.or(community.content.contains(word));
-        if (key.contains("w")) builder.or(community.writer.contains(word));
-        return builder;
-    }
 
     @Override
     public Long getCount(String key, String word) {
         return queryFactory
                 .select(community.count())
                 .from(community)
-                .where(search(key, word))
                 .fetchOne();
     }
 
