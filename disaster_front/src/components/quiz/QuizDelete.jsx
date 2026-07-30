@@ -37,7 +37,7 @@ function QuizDelete({ no, handleCancel }) {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="confirmText" className="form-label text-danger fw-bold mb-2">
-              ⚠️ 삭제를 원하시면 아래에 "삭제"라고 입력하세요 :
+               삭제를 원하시면 아래에 "삭제"라고 입력하세요 :
             </label>
             <div className="input-group input-group-lg">
               <span className="input-group-text bg-light border-danger-subtle text-danger"><i className="bi bi-shield-slash-fill"></i></span>
