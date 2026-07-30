@@ -103,10 +103,10 @@ public class CommunityServiceImpl implements CommunityService {
         if (optional.isEmpty()) throw new RuntimeException("제보게시판 수정 오류 - 잘못된 글번호");
         Community entity = optional.get();
 
-        //  [판단 기준 변경] 리액트가 보낸 패스워드가 관리자 마스터 키인지 확인
+        // 리액트가 보낸 패스워드가 관리자 마스터 키인지 확인
         boolean isAdminPass = vo.getPw() != null && vo.getPw().equals("admin_master_pass");
 
-        // 🛡관리자 마스터 키가 아닐 때만 일반 유저 비밀번호 및 작성자 검증 실행
+        // 관리자 마스터 키가 아닐 때만 일반 유저 비밀번호 및 작성자 검증 실행
         if (!isAdminPass) {
             // 1. 기존 비밀번호 검증
             if (!passwordEncoder.matches(vo.getPw(), entity.getPw())) {
@@ -130,15 +130,15 @@ public class CommunityServiceImpl implements CommunityService {
         if (optional.isEmpty()) throw new RuntimeException("제보게시판 삭제 오류 - 잘못된 글번호");
         Community entity = optional.get();
 
-        // 🔑 [관리자 패스 추가] 요청한 유저가 관리자 권한을 가졌는지 확인
-        // 프론트엔드 토큰 구조 및 사용 예시에 맞춰 admin, admin01, 관리자 키워드를 허용합니다.
+        // [관리자 패스 추가] 요청한 유저가 관리자 권한을 가졌는지 확인
+        // 프론트엔드 토큰 구조 및 사용 예시에 맞춰 admin, admin01, 관리자 키워드를 허용
         boolean isAdmin = vo.getWriter() != null && (
                 vo.getWriter().equals("admin") ||
                         vo.getWriter().equals("admin01") ||
                         vo.getWriter().equals("관리자")
         );
 
-        // 🛡️ 관리자가 아닐 때만 비밀번호와 작성자 매칭 검증 실행
+        //  관리자가 아닐 때만 비밀번호와 작성자 매칭 검증 실행
         if (!isAdmin) {
             // 1. 기존 비밀번호 검증
             if (!passwordEncoder.matches(vo.getPw(), entity.getPw())) {
