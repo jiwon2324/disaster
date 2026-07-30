@@ -64,10 +64,10 @@ public class QuizServiceImpl implements QuizService {
         question.setOrdNo(1);
         question.setLevNo(0);
 
-        // 영속성 컨텍스트에 저장하여 실제 DB 시퀀스/AUTO_INCREMENT 번호(no)를 즉시 부여받습니다.
+        // 영속성 컨텍스트에 저장하여 실제 DB 시퀀스/AUTO_INCREMENT 번호(no)를 즉시 부여
         Quiz savedQuestion = quizRepositoryCustom.writeQuiz(question);
 
-        // 생성된 고유 키(no)를 refNo로 지정해 줍니다.
+        // 생성된 고유 키(no)를 refNo로 지정
         savedQuestion.setRefNo(savedQuestion.getNo());
         quizRepositoryCustom.writeQuiz(savedQuestion); // 영속 데이터 업데이트
 
