@@ -13,7 +13,7 @@ function CommunityList(){
 
   const navigate = useNavigate();
 
-  // 🔑 로그인 정보 유무 체크 (비로그인 시 null)
+  // 로그인 정보 유무 체크 (비로그인 시 null)
   const loginInfoStr = localStorage.getItem("login");
   const loginInfo = loginInfoStr ? JSON.parse(loginInfoStr) : null;
 
@@ -78,7 +78,7 @@ function CommunityList(){
         </tbody>
       </table>
 
-      {/* 🛡️ 로그인 정보가 존재하는 유저에게만 [제보하기] 버튼을 노출시킵니다 - 원본 순서 및 틀 백퍼센트 유지 */}
+      {/*  로그인 정보가 존재하는 유저에게만 [제보하기] 버튼을 노출 - 원본 순서 및 틀 백퍼센트 유지 */}
       {loginInfo && (
         <div className="mb-3">
           <Link to={"/community/write"} className="btn btn-outline-primary px-4">
