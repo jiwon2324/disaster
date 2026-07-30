@@ -7,7 +7,7 @@ function QuizList() {
   const [list, setList] = useState([]);
   const navigate = useNavigate();
 
-  // 🔑 로그인 세션 판별부 (관리자 판단)
+  //  로그인 세션 판별부 (관리자 판단)
   const loginInfoStr = localStorage.getItem("login");
   const loginInfo = loginInfoStr ? JSON.parse(loginInfoStr) : null;
   
@@ -75,7 +75,7 @@ function QuizList() {
         </tbody>
       </table>
 
-      {/* 🛡️ 관리자일 경우 등록 버튼이 하단에 표시됩니다 - 원본 틀 그대로 유지 */}
+      {/*  관리자일 경우 등록 버튼이 하단에 표시됩니다 - 원본 틀 그대로 유지 */}
       {isAdmin && (
         <div className="mt-4">
           {/* 버튼 디자인 변경: btn-primary -> btn-outline-primary */}
